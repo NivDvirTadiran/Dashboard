@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="700x275">
+	<nla:obj ref="Group.Agents">
+		<nla:table_md keys="6_3_2_1_1,6_3_2_1_3,6_3_2_2_1,6_3_2_2_2,6_3_2_2_4,6_3_2_2_5,6_3_2_3_7,6_3_2_2_3,6_3_2_2_12,6_3_2_2_14,6_3_2_3_4,6_3_2_3_9"/>
+	</nla:obj>
+</nla:window>

@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="800x250">
+	<nla:obj ref="SuperGroups.Period" type="voice">
+		<nla:table keys="6_3_4_1_1" optionalInKeys="6_3_4_2_1,6_3_4_2_4,6_3_4_3_1,6_3_4_3_2,6_3_4_3_4,6_3_4_3_5,6_3_4_4_2,6_3_4_4_4," optionalOutKeys="6_3_4_2_2,6_3_4_3_10,6_3_4_3_14,6_3_4_3_6,6_3_4_4_3,6_3_4_2_5,6_3_4_4_18,6_3_4_4_20"/>
+	</nla:obj>
+</nla:window>

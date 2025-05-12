@@ -1,0 +1,49 @@
+<div class="dashboard-container">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h2>Contact Center Dashboard</h2>
+      <div class="dashboard-controls">
+        <!-- Existing buttons for adding specific widgets -->
+        <button class="btn-refresh" (click)="this.addWidgetTable()" title="Add Signal-based Table Widget">
+          <i class="fas fa-table"></i> Add Table Widget
+        </button>
+        <!-- New general Add Widget button (could open a modal or dropdown) -->
+        <button class="btn-refresh" (click)="this.presentAddWidgetOptions()" title="Add New Widget">
+          <i class="fas fa-puzzle-piece"></i> Add Widget
+        </button>
+        <button class="btn-refresh" (click)="this.saveLayout()" title="Save Dashboard Layout">
+          <i class="fas fa-save"></i> Save Layout
+        </button>
+        <button class="btn-refresh" (click)="this.loadLayout()" title="Load Dashboard Layout">
+          <i class="fas fa-folder-open"></i> Load Layout
+        </button>
+        <button class="btn-refresh" title="Refresh All Widgets" (click)="refreshAllWidgets()">
+          <i class="fas fa-sync-alt"></i> Refresh All
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="grid-container">
+        <gridstack [options]="this.gridOptions" class="board" >
+        </gridstack>
+    </div>
+
+</div>
+
+<!-- Modal or Dropdown for Adding Widgets (Conceptual) -->
+<div *ngIf="showAddWidgetModal" class="add-widget-modal">
+  <h4>Select Widget Type to Add</h4>
+  <ul>
+    <li (click)="addWidgetByType('pie-chart')">Pie Chart</li>
+    <li (click)="addWidgetByType('doughnut')">Doughnut Chart</li>
+    <li (click)="addWidgetByType('agent-list-table')">Agent List Table</li>
+    <li (click)="addWidgetByType('group-list-table')">Group List Table</li>
+    <li (click)="addWidgetByType('brief-agents-data')">Brief Agents Data</li>
+    <li (click)="addWidgetByType('super-group-list-table')">Super Group List Table</li>
+    <li (click)="addWidgetByType('group-abandoned-info')">Group Abandoned Info (Group 1)</li>
+    <!-- Add more widget types here -->
+  </ul>
+  <button (click)="showAddWidgetModal = false">Close</button>
+</div>

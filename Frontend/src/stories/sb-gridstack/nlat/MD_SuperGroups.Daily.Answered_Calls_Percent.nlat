@@ -1,0 +1,8 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
+
+<nla:window size="450x300">
+	<nla:caption text="Daily.Answered_Calls_Percent" type="caption"/>
+	<nla:obj ref="SuperGroup.Period">
+		<nla:data key="6_3_4_4_3a" format="percent"/>
+	</nla:obj>
+</nla:window>

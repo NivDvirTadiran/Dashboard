@@ -1,0 +1,24 @@
+:host {
+  left: 0;
+  display: flex;
+  width: calc(100% - 3.5rem - 1.5rem); // This width might need adjustment based on overall app layout
+  height: 98%; // Consider using 100% or calc(100vh - offset) if it's meant to fill viewport height
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 1.5rem;
+  // border: 10px; // This likely does nothing or is a typo, consider removing or specifying (e.g., border: 1px solid #ccc;)
+}
+
+.sb-gridstack-content {
+  display: flex;
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-lg, 0px 4px 10px rgba(0, 0, 0, 0.15)); // Use a theme variable for shadow
+  overflow: hidden; // Important for containing the grid and its rounded corners
+  width: 100%;
+  height: 100%;
+  background-color: var(--dashboard-content-bg, var(--neutral-background, #f4f7f9)); // Ensure a background for the content area
+}
+
+
+
+

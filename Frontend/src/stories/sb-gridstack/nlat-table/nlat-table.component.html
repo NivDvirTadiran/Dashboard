@@ -1,0 +1,25 @@
+<div class="group-list-table-container">
+  <ng-container *ngIf="data && data.length > 0; else noData">
+    <table>
+      <thead>
+        <tr>
+          <th>Group ID</th>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Email Enabled</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let group of data">
+          <td>{{ group.grpId }}</td>
+          <td>{{ group.grpName }}</td>
+          <td>{{ group.grpNumber }}</td>
+          <td>{{ group.grpEmailEnable === 1 ? 'Yes' : 'No' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+  <ng-template #noData>
+    <p>No group data to display.</p>
+  </ng-template>
+</div>

@@ -1,0 +1,6 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="450x500">
+	<jsp:include page="Groups.Calls_Distribution_Graph.nlat" />
+	<jsp:include page="Groups.Agents.Distribution_Graph.nlat" />
+</nla:window>

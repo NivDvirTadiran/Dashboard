@@ -1,0 +1,21 @@
+<div  [dir]="this.direction" class="password-alert-text" Style="margin-left: 20px; padding-bottom: 15px">
+<tr><strong>{{this.actionHeader  |translate }}</strong></tr>
+</div>
+<div [dir]="this.direction" >
+
+  <table>
+
+    <!--thead>
+
+    </thead-->
+    <tbody>
+      <tr  *ngFor="let actionInput of actionInputs">
+        <td  *ngIf="actionInput.isFulfilled == true" Style="color: green">✔</td>
+        <td  *ngIf="actionInput.isFulfilled != true" Style="color: red">X</td>
+        <td Style="border-left-width: 7px; border-color: white; line-height: 15px">{{ actionInput.presentingMessage |translate  }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+</div>

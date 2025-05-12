@@ -1,0 +1,79 @@
+
+
+.button {
+
+
+
+}
+
+
+
+.storybook-button-continue {
+    width: 100%;
+    padding: 17px 136px 17px 139px;
+    border-radius: 7px;
+    background-image: linear-gradient(180deg, #3D8ECF 0%, #58A6E4 100%);
+
+    font-family: 'Noto Sans', ui-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 21px;
+    line-height: 11px;
+    border-color: white;
+    color: white;
+    //transition: background-color 300ms ease-out;
+    //box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+    &:hover {
+      background: #3D8ECF;
+    }
+
+    &:focus {
+      background: #ADDBFF;
+    }
+
+    &:active {
+      box-shadow: none;
+      background: linear-gradient(116.01deg, #7EC6FF 2.44%, #ADDBFF 93.73%);
+    }
+
+}
+
+
+
+
+/*
+.storybook-button-continue--primary {
+  top: 50px;
+  bottom: unset;
+  left: 30px;
+}
+
+.storybook-button-continue--secondary {
+  top: unset;
+  bottom: 50px;
+  left: 30px;
+}
+*/
+
+.storybook-button-continue--small {
+  font-size: 20.7945px;
+  padding: 10px 16px;
+}
+.storybook-button-continue--medium {
+  font-size: 21px;
+  padding: 17px 136px 17px 139px;
+}
+.storybook-button-continue--large {
+  font-size: 28px;
+  padding: 17px 136px;
+}
+
+.storybook-button-continue--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.storybook-button-continue--enabled {
+  opacity: unset;
+  cursor: unset;
+}

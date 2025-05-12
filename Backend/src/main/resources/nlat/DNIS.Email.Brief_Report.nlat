@@ -1,0 +1,10 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="700x250">
+	<nla:obj ref="DNISs" type="email">
+		<nla:table keys="6_3_10_1_1" optionalInKeys="6_3_10_1_2,6_3_10_2_11,6_3_10_4_26,6_3_10_4_27,6_3_10_4_28," optionalOutKeys="6_3_10_2_12,6_3_10_4_29,6_3_10_4_1"/>
+	</nla:obj>
+</nla:window>
+
+
+

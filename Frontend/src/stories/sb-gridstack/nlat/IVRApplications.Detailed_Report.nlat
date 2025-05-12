@@ -1,0 +1,64 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="775x325">
+<nla:obj ref="IVRApplication">
+	<nla:pane caption="On Line" width="150">
+		<nla:pane caption="Inbound">
+			<br/>
+			<nla:data key="6_3_11_2_1" name="Calls"/>
+			<nla:data key="6_3_11_2_3" name="Too Long"/>
+			<nla:data key="6_3_11_2_5" name="Avg.Time" format="time"/>
+			<nla:data key="6_3_11_2_4" name="Max.Time" format="time"/>
+		</nla:pane>
+		<br/>
+		<nla:pane caption="Outbound">
+			<br/>
+			<nla:data key="6_3_11_2_2" name="Calls"/>
+			<nla:data key="6_3_11_2_6" name="Too Long"/>
+			<nla:data key="6_3_11_2_8" name="Avg.Time" format="time"/>
+			<nla:data key="6_3_11_2_7" name="Max.Time" format="time"/>
+		</nla:pane>
+		<br/>
+	</nla:pane>
+	<nla:pane caption="OnCurrentInterval (${refObject.data['6_3_11_1_2'].value} min)" align="right,top" width="600">
+		<nla:pane caption="Inbound" cols="4">
+			<nla:data-title text="ACD Calls"/>
+				<nla:data key="6_3_11_3_1" name="All/Access"/>
+				<nla:data key="6_3_11_3_4" name="Fully Handled"/>
+				<nla:data key="6_3_11_3_5" name="Failed"/>
+				<nla:data key="6_3_11_3_6" name="Interflowed"/>
+			<nla:data-title text="Avg.Time"/>
+				<nla:data key="6_3_11_3_10" name="All/Access" format="time"/>
+				<nla:data key="6_3_11_3_12" name="Fully Handled" format="time"/>
+				<nla:data key="6_3_11_3_14" name="Failed" format="time"/>
+				<nla:data key="6_3_11_3_16" name="Interflowed" format="time"/>
+			<nla:data-title text="Max.Time"/>
+				<nla:data key="6_3_11_3_11" name="All/Access" format="time"/>
+				<nla:data key="6_3_11_3_13" name="Fully Handled" format="time"/>
+				<nla:data key="6_3_11_3_15" name="Failed" format="time"/>
+				<nla:data key="6_3_11_3_17" name="Interflowed" format="time"/>
+			<nla:data-title text="Statistics"/>
+				<nla:data key="6_3_11_3_18" name="RPH"/>
+		</nla:pane>
+		<nla:pane caption="Outbound" cols="4">
+			<nla:data-title text="ACD Calls"/>
+				<nla:data key="6_3_11_3_19" name="All/Access"/>
+				<nla:data key="6_3_11_3_21" name="Fully Handled"/>
+				<nla:data key="6_3_11_3_23" name="Failed"/>
+				<nla:data key="6_3_11_3_24" name="Interflowed"/>
+			<nla:data-title text="Avg.Time"/>
+				<nla:data key="6_3_11_3_28" name="All/Access" format="time"/>
+				<nla:data key="6_3_11_3_30" name="Fully Handled" format="time"/>
+				<nla:data key="6_3_11_3_32" name="Failed" format="time"/>
+				<nla:data key="6_3_11_3_34" name="Interflowed" format="time"/>
+			<nla:data-title text="Max.Time"/>
+				<nla:data key="6_3_11_3_29" name="All/Access" format="time"/>
+				<nla:data key="6_3_11_3_31" name="Fully Handled" format="time"/>
+				<nla:data key="6_3_11_3_33" name="Failed" format="time"/>
+				<nla:data key="6_3_11_3_35" name="Interflowed" format="time"/>
+			<nla:data-title text="Statistics"/>
+				<nla:data key="6_3_11_3_36" name="RPH"/>
+		</nla:pane>
+	</nla:pane>
+</nla:obj>
+</nla:window>

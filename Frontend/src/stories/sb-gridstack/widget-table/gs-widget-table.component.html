@@ -1,0 +1,16 @@
+<table class="table">
+    <thead>
+        <tr>
+            @for (header of this.tableObjHeader() ; track header) {
+                <th scope="col">{{ header }}</th>
+            }
+        </tr>
+    </thead>
+    <tbody class="scroll-box">
+        <tr *ngFor="let row of tableObjBody; index as i">
+            @for (cell of this.tableObjValues(row) ; track cell) {
+                <td>{{ cell.toString() }}</td>
+            }
+        </tr>
+    </tbody>
+</table>

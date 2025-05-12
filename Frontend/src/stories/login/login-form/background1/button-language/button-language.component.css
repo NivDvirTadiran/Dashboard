@@ -1,0 +1,28 @@
+.Vector {
+  position: absolute;
+  top: 54px;
+  right: 38px;
+  width: 49px;
+  height: 46px;
+
+}
+
+button {
+  padding-left: 0;
+  padding-right: 50px;
+  padding-bottom: 30px;
+}
+
+button:hover, button:focus, .button:hover, .button:focus {
+  background-color: rgba(173, 219, 255, 0);
+}
+
+img.Language-Desktop-Icon {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  box-shadow: 0 1px 1px 0 rgba(61, 142, 207, 0.15);
+}

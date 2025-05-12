@@ -1,0 +1,14 @@
+{
+  "/accDashboard": {
+    "target": "https://localhost:8445",
+    "pathRewrite": {"^/accDashboard" : "https://localhost:8445/accDashboard"},
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/#" : {
+    "target": "https://localhost:8445/accDashboard/#",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

@@ -1,0 +1,20 @@
+.status-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  
+  // Make the content responsive by using flex-wrap
+  status-switcher-with-icon {
+    flex: 0 0 auto;
+    margin: 0 4px;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}

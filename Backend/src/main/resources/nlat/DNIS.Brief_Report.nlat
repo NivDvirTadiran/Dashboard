@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="700x250">
+	<nla:obj ref="DNISs" type="voice">
+		<nla:table keys="6_3_10_1_1,6_3_10_1_2" optionalInKeys="20_3_10_2_1,20_3_10_4_1,20_3_10_4_2,20_3_10_4_3,6_3_10_4_1,20_3_10_4_6," optionalOutKeys="20_3_10_2_2,20_3_10_2_4,20_3_10_4_4,20_3_10_4_5,20_3_10_4_7"/>
+	</nla:obj>
+</nla:window>

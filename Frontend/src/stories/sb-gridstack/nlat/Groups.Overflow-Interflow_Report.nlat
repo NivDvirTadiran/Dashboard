@@ -1,0 +1,25 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="330x360">
+<nla:obj ref="Group" type="voice">
+	<nla:pane caption="CallsPresentedToGroup" width="310">
+		<nla:data key="20_3_1_4_1"/>
+		<nla:data key="20_3_1_4_2"/>
+		<nla:data key="20_3_1_4_3"/>
+	</nla:pane>
+	<nla:pane caption="TreatmentofCallsPresentedtoGroup" width="310">
+		<nla:data key="20_3_1_4_4"/>
+		<nla:data key="20_3_1_4_5"/>
+		<nla:data key="20_3_1_4_6"/>
+		<nla:data key="20_3_1_4_7"/>
+		<nla:data key="20_3_1_4_8"/>
+		<nla:data key="20_3_1_4_9"/>
+		<nla:data key="20_3_1_4_13"/>
+		<nla:data key="20_3_1_4_14"/>
+		<nla:data key="20_3_1_4_15"/>
+		<nla:data key="20_3_1_4_10"/>
+		<nla:data key="20_3_1_4_11"/>
+		<nla:data key="20_3_1_4_12"/>
+	</nla:pane>
+</nla:obj>
+</nla:window>

@@ -1,0 +1,74 @@
+
+
+
+<div id="main-login-card" class="col-md-12">
+  <div  class="h-100 d-flex align-items-center form-wrapper" style="z-index: 300;">
+    <div class="centre form-header">
+      <a >{{"Aeonix Contact Center\n" | translate}}</a> <br/>
+      <a >{{'Agent' | translate}}</a>
+    </div>
+
+    <!--form name="form"  (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate --> <!-- *ngIf="!isConfigSuccess"-->
+      <form class="currentForm" name="currentForm"   [formGroup]="mForm" style="width: 100%; height: 100%;z-index: 400;">
+      <div  *ngIf="!isLoggedIn" class="Vector">
+
+
+
+            <div *ngIf="isLoggedIn">isConfigSuccess</div>
+            <div *ngIf="!isLoggedIn && storyInputsInOrder.length === 0">empty</div>
+            <storybook-input
+              [storyInput]="storyInputsInOrder[0]"
+              [toFocus]=true
+              [direction]="'ltr'"
+              (onArchiveInput)="onArchiveInput.emit($event)"
+              (onPinInput)="onPinInput.emit($event)"
+              [currentForm]="mForm">
+            </storybook-input>
+
+            <storybook-input
+              [storyInput]="storyInputsInOrder[1]"
+              [direction]="'ltr'"
+              (onArchiveInput)="onArchiveInput.emit($event)"
+              (onPinInput)="onPinInput.emit($event)"
+              [currentForm]="mForm">
+            </storybook-input>
+
+
+            <div  class="login-button">
+            <storybook-button-continue  size="small" label="{{'Continue' | translate}}" type="button" (click)="onSubmit()" ></storybook-button-continue>
+            </div>
+
+
+            <div class="login-failed-message" role="alert" >
+              <p *ngIf="isLoginFailed && loginErrorMessage.length>0" [dir]="this.extractDirection()">*  {{ loginErrorMessage.toString() | translate  }}</p>
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+      </div>
+      </form>
+
+      <div class="thematic-break" style="bottom: 3px">
+          <a class="TermsConditions" [dir]="this.extractDirection()" >
+              {{'Terms & Conditions' | translate}} <!-- {{this.ACC_VERSION | translate}} -->
+          </a>
+      </div>
+
+
+  </div>
+
+    <storybook-card class="card-container" ></storybook-card>
+
+
+</div>
+
+

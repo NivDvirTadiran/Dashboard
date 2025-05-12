@@ -1,0 +1,100 @@
+.handler {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  transform: none !important;
+  &:hover {
+    background: blue;
+  }
+}
+
+::ng-deep body.resizing-x {
+  cursor: col-resize;
+}
+
+::ng-deep body.resizing-y {
+  cursor: row-resize;
+}
+
+::ng-deep body.resizing-both {
+  cursor: nwse-resize;
+}
+
+::ng-deep .cdk-drag-dragging .handler {
+  background: blue;
+}
+
+::ng-deep .cdk-drag.diagonal .handler{
+  width: 14px;
+  height: 14px;
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
+
+::ng-deep .cdk-drag.diagonal .handler::after{
+  content: "drag_indicator";
+  font-family: 'Material Icons', serif;
+  position:relative;
+  transform: rotate(45deg);
+}
+
+::ng-deep .cdk-drag.horizontal .handler{
+  width: 4px;
+  height: 100%;
+  right: -2px;
+  top: 0;
+  cursor: col-resize;
+}
+
+::ng-deep .cdk-drag.horizontal .handler::after{
+  content: "drag_indicator";
+  font-family: 'Material Icons', serif;
+  position:relative;
+}
+
+::ng-deep .cdk-drag.vertical .handler::after{
+  content: "drag_indicator";
+  font-family: 'Material Icons', serif;
+  position:relative;
+  transform: rotate(90deg);
+}
+
+::ng-deep .cdk-drag.vertical .handler{
+  width: 100%;
+  height: 4px;
+  bottom: -2px;
+  left: 0;
+  cursor: row-resize;
+}
+
+
+
+/* Turn on single button up on top, and down on bottom
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  display: block;
+}
+*/
+/* Turn off the down area up on top, and up area on bottom
+::-webkit-scrollbar-button:start:increment,
+::-webkit-scrollbar-button:end:decrement {
+  display: none;
+}
+*/
+/* Place The scroll down button at the bottom */
+::-webkit-scrollbar-button:end:increment {
+  background-image: url("/stories/assets/icons/fold-menu@2x.png");
+}
+
+/* Place The scroll up button at the up */
+::-webkit-scrollbar-button:start:decrement {
+  background-image: url("/stories/assets/icons/fold-menu@2x.png");
+}
+
+win-template {
+  position: fixed;
+  justify-self: center;
+  align-self: end;
+}

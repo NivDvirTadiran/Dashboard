@@ -1,0 +1,8 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
+
+<nla:window size="450x300">
+	<nla:caption text="TSF" type="caption"/>
+	<nla:obj ref="Group">
+		<nla:data key="6_3_1_4_1" format="percent"/>
+	</nla:obj>
+</nla:window>

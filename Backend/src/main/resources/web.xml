@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+    <display-name>Web based NLA</display-name>
+    <servlet>
+        <servlet-name>jsp</servlet-name>
+        <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+        <init-param>
+            <param-name>development</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>trimSpaces</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>fork</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>xpoweredBy</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jsp</servlet-name>
+        <url-pattern>*.jsp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>jsp</servlet-name>
+        <url-pattern>*.nlat</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>jsp</servlet-name>
+        <url-pattern>*.tag</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ProcessLogin</servlet-name>
+        <servlet-class>tadiran.webnla.servlet.ProcessLogin</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProcessLogin</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ProcessActivity</servlet-name>
+        <servlet-class>tadiran.webnla.servlet.ProcessActivity</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProcessActivity</servlet-name>
+        <url-pattern>/processActivity</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>10</session-timeout>
+    </session-config>
+    <servlet>
+        <servlet-name>NLAStart</servlet-name>
+        <servlet-class>tadiran.webnla.servlet.NLAService</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NLAStart</servlet-name>
+        <url-pattern>/nlatRescan</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DrawChart</servlet-name>
+        <servlet-class>tadiran.webnla.servlet.DrawChart</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DrawChart</servlet-name>
+        <url-pattern>/drawChart</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>ACCVersion</param-name>
+        <param-value>8.5.034</param-value>
+    </context-param>
+    <context-param>
+        <param-name>appID</param-name>
+        <param-value>yariv-leptop</param-value>
+    </context-param>
+    <context-param>
+        <param-name>MaxAgentsInBriefReport</param-name>
+        <param-value>200</param-value>
+    </context-param>
+    <context-param>
+        <param-name>PBXType</param-name>
+        <param-value>15</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ACCServerAddress1</param-name>
+        <param-value>172.28.31.87</param-value>
+        <!-- wserv.tadirantele.com:9071 -->
+    </context-param>
+    <context-param>
+        <param-name>ACCServerPort1</param-name>
+        <param-value>9071</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ACCServerAddress2</param-name>
+        <param-value>172.28.31.87</param-value>
+        <!-- wserv.tadirantele.com:9071 -->
+    </context-param>
+    <context-param>
+        <param-name>ACCServerPort2</param-name>
+        <param-value>9071</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ACCWEBServers</param-name>
+        <param-value>https://172.28.31.87:8445;https://172.28.31.87:8445;</param-value>
+    </context-param>
+    <!--<listener>
+        <description>WebNLA Sessions Listener</description>
+        <listener-class>tadiran.webnla.servlet.SessionsListener</listener-class>
+    </listener>-->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+</web-app>

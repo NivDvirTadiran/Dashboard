@@ -1,0 +1,30 @@
+.storybook-button-tadiran {
+  position: absolute;
+  bottom: 50px;
+  left: 30px;
+  width: 151px;
+  height: 39px;
+}
+
+img.Language-Desktop-Icon {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  width: 151px;
+  height: 39px;
+  object-fit: contain;
+  /*box-shadow: 0 1px 1px 0 rgba(61, 142, 207, 0.15);*/
+}
+
+
+.storybook-button-tadiran--primary {
+  top: 50px;
+  bottom: unset;
+  left: 30px;
+}
+
+.storybook-button-tadiran--secondary {
+  top: unset;
+  bottom: 50px;
+  left: 30px;
+}

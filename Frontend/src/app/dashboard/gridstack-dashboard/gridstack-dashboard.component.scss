@@ -1,0 +1,46 @@
+
+
+.gridstack {
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.grid-stack-item {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  .grid-stack-item-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.sb-dashboard-content {
+  height: 100%;
+  width: 100%;
+}
+
+.widget-table {
+  display: block;
+  position: relative !important;
+  width: 100%;
+  height: 100%;
+}
+
+.test-container {
+  margin-top: 30px;
+}
+button.active {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.text-container {
+  display: flex;
+}

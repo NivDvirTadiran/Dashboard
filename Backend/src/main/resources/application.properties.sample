@@ -1,0 +1,33 @@
+tadiran.dashboard.ACCServerAddress1= %ACC_IP1%
+tadiran.dashboard.ACCServerAddress2= %ACC_IP2%
+tadiran.dashboard.ACCServerPort1= 9071
+tadiran.dashboard.ACCServerPort2= 9071
+tadiran.dashboard.ACCWEBServers= %ACC_WEB_SERVERS_URLS%
+tadiran.dashboard.accVersion= %VERSION%
+tadiran.dashboard.IsAuthTokenFilterOn= %APP_CENTER_STATUS%
+spring.datasource.url= jdbc:mysql://localhost:3308/ecc?useSSL=true&zeroDateTimeBehavior=convertToNull
+# 10.3.1.20
+spring.datasource.userName= ecc
+spring.datasource.password= !A_C_C-c0d8
+spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.MySQLDialect
+
+spring.jpa.hibernate.ddl-auto= none
+
+
+
+# Spring Datasource, Spring Data...
+# App Properties
+tadiran.dashboard.jwtCookieName=tadirantele
+tadiran.dashboard.jwtSecret= e1996-secret-key
+tadiran.dashboard.local.jwtSecret= ==================some=local=secret=key=========================
+
+tadiran.dashboard.local.jwtCookieExpirationMin= 20
+# 1,200,000[Ms] = 20[min]
+tadiran.dashboard.timeDurationBeforeDetachUnusedLicense= 20
+
+# Log to File
+logging.file=/opt/accwebapps/logs/accDashboard.log
+
+
+
+server.port=8445

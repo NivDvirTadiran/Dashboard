@@ -1,0 +1,8 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
+<%String dynamicFrontSize=(String)session.getAttribute("dynamicFrontSize"); %>
+<nla:window size="450x300">
+	<nla:caption text="Outbound_Longest_Pend" type="caption ${dynamicFrontSize}"/>
+	<nla:obj ref="SuperGroup">
+		<nla:data key="6_3_4_2_7" format="time"/>
+	</nla:obj>
+</nla:window>

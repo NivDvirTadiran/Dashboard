@@ -1,0 +1,8 @@
+<div [languagePopover] = "this.popover" header="'this.header'" [bubbleOn]="this.isNotify" [_translate]="this._translate" class="Vector">
+  <button  (click)="this.onClick.emit($event);" style="background-color: rgba(127,255,212,0);">
+<img [ngClass]="classes" [ngStyle]="{ 'background-color': backgroundColor }"
+   src="./stories/assets/icons/language-desktop-icon.png"
+       srcset="./stories/assets/icons/language-desktop-icon@2x.png 2x,
+             ./stories/assets/icons/language-desktop-icon@3x.png 3x"
+       class="Language-Desktop-Icon"  alt="form-desktop-icon"/></button>
+</div>

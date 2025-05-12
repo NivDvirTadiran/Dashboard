@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="700x250">
+	<nla:obj ref="IVRApplications">
+		<nla:table keys="6_3_11_1_1" optionalInKeys="6_3_11_2_1,6_3_11_3_1,6_3_11_3_4,6_3_11_3_5,6_3_11_3_6,6_3_11_3_18," optionalOutKeys="6_3_11_2_3,6_3_11_2_2,6_3_11_2_6,6_3_11_3_19,6_3_11_3_21,6_3_11_3_23,6_3_11_3_24,6_3_11_3_36"/>
+	</nla:obj>
+</nla:window>

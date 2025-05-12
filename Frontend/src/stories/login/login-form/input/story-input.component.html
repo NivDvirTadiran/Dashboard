@@ -1,0 +1,67 @@
+<div id="parent3"  [hidden]="storyInput?.hide" [ngClass]="classes"  >
+<div  id="parent1" >
+  <div class="main"  [formGroup]="this.currentForm">
+
+  <p [dir]="this.direction" class="user-name D-Caps-Regular">{{storyInput.state  | translate}} </p>
+
+  <label  [attr.aria-label]="storyInput?.id + ''" for="{{ storyInput?.title }}" class="Vector2 ">
+    <div class="inputRow" >
+        <img  src="{{ storyInput?.icon }}" class="icon-input" alt="icon input userName"  name="{{ storyInput?.title }}" />
+        <input #mInput
+          [readonly]=true
+          [dir]="direction"
+          type="{{storyInput?.type}}"
+          id="{{ storyInput?.id }}"
+          class="inputField"
+          name="{{storyInput?.title}}"
+          formControlName="{{storyInput?.title}}"
+          placeholder="{{storyInput.placeholder | translate }}"
+          oninput="/*this.value=this.value.replace(/[^A-Za-z0-9$@!%*#&><{}()+~.?\n\r\s\t]+/g,'').replace(/ /g,'');*/"
+          required />
+        <a *ngIf="this.isPasswordTextHide"
+           (click)="showPassChange()"
+           class="icon-input-showpass icons ">
+          <link hidden href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+           <mat-icon *ngIf="storyInput.type === 'password'" class="icon-input-showpass visibilityOff"  aria-hidden="false"  aria-label="visibility_off" fontIcon="visibility_off"></mat-icon>
+           <mat-icon *ngIf="storyInput.type === 'text'" class="visibility" aria-hidden="false"  aria-label="visibility" fontIcon="visibility"></mat-icon>
+        </a>
+        <!--storybook-button-pass-hide
+                *ngIf="this.isPasswordTextHide"
+                class="icon-input-showpass"
+                [state]="'show'"
+                (onClick)="showPassChange()">
+        </storybook-button-pass-hide-->
+  </div>
+
+  <br>
+
+  <span hidden [ngSwitch]="storyInput?.title" class="D-Caps-Regular"  style="line-height: 0" >
+      <span  class="position-absolute"  *ngIf="formControler?.invalid && (formControler?.dirty || formControler?.touched)"  >
+          <span *ngSwitchCase="'username'"><br>{{storyInput?.state}} is required!</span>
+          <span *ngSwitchCase="'password'">
+            <br>
+            {{storyInput?.state}} is required!
+            <!--div *ngIf="password.errors.required">Password is required</div>
+            <div *ngIf="password.errors.minlength">Password must be at least 1 characters</div-->
+          </span>
+          <span *ngSwitchCase="'email'"   ><br>{{storyInput?.state}} is required!</span>
+          <span *ngSwitchCase="'phone'"   ><br>{{storyInput?.state}} is required!</span>
+
+      </span>
+      <div   *ngIf="formControler?.valid && (formControler?.dirty || formControler?.touched)">
+        <div *ngSwitchCase="'username'">ok!</div>
+        <div *ngSwitchCase="'password'">ok!</div>
+        <div *ngSwitchCase="'email'"   >ok!</div>
+        <div *ngSwitchCase="'phone'"   >ok!</div>
+      </div>
+
+ </span>
+
+  </label>
+
+  </div>
+</div>
+
+
+
+</div>

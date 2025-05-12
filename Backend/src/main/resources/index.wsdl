@@ -1,0 +1,1659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="EMISweb" targetNamespace="urn:EMISweb"
+			 xmlns:tns="urn:EMISweb"
+			 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			 xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+			 xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+			 xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+	<types>
+		<schema targetNamespace="urn:EMISweb"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+				xmlns="http://www.w3.org/2001/XMLSchema"
+				elementFormDefault="unqualified"
+				attributeFormDefault="unqualified">
+
+			<complexType name="RequestInfoHeaderType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="ticket" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="GenInfoRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="Id" type="xsd:unsignedInt" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="ACDMultiRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="Id" type="xsd:unsignedInt" />
+					<element name="multiId" type="xsd:unsignedInt"  minOccurs="1" maxOccurs="unbounded" />
+					<element name="Operation" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ACDRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="AgentId" type="xsd:unsignedInt" />
+					<element name="GroupId" type="xsd:unsignedInt" />
+					<element name="Operation" type="xsd:string" />
+					<element name="Code" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="TFRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="AgentId" type="xsd:unsignedInt" />
+					<element name="Operation" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ChatResponseType">
+				<all>
+					<element name="sessionId" type="xsd:string" />
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="errorCause" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="ResponseInfoHeaderType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="errorCause" type="xsd:unsignedInt" />
+					<element name="serversInfo" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ResponseSaveReportType">
+				<all>
+					<element name="reportId" type="xsd:unsignedInt" />
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="errorCause" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="DataItemType">
+				<all>
+					<element name="ersid" type="xsd:string" />
+					<element name="value" type="xsd:string" />
+					<element name="ersname" type="xsd:string" />
+					<element name="bgcolor" type="xsd:unsignedInt" minOccurs="0"/>
+				</all>
+			</complexType>
+
+			<complexType name="DataItemRow">
+				<all>
+					<element name="returnArray" type="tns:DataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="BlockItemType">
+				<all>
+					<element name="Id" type="xsd:unsignedInt"/>
+					<element name="Name" type="xsd:string" />
+					<element name="returnArray" type="tns:DataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="ReturnArrayDataType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArrayOfBlocks" type="tns:BlockItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="returnDataRowsPerGroup">
+				<all>
+					<element name="Id" type="xsd:unsignedInt" />
+					<element name="Name" type="xsd:string" />
+					<element name="returnMatrix" type="tns:DataItemRow" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="ReturnMatrixDataTypePerGroup">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnDataRowsPerGroup" type="tns:returnDataRowsPerGroup" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="returnDataRowsPerSuperGroup">
+				<all>
+					<element name="Id" type="xsd:unsignedInt" />
+					<element name="Name" type="xsd:string" />
+					<element name="returnMatrix" type="tns:DataItemRow" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="ReturnMatrixDataTypePerSuperGroup">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnDataRowsPerSuperGroup" type="tns:returnDataRowsPerSuperGroup" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="ReturnMatrixDataTypeBG">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnMatrix" type="tns:DataItemRow" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="LoginRequestType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="applicationId" type="xsd:string" />
+					<element name="name" type="xsd:string" />
+					<element name="pass" type="xsd:string" />
+					<element name="session_id" type="xsd:string" />
+					<element name="ip_address" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="LoginReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="ticket" type="xsd:string" />
+					<element name="loginEnable" type="xsd:unsignedInt" />
+					<element name="supLevel" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="GenRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="GroupListDataItemType">
+				<all>
+					<element name="grpId" type="xsd:unsignedInt" />
+					<element name="grpName" type="xsd:string" />
+					<element name="grpNumber" type="xsd:string" />
+					<element name="grpEmailEnable" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="GroupListReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:GroupListDataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="GenListDataItemType">
+				<all>
+					<element name="Id" type="xsd:unsignedInt" />
+					<element name="Name" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="GenListReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:GenListDataItemType" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="AgentsListDataItemType">
+				<all>
+					<element name="agentId" type="xsd:unsignedInt" />
+					<element name="agentName" type="xsd:string" />
+					<element name="agentNumber" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="AgentsListReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:AgentsListDataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="BriefInfoRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="DefaultWorkspaceRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="DefaultWorkspaceItemType">
+				<all>
+					<element name="reportId" type="xsd:unsignedInt" />
+					<element name="x" type="xsd:short" />
+					<element name="y" type="xsd:short" />
+					<element name="width" type="xsd:unsignedInt" />
+					<element name="height" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="DefaultWorkspaceReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:DefaultWorkspaceItemType" minOccurs="0" maxOccurs="unbounded" />
+					<element name="fontSize" type="xsd:string" />
+					<element name="language" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ReportListDataRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="ReportListDataItemType">
+				<all>
+					<element name="reportId" type="xsd:unsignedInt" />
+					<element name="isPublic" type="xsd:unsignedInt" />
+					<element name="reportName" type="xsd:string" />
+					<element name="renderName" type="xsd:string" />
+					<element name="params" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ReportListDataReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:ReportListDataItemType" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="DNISListDataItemType">
+				<all>
+					<element name="dnisId" type="xsd:unsignedInt" />
+					<element name="dnisName" type="xsd:string" />
+					<element name="dnisNumber" type="xsd:string" />
+					<element name="dnisType" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="DNISListReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:DNISListDataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="BriefDNISInfoRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="SuperGroupListDataItemType">
+				<all>
+					<element name="superGroupId" type="xsd:unsignedInt" />
+					<element name="superGroupName" type="xsd:string" />
+					<element name="returnArray" type="tns:GroupListDataItemType" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="SuperGroupListReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnArray" type="tns:SuperGroupListDataItemType" minOccurs="1" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<complexType name="SaveWorkspaseRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="RequestArray" type="tns:DefaultWorkspaceItemType" minOccurs="0" maxOccurs="unbounded" />
+					<element name="fontSize" type="xsd:string" />
+					<element name="language" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="RequestSaveReportType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="RequestItem" type="tns:ReportListDataItemType" />
+				</all>
+			</complexType>
+
+			<complexType name="RequestDeleteReportType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="reportId" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="LoginManagerRequestType">
+				<all>
+					<element name="requestInfoHeader" type="tns:RequestInfoHeaderType" />
+					<element name="Id" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="ApplicationRegisterRequestType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="applicationId" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ApplicationKeepAliveRequestType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+					<element name="applicationId" type="xsd:string" />
+				</all>
+			</complexType>
+
+			<complexType name="ApplicationReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+				</all>
+			</complexType>
+
+			<complexType name="StatRequestType">
+				<all>
+					<element name="serviceReqId" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="StatItemType">
+				<all>
+					<element name="ipAddress" type="xsd:string" />
+					<element name="applicationId" type="xsd:string" />
+					<element name="lastKeepAliveSecAgo" type="xsd:unsignedInt" />
+					<element name="numOfVisors" type="xsd:unsignedInt" />
+					<element name="numOfMonitors" type="xsd:unsignedInt" />
+					<element name="numOfWebVisors" type="xsd:unsignedInt" />
+					<element name="totalNumberOfSoapConnections" type="xsd:unsignedInt" />
+					<element name="numberOfSoapConnectionsSinceLastStatRequest" type="xsd:unsignedInt" />
+					<element name="CurrentNumberOfSoapConnections" type="xsd:unsignedInt" />
+					<element name="LastError" type="xsd:unsignedInt" />
+				</all>
+			</complexType>
+
+			<complexType name="StatReturnType">
+				<all>
+					<element name="responseInfoHeader" type="tns:ResponseInfoHeaderType" />
+					<element name="returnStatArray" type="tns:StatItemType" minOccurs="0" maxOccurs="unbounded" />
+				</all>
+			</complexType>
+
+			<xsd:element name="RequestGroupDetailFullInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupQueInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupAgentsInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupAbndInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupIntOvfInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupShiftInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupGeneralInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestGroupPeriodInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestIvrApplInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestIvrPortInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestIvrGrpInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestMailboxInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestSuperGroupInfo" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestSuperGroupList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestUserLogin" type="tns:LoginRequestType"></xsd:element>
+			<xsd:element name="RequestUserLogout" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestGroupList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestIvrPortGroupList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestIvrAppList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestRCodeList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestMailAccList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestGroupAgentsMatrix" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="RequestAgentsList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestBriefAgentsMatrix" type="tns:BriefInfoRequestType"></xsd:element>
+			<xsd:element name="RequestDefaultWorkspace" type="tns:DefaultWorkspaceRequestType"></xsd:element>
+			<xsd:element name="RequestReportListData" type="tns:ReportListDataRequestType"></xsd:element>
+			<xsd:element name="RequestVoiceDNISList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestEmailDNISList" type="tns:GenRequestType"></xsd:element>
+			<xsd:element name="RequestBriefVoiceDNISMatrix" type="tns:BriefInfoRequestType"></xsd:element>
+			<xsd:element name="LoginLogoutRequestAcdComandAgent" type="tns:ACDMultiRequestType"></xsd:element>
+			<xsd:element name="LoginLogoutRequestAcdOneAgent" type="tns:ACDMultiRequestType"></xsd:element>
+			<xsd:element name="LoginLogoutRequestAcdMultiAgents" type="tns:ACDMultiRequestType"></xsd:element>
+			<xsd:element name="ReleaseResumeRequestAcd" type="tns:ACDRequestType"></xsd:element>
+			<xsd:element name="StartChatRequestAcd" type="tns:TFRequestType"></xsd:element>
+			<xsd:element name="StartRecordRequestAcd" type="tns:TFRequestType"></xsd:element>
+			<xsd:element name="RequestTf" type="tns:TFRequestType"></xsd:element>
+			<xsd:element name="RequestSaveWorkspase" type="tns:SaveWorkspaseRequestType"></xsd:element>
+			<xsd:element name="RequestSaveReport" type="tns:RequestSaveReportType"></xsd:element>
+			<xsd:element name="RequestDeleteReport" type="tns:RequestDeleteReportType"></xsd:element>
+			<xsd:element name="LoginManagerRequestAgents" type="tns:LoginManagerRequestType"></xsd:element>
+			<xsd:element name="LoginManagerRequestGroups" type="tns:LoginManagerRequestType"></xsd:element>
+			<xsd:element name="LoginManagerRequestAvailableAgents" type="tns:LoginManagerRequestType"></xsd:element>
+			<xsd:element name="LoginManagerRequestAvailableGroups" type="tns:LoginManagerRequestType"></xsd:element>
+			<xsd:element name="ApplicationRegisterRequest" type="tns:ApplicationRegisterRequestType"></xsd:element>
+			<xsd:element name="ApplicationKeepAliveRequest" type="tns:ApplicationKeepAliveRequestType"></xsd:element>
+			<xsd:element name="TraceInternalStatRequest" type="tns:StatRequestType"></xsd:element>
+			<xsd:element name="AgentNeedHelpRequest" type="tns:BriefInfoRequestType"></xsd:element>
+			<xsd:element name="GroupHourlyInfoRequest" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="GroupDailyBriefInfoRequest" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="GroupDailyDetailedInfoRequest" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="SuperGroupHourlyInfoRequest" type="tns:GenInfoRequestType"></xsd:element>
+			<xsd:element name="SuperGroupDailyBriefInfoRequest" type="tns:GenInfoRequestType"></xsd:element>
+
+			<xsd:element name="ReturnGroupDetailFullInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupQueInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupAgentsInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupAbndInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupIntOvfInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupShiftInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupGeneralInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnGroupPeriodInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnIvrApplInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnIvrPortInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnIvrGrpInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnMailboxInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnSuperGroupInfo" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="ReturnSuperGroupList" type="tns:SuperGroupListReturnType"></xsd:element>
+			<xsd:element name="ReturnUserLogin" type="tns:LoginReturnType"></xsd:element>
+			<xsd:element name="ReturnGroupList" type="tns:GroupListReturnType"></xsd:element>
+			<xsd:element name="ReturnIvrPortGroupList" type="tns:GenListReturnType"></xsd:element>
+			<xsd:element name="ReturnIvrAppList" type="tns:GenListReturnType"></xsd:element>
+			<xsd:element name="ReturnRCodeList" type="tns:GenListReturnType"></xsd:element>
+			<xsd:element name="ReturnMailAccList" type="tns:GenListReturnType"></xsd:element>
+			<xsd:element name="ReturnGroupAgentsMatrix" type="tns:ReturnMatrixDataTypePerGroup"></xsd:element>
+			<xsd:element name="ReturnAgentsList" type="tns:AgentsListReturnType"></xsd:element>
+			<xsd:element name="ReturnBriefAgentsMatrix" type="tns:ReturnMatrixDataTypeBG"></xsd:element>
+			<xsd:element name="ReturnDefaultWorkspace" type="tns:DefaultWorkspaceReturnType"></xsd:element>
+			<xsd:element name="ReturnReportListData" type="tns:ReportListDataReturnType"></xsd:element>
+			<xsd:element name="ReturnVoiceDNISList" type="tns:DNISListReturnType"></xsd:element>
+			<xsd:element name="ReturnEmailDNISList" type="tns:DNISListReturnType"></xsd:element>
+			<xsd:element name="ReturnBriefVoiceDNISMatrix" type="tns:ReturnMatrixDataTypeBG"></xsd:element>
+			<xsd:element name="NoDataResponse" type="tns:ResponseInfoHeaderType"></xsd:element>
+			<xsd:element name="ResponseSaveReport" type="tns:ResponseSaveReportType"></xsd:element>
+			<xsd:element name="LoginManagerResponse" type="tns:GenListReturnType"></xsd:element>
+			<xsd:element name="StartChatResponse" type="tns:ChatResponseType"></xsd:element>
+			<xsd:element name="ApplicationRegisterResponse" type="tns:ApplicationReturnType"></xsd:element>
+			<xsd:element name="ApplicationKeepAliveResponse" type="tns:ApplicationReturnType"></xsd:element>
+			<xsd:element name="TraceInternalStatResponse" type="tns:StatReturnType"></xsd:element>
+			<xsd:element name="AgentNeedHelpResponse" type="tns:ReturnMatrixDataTypeBG"></xsd:element>
+			<xsd:element name="GroupHourlyInfoResponse" type="tns:ReturnMatrixDataTypePerGroup"></xsd:element>
+			<xsd:element name="GroupDailyBriefInfoResponse" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="GroupDailyDetailedInfoResponse" type="tns:ReturnArrayDataType"></xsd:element>
+			<xsd:element name="SuperGroupHourlyInfoResponse" type="tns:ReturnMatrixDataTypePerSuperGroup"></xsd:element>
+			<xsd:element name="SuperGroupDailyBriefInfoResponse" type="tns:ReturnArrayDataType"></xsd:element>
+		</schema>
+	</types>
+
+	<message name="GroupDetailFullInfo_Request">
+		<part name="reqData" element="tns:RequestGroupDetailFullInfo" />
+	</message>
+
+	<message name="GroupDetailFullInfo_Response">
+		<part name="resData" element="tns:ReturnGroupDetailFullInfo" />
+	</message>
+
+	<message name="GroupQueInfo_Request">
+		<part name="reqData" element="tns:RequestGroupQueInfo" />
+	</message>
+	<message name="GroupQueInfo_Response">
+		<part name="resData" element="tns:ReturnGroupQueInfo" />
+	</message>
+
+	<message name="GroupAgentsInfo_Request">
+		<part name="reqData" element="tns:RequestGroupAgentsInfo" />
+	</message>
+	<message name="GroupAgentsInfo_Response">
+		<part name="resData" element="tns:ReturnGroupAgentsInfo" />
+	</message>
+
+	<message name="GroupAbndInfo_Request">
+		<part name="reqData" element="tns:RequestGroupAbndInfo" />
+	</message>
+	<message name="GroupAbndInfo_Response">
+		<part name="resData" element="tns:ReturnGroupAbndInfo" />
+	</message>
+
+	<message name="GroupIntOvfInfo_Request">
+		<part name="reqData" element="tns:RequestGroupIntOvfInfo" />
+	</message>
+
+	<message name="GroupIntOvfInfo_Response">
+		<part name="resData" element="tns:ReturnGroupIntOvfInfo" />
+	</message>
+
+	<message name="GroupShiftInfo_Request">
+		<part name="reqData" element="tns:RequestGroupShiftInfo" />
+	</message>
+	<message name="GroupShiftInfo_Response">
+		<part name="resData" element="tns:ReturnGroupShiftInfo" />
+	</message>
+
+	<message name="GroupGeneralInfo_Request">
+		<part name="reqData" element="tns:RequestGroupGeneralInfo" />
+	</message>
+	<message name="GroupGeneralInfo_Response">
+		<part name="resData" element="tns:ReturnGroupGeneralInfo" />
+	</message>
+
+	<message name="GroupPeriodInfo_Request">
+		<part name="reqData" element="tns:RequestGroupPeriodInfo" />
+	</message>
+	<message name="GroupPeriodInfo_Response">
+		<part name="resData" element="tns:ReturnGroupPeriodInfo" />
+	</message>
+
+	<message name="IvrApplInfo_Request">
+		<part name="reqData" element="tns:RequestIvrApplInfo" />
+	</message>
+	<message name="IvrApplInfo_Response">
+		<part name="resData" element="tns:ReturnIvrApplInfo" />
+	</message>
+
+	<message name="IvrPortInfo_Request">
+		<part name="reqData" element="tns:RequestIvrPortInfo" />
+	</message>
+	<message name="IvrPortInfo_Response">
+		<part name="resData" element="tns:ReturnIvrPortInfo" />
+	</message>
+
+	<message name="IvrGrpInfo_Request">
+		<part name="reqData" element="tns:RequestIvrGrpInfo" />
+	</message>
+	<message name="IvrGrpInfo_Response">
+		<part name="resData" element="tns:ReturnIvrGrpInfo" />
+	</message>
+
+	<message name="MailboxInfo_Request">
+		<part name="reqData" element="tns:RequestMailboxInfo" />
+	</message>
+	<message name="MailboxInfo_Response">
+		<part name="resData" element="tns:ReturnMailboxInfo" />
+	</message>
+
+	<message name="SuperGroupInfo_Request">
+		<part name="reqData" element="tns:RequestSuperGroupInfo" />
+	</message>
+
+	<message name="SuperGroupInfo_Response">
+		<part name="resData" element="tns:ReturnSuperGroupInfo" />
+	</message>
+
+	<message name="SuperGroupList_Request">
+		<part name="reqData" element="tns:RequestSuperGroupList" />
+	</message>
+
+	<message name="SuperGroupList_Response">
+		<part name="resData" element="tns:ReturnSuperGroupList" />
+	</message>
+
+	<message name="UserLogin_Request">
+		<part name="reqData" element="tns:RequestUserLogin" />
+	</message>
+	<message name="UserLogin_Response">
+		<part name="resData" element="tns:ReturnUserLogin" />
+	</message>
+
+	<message name="UserLogout_Request">
+		<part name="reqData" element="tns:RequestUserLogout" />
+	</message>
+	<message name="UserLogout_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="GroupList_Request">
+		<part name="reqData" element="tns:RequestGroupList" />
+	</message>
+	<message name="GroupList_Response">
+		<part name="resData" element="tns:ReturnGroupList" />
+	</message>
+
+	<message name="IvrPortGroupList_Request">
+		<part name="reqData" element="tns:RequestIvrPortGroupList" />
+	</message>
+	<message name="IvrPortGroupList_Response">
+		<part name="resData" element="tns:ReturnIvrPortGroupList" />
+	</message>
+
+	<message name="IvrAppList_Request">
+		<part name="reqData" element="tns:RequestIvrAppList" />
+	</message>
+	<message name="IvrAppList_Response">
+		<part name="resData" element="tns:ReturnIvrAppList" />
+	</message>
+
+	<message name="RCodeList_Request">
+		<part name="reqData" element="tns:RequestRCodeList" />
+	</message>
+	<message name="RCodeList_Response">
+		<part name="resData" element="tns:ReturnRCodeList" />
+	</message>
+
+	<message name="MailAccList_Request">
+		<part name="reqData" element="tns:RequestMailAccList" />
+	</message>
+	<message name="MailAccList_Response">
+		<part name="resData" element="tns:ReturnMailAccList" />
+	</message>
+
+	<message name="AgentsPerGroup_Request">
+		<part name="reqData" element="tns:RequestGroupAgentsMatrix" />
+	</message>
+	<message name="AgentsPerGroup_Response">
+		<part name="resData" element="tns:ReturnGroupAgentsMatrix" />
+	</message>
+
+	<message name="AgentsList_Request">
+		<part name="reqData" element="tns:RequestAgentsList" />
+	</message>
+	<message name="AgentsList_Response">
+		<part name="resData" element="tns:ReturnAgentsList" />
+	</message>
+
+	<message name="BriefAgents_Request">
+		<part name="reqData" element="tns:RequestBriefAgentsMatrix" />
+	</message>
+	<message name="BriefAgents_Response">
+		<part name="resData" element="tns:ReturnBriefAgentsMatrix" />
+	</message>
+
+	<message name="DefaultWorkspace_Request">
+		<part name="reqData" element="tns:RequestDefaultWorkspace" />
+	</message>
+	<message name="DefaultWorkspace_Response">
+		<part name="resData" element="tns:ReturnDefaultWorkspace" />
+	</message>
+
+	<message name="ReportListData_Request">
+		<part name="reqData" element="tns:RequestReportListData" />
+	</message>
+	<message name="ReportListData_Response">
+		<part name="resData" element="tns:ReturnReportListData" />
+	</message>
+
+	<message name="voiceDNISlist_Request">
+		<part name="reqData" element="tns:RequestVoiceDNISList" />
+	</message>
+	<message name="voiceDNISlist_Response">
+		<part name="resData" element="tns:ReturnVoiceDNISList" />
+	</message>
+
+	<message name="emailDNISlist_Request">
+		<part name="reqData" element="tns:RequestEmailDNISList" />
+	</message>
+	<message name="emailDNISlist_Response">
+		<part name="resData" element="tns:ReturnEmailDNISList" />
+	</message>
+
+	<message name="BriefVoiceDNIS_Request">
+		<part name="reqData" element="tns:RequestBriefVoiceDNISMatrix" />
+	</message>
+	<message name="BriefVoiceDNISlist_Response">
+		<part name="resData" element="tns:ReturnBriefVoiceDNISMatrix" />
+	</message>
+
+	<message name="CommandAgentLoginLogout_Request">
+		<part name="reqData" element="tns:LoginLogoutRequestAcdComandAgent" />
+	</message>
+	<message name="CommandAgentLoginLogout_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="CommandAgentReleaseResume_Request">
+		<part name="reqData" element="tns:ReleaseResumeRequestAcd" />
+	</message>
+	<message name="CommandAgentReleaseResume_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="CommandAgentStartChat_Request">
+		<part name="reqData" element="tns:StartChatRequestAcd" />
+	</message>
+	<message name="CommandAgentStartChat_Response">
+		<part name="resData" element="tns:StartChatResponse" />
+	</message>
+
+	<message name="CommandAgentStartRecord_Request">
+		<part name="reqData" element="tns:StartRecordRequestAcd" />
+	</message>
+	<message name="CommandAgentStartRecord_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="CommandAgentTelephonyFeatures_Request">
+		<part name="reqData" element="tns:RequestTf" />
+	</message>
+	<message name="CommandAgentTelephonyFeatures_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="SaveWorkspase_Request">
+		<part name="reqData" element="tns:RequestSaveWorkspase" />
+	</message>
+	<message name="SaveWorkspase_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="SaveReport_Request">
+		<part name="reqData" element="tns:RequestSaveReport" />
+	</message>
+	<message name="SaveReport_Response">
+		<part name="resData" element="tns:ResponseSaveReport" />
+	</message>
+
+	<message name="DeleteReport_Request">
+		<part name="reqData" element="tns:RequestDeleteReport" />
+	</message>
+	<message name="DeleteReport_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="LoginManagerAgentsPerGroup_Request">
+		<part name="reqData" element="tns:LoginManagerRequestAgents" />
+	</message>
+	<message name="LoginManagerAgentsPerGroup_Response">
+		<part name="resData" element="tns:LoginManagerResponse" />
+	</message>
+
+	<message name="LoginManagerGroupsPerAgent_Request">
+		<part name="reqData" element="tns:LoginManagerRequestGroups" />
+	</message>
+	<message name="LoginManagerGroupsPerAgent_Response">
+		<part name="resData" element="tns:LoginManagerResponse" />
+	</message>
+
+	<message name="LoginManagerOneAgentToMultiGroups_Request">
+		<part name="reqData" element="tns:LoginLogoutRequestAcdOneAgent" />
+	</message>
+	<message name="LoginManagerOneAgentToMultiGroups_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="LoginManagerMultiAgentsToOneGroup_Request">
+		<part name="reqData" element="tns:LoginLogoutRequestAcdMultiAgents" />
+	</message>
+	<message name="LoginManagerMultiAgentsToOneGroup_Response">
+		<part name="resData" element="tns:NoDataResponse" />
+	</message>
+
+	<message name="LoginManagerAvailableAgentsForGroup_Request">
+		<part name="reqData" element="tns:LoginManagerRequestAvailableAgents" />
+	</message>
+	<message name="LoginManagerAvailableAgentsForGroup_Response">
+		<part name="resData" element="tns:LoginManagerResponse" />
+	</message>
+
+	<message name="LoginManagerAvailableGroupsForAgent_Request">
+		<part name="reqData" element="tns:LoginManagerRequestAvailableGroups" />
+	</message>
+	<message name="LoginManagerAvailableGroupsForAgent_Response">
+		<part name="resData" element="tns:LoginManagerResponse" />
+	</message>
+
+	<message name="ApplicationRegister_Request">
+		<part name="reqData" element="tns:ApplicationRegisterRequest" />
+	</message>
+	<message name="ApplicationRegister_Response">
+		<part name="resData" element="tns:ApplicationRegisterResponse" />
+	</message>
+
+	<message name="ApplicationKeepAlive_Request">
+		<part name="reqData" element="tns:ApplicationKeepAliveRequest" />
+	</message>
+	<message name="ApplicationKeepAlive_Response">
+		<part name="resData" element="tns:ApplicationKeepAliveResponse" />
+	</message>
+
+	<message name="TraceInternalStat_Request">
+		<part name="reqData" element="tns:TraceInternalStatRequest" />
+	</message>
+
+	<message name="TraceInternalStat_Response">
+		<part name="resData" element="tns:TraceInternalStatResponse" />
+	</message>
+
+	<message name="AgentNeedHelp_Request">
+		<part name="reqData" element="tns:AgentNeedHelpRequest" />
+	</message>
+
+	<message name="AgentNeedHelp_Response">
+		<part name="resData" element="tns:AgentNeedHelpResponse" />
+	</message>
+
+	<message name="GroupHourlyInfo_Request">
+		<part name="reqData" element="tns:GroupHourlyInfoRequest" />
+	</message>
+
+	<message name="GroupHourlyInfo_Response">
+		<part name="resData" element="tns:GroupHourlyInfoResponse" />
+	</message>
+
+	<message name="GroupDailyBriefInfo_Request">
+		<part name="reqData" element="tns:GroupDailyBriefInfoRequest" />
+	</message>
+
+	<message name="GroupDailyBriefInfo_Response">
+		<part name="resData" element="tns:GroupDailyBriefInfoResponse" />
+	</message>
+
+	<message name="GroupDailyDetailedInfo_Request">
+		<part name="reqData" element="tns:GroupDailyDetailedInfoRequest" />
+	</message>
+
+	<message name="GroupDailyDetailedInfo_Response">
+		<part name="resData" element="tns:GroupDailyDetailedInfoResponse" />
+	</message>
+
+	<message name="SuperGroupHourlyInfo_Request">
+		<part name="reqData" element="tns:SuperGroupHourlyInfoRequest" />
+	</message>
+
+	<message name="SuperGroupHourlyInfo_Response">
+		<part name="resData" element="tns:SuperGroupHourlyInfoResponse" />
+	</message>
+
+	<message name="SuperGroupDailyBriefInfo_Request">
+		<part name="reqData" element="tns:SuperGroupDailyBriefInfoRequest" />
+	</message>
+
+	<message name="SuperGroupDailyBriefInfo_Response">
+		<part name="resData" element="tns:SuperGroupDailyBriefInfoResponse" />
+	</message>
+
+	<portType name="EMISwebPort">
+		<operation name="GroupDetailFullInfo">
+			<input message="tns:GroupDetailFullInfo_Request" />
+			<output message="tns:GroupDetailFullInfo_Response" />
+		</operation>
+
+		<operation name="GroupQueInfo">
+			<input message="tns:GroupQueInfo_Request" />
+			<output message="tns:GroupQueInfo_Response" />
+		</operation>
+
+		<operation name="GroupAgentsInfo">
+			<input message="tns:GroupAgentsInfo_Request" />
+			<output message="tns:GroupAgentsInfo_Response" />
+		</operation>
+
+		<operation name="GroupAbndInfo">
+			<input message="tns:GroupAbndInfo_Request" />
+			<output message="tns:GroupAbndInfo_Response" />
+		</operation>
+
+		<operation name="GroupIntOvfInfo">
+			<input message="tns:GroupIntOvfInfo_Request" />
+			<output message="tns:GroupIntOvfInfo_Response" />
+		</operation>
+
+		<operation name="GroupShiftInfo">
+			<input message="tns:GroupShiftInfo_Request" />
+			<output message="tns:GroupShiftInfo_Response" />
+		</operation>
+
+		<operation name="GroupGeneralInfo">
+			<input message="tns:GroupGeneralInfo_Request" />
+			<output message="tns:GroupGeneralInfo_Response" />
+		</operation>
+
+		<operation name="GroupPeriodInfo">
+			<input message="tns:GroupPeriodInfo_Request" />
+			<output message="tns:GroupPeriodInfo_Response" />
+		</operation>
+
+		<operation name="IvrApplInfo">
+			<input message="tns:IvrApplInfo_Request" />
+			<output message="tns:IvrApplInfo_Response" />
+		</operation>
+
+		<operation name="IvrPortInfo">
+			<input message="tns:IvrPortInfo_Request" />
+			<output message="tns:IvrPortInfo_Response" />
+		</operation>
+
+		<operation name="IvrGrpInfo">
+			<input message="tns:IvrGrpInfo_Request" />
+			<output message="tns:IvrGrpInfo_Response" />
+		</operation>
+
+		<operation name="MailboxInfo">
+			<input message="tns:MailboxInfo_Request" />
+			<output message="tns:MailboxInfo_Response" />
+		</operation>
+
+		<operation name="SuperGroupInfo">
+			<input message="tns:SuperGroupInfo_Request" />
+			<output message="tns:SuperGroupInfo_Response" />
+		</operation>
+
+		<operation name="SuperGroupList">
+			<input message="tns:SuperGroupList_Request" />
+			<output message="tns:SuperGroupList_Response" />
+		</operation>
+
+		<operation name="UserLogin">
+			<input message="tns:UserLogin_Request" />
+			<output message="tns:UserLogin_Response" />
+		</operation>
+
+		<operation name="UserLogout">
+			<input message="tns:UserLogout_Request" />
+			<output message="tns:UserLogout_Response" />
+		</operation>
+
+		<operation name="GroupList">
+			<input message="tns:GroupList_Request" />
+			<output message="tns:GroupList_Response" />
+		</operation>
+
+		<operation name="IvrPortGroupList">
+			<input message="tns:IvrPortGroupList_Request" />
+			<output message="tns:IvrPortGroupList_Response" />
+		</operation>
+
+		<operation name="IvrAppList">
+			<input message="tns:IvrAppList_Request" />
+			<output message="tns:IvrAppList_Response" />
+		</operation>
+
+		<operation name="RCodeList">
+			<input message="tns:RCodeList_Request" />
+			<output message="tns:RCodeList_Response" />
+		</operation>
+
+		<operation name="MailAccList">
+			<input message="tns:MailAccList_Request" />
+			<output message="tns:MailAccList_Response" />
+		</operation>
+
+		<operation name="AgentsPerGroupInfo">
+			<input message="tns:AgentsPerGroup_Request" />
+			<output message="tns:AgentsPerGroup_Response" />
+		</operation>
+
+		<operation name="AgentsList">
+			<input message="tns:AgentsList_Request" />
+			<output message="tns:AgentsList_Response" />
+		</operation>
+
+		<operation name="BriefAgents">
+			<input message="tns:BriefAgents_Request" />
+			<output message="tns:BriefAgents_Response" />
+		</operation>
+
+		<operation name="DefaultWorkspace">
+			<input message="tns:DefaultWorkspace_Request" />
+			<output message="tns:DefaultWorkspace_Response" />
+		</operation>
+
+		<operation name="ReportListData">
+			<input message="tns:ReportListData_Request" />
+			<output message="tns:ReportListData_Response" />
+		</operation>
+
+		<operation name="VoiceDNISList">
+			<input message="tns:voiceDNISlist_Request" />
+			<output message="tns:voiceDNISlist_Response" />
+		</operation>
+
+		<operation name="EmailDNISList">
+			<input message="tns:emailDNISlist_Request" />
+			<output message="tns:emailDNISlist_Response" />
+		</operation>
+
+		<operation name="BriefVoiceDNIS">
+			<input message="tns:BriefVoiceDNIS_Request" />
+			<output message="tns:BriefVoiceDNISlist_Response" />
+		</operation>
+
+		<operation name="CommandAgentLoginLogout">
+			<input message="tns:CommandAgentLoginLogout_Request" />
+			<output message="tns:CommandAgentLoginLogout_Response" />
+		</operation>
+
+		<operation name="CommandAgentReleaseResume">
+			<input message="tns:CommandAgentReleaseResume_Request" />
+			<output message="tns:CommandAgentReleaseResume_Response" />
+		</operation>
+
+		<operation name="CommandAgentStartChat">
+			<input message="tns:CommandAgentStartChat_Request" />
+			<output message="tns:CommandAgentStartChat_Response" />
+		</operation>
+
+		<operation name="CommandAgentStartRecord">
+			<input message="tns:CommandAgentStartRecord_Request" />
+			<output message="tns:CommandAgentStartRecord_Response" />
+		</operation>
+
+		<operation name="CommandAgentTelephonyFeatures">
+			<input message="tns:CommandAgentTelephonyFeatures_Request" />
+			<output message="tns:CommandAgentTelephonyFeatures_Response" />
+		</operation>
+
+		<operation name="SaveWorkspase">
+			<input message="tns:SaveWorkspase_Request" />
+			<output message="tns:SaveWorkspase_Response" />
+		</operation>
+
+		<operation name="SaveReport">
+			<input message="tns:SaveReport_Request" />
+			<output message="tns:SaveReport_Response" />
+		</operation>
+
+		<operation name="DeleteReport">
+			<input message="tns:DeleteReport_Request" />
+			<output message="tns:DeleteReport_Response" />
+		</operation>
+
+		<operation name="LoginManagerAgentsPerGroup">
+			<input message="tns:LoginManagerAgentsPerGroup_Request" />
+			<output message="tns:LoginManagerAgentsPerGroup_Response" />
+		</operation>
+
+		<operation name="LoginManagerGroupsPerAgent">
+			<input message="tns:LoginManagerGroupsPerAgent_Request" />
+			<output message="tns:LoginManagerGroupsPerAgent_Response" />
+		</operation>
+
+		<operation name="LoginManagerOneAgentToMultiGroups">
+			<input message="tns:LoginManagerOneAgentToMultiGroups_Request" />
+			<output message="tns:LoginManagerOneAgentToMultiGroups_Response" />
+		</operation>
+
+		<operation name="LoginManagerMultiAgentsToOneGroup">
+			<input message="tns:LoginManagerMultiAgentsToOneGroup_Request" />
+			<output message="tns:LoginManagerMultiAgentsToOneGroup_Response" />
+		</operation>
+
+		<operation name="LoginManagerAvailableAgentsForGroup">
+			<input message="tns:LoginManagerAvailableAgentsForGroup_Request" />
+			<output message="tns:LoginManagerAvailableAgentsForGroup_Response" />
+		</operation>
+
+		<operation name="LoginManagerAvailableGroupsForAgent">
+			<input message="tns:LoginManagerAvailableGroupsForAgent_Request" />
+			<output message="tns:LoginManagerAvailableGroupsForAgent_Response" />
+		</operation>
+
+		<operation name="ApplicationRegister">
+			<input message="tns:ApplicationRegister_Request" />
+			<output message="tns:ApplicationRegister_Response" />
+		</operation>
+
+		<operation name="ApplicationKeepAlive">
+			<input message="tns:ApplicationKeepAlive_Request" />
+			<output message="tns:ApplicationKeepAlive_Response" />
+		</operation>
+
+		<operation name="TraceInternalStat">
+			<input message="tns:TraceInternalStat_Request" />
+			<output message="tns:TraceInternalStat_Response" />
+		</operation>
+
+		<operation name="AgentNeedHelp">
+			<input message="tns:AgentNeedHelp_Request" />
+			<output message="tns:AgentNeedHelp_Response" />
+		</operation>
+
+		<operation name="GroupHourlyInfo">
+			<input message="tns:GroupHourlyInfo_Request" />
+			<output message="tns:GroupHourlyInfo_Response" />
+		</operation>
+
+		<operation name="GroupDailyBriefInfo">
+			<input message="tns:GroupDailyBriefInfo_Request" />
+			<output message="tns:GroupDailyBriefInfo_Response" />
+		</operation>
+
+		<operation name="GroupDailyDetailedInfo">
+			<input message="tns:GroupDailyDetailedInfo_Request" />
+			<output message="tns:GroupDailyDetailedInfo_Response" />
+		</operation>
+
+		<operation name="SuperGroupHourlyInfo">
+			<input message="tns:SuperGroupHourlyInfo_Request" />
+			<output message="tns:SuperGroupHourlyInfo_Response" />
+		</operation>
+
+		<operation name="SuperGroupDailyBriefInfo">
+			<input message="tns:SuperGroupDailyBriefInfo_Request" />
+			<output message="tns:SuperGroupDailyBriefInfo_Response" />
+		</operation>
+	</portType>
+
+	<binding name="EMISwebBinding" type="tns:EMISwebPort">
+		<SOAP:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+
+		<operation name="GroupDetailFullInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupDetailFullInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupQueInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupQueInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupAgentsInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupAgentsInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupAbndInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupAbndInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupIntOvfInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupIntOvfInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupShiftInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupShiftInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupGeneralInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupGeneralInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupPeriodInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupPeriodInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="IvrApplInfo">
+			<SOAP:operation soapAction="urn:EMISweb/IvrApplInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="IvrPortInfo">
+			<SOAP:operation soapAction="urn:EMISweb/IvrPortInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="IvrGrpInfo">
+			<SOAP:operation soapAction="urn:EMISweb/IvrGrpInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="MailboxInfo">
+			<SOAP:operation soapAction="urn:EMISweb/MailboxInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SuperGroupInfo">
+			<SOAP:operation soapAction="urn:EMISweb/SuperGroupInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SuperGroupList">
+			<SOAP:operation soapAction="urn:EMISweb/SuperGroupList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="UserLogin">
+			<SOAP:operation soapAction="urn:EMISweb/UserLogin" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="UserLogout">
+			<SOAP:operation soapAction="urn:EMISweb/UserLogout" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupList">
+			<SOAP:operation soapAction="urn:EMISweb/GroupList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="IvrPortGroupList">
+			<SOAP:operation soapAction="urn:EMISweb/IvrPortGroupList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="IvrAppList">
+			<SOAP:operation soapAction="urn:EMISweb/IvrAppList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="RCodeList">
+			<SOAP:operation soapAction="urn:EMISweb/RCodeList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="MailAccList">
+			<SOAP:operation soapAction="urn:EMISweb/MailAccList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="AgentsPerGroupInfo">
+			<SOAP:operation soapAction="urn:EMISweb/AgentsPerGroupInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="AgentsList">
+			<SOAP:operation soapAction="urn:EMISweb/AgentsList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="BriefAgents">
+			<SOAP:operation soapAction="urn:EMISweb/BriefAgents" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="DefaultWorkspace">
+			<SOAP:operation soapAction="urn:EMISweb/DefaultWorkspace" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="ReportListData">
+			<SOAP:operation soapAction="urn:EMISweb/ReportListData" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="VoiceDNISList">
+			<SOAP:operation soapAction="urn:EMISweb/VoiceDNISList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="EmailDNISList">
+			<SOAP:operation soapAction="urn:EMISweb/EmailDNISList" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="BriefVoiceDNIS">
+			<SOAP:operation soapAction="urn:EMISweb/BriefVoiceDNIS" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="CommandAgentLoginLogout">
+			<SOAP:operation soapAction="urn:EMISweb/CommandAgentLoginLogout" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="CommandAgentReleaseResume">
+			<SOAP:operation soapAction="urn:EMISweb/CommandAgentReleaseResume" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="CommandAgentStartChat">
+			<SOAP:operation soapAction="urn:EMISweb/CommandAgentStartChat" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="CommandAgentStartRecord">
+			<SOAP:operation soapAction="urn:EMISweb/CommandAgentStartRecord" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="CommandAgentTelephonyFeatures">
+			<SOAP:operation soapAction="urn:EMISweb/CommandAgentTelephonyFeatures" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SaveWorkspase">
+			<SOAP:operation soapAction="urn:EMISweb/SaveWorkspase" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SaveReport">
+			<SOAP:operation soapAction="urn:EMISweb/SaveReport" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="DeleteReport">
+			<SOAP:operation soapAction="urn:EMISweb/SaveReport" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerAgentsPerGroup">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerAgentsPerGroup" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerGroupsPerAgent">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerGroupsPerAgent" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerOneAgentToMultiGroups">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerOneAgentToMultiGroups" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerMultiAgentsToOneGroup">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerMultiAgentsToOneGroup" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerAvailableAgentsForGroup">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerAvailableAgentsForGroup" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="LoginManagerAvailableGroupsForAgent">
+			<SOAP:operation soapAction="urn:EMISweb/LoginManagerAvailableGroupsForAgent" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="ApplicationRegister">
+			<SOAP:operation soapAction="urn:EMISweb/ApplicationRegister" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="ApplicationKeepAlive">
+			<SOAP:operation soapAction="urn:EMISweb/ApplicationKeepAlive" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="TraceInternalStat">
+			<SOAP:operation soapAction="urn:EMISweb/TraceInternalStat" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="AgentNeedHelp">
+			<SOAP:operation soapAction="urn:EMISweb/AgentNeedHelp" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupHourlyInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupHourlyInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupDailyBriefInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupDailyBriefInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="GroupDailyDetailedInfo">
+			<SOAP:operation soapAction="urn:EMISweb/GroupDailyDetailedInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SuperGroupHourlyInfo">
+			<SOAP:operation soapAction="urn:EMISweb/SuperGroupHourlyInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+
+		<operation name="SuperGroupDailyBriefInfo">
+			<SOAP:operation soapAction="urn:EMISweb/SuperGroupDailyBriefInfo" />
+			<input>
+				<SOAP:body use="literal" />
+			</input>
+			<output>
+				<SOAP:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+
+
+	<service name="EMISwebService">
+		<port name="EMISwebPort" binding="tns:EMISwebBinding">
+			<SOAP:address location="" />
+		</port>
+	</service>
+	<!--service name="EMISwebService">
+		<port name="EMISwebPort" binding="tns:EMISwebBinding">
+			<SOAP:address location="http://wserv.tadirantele.com:9071" />
+		</port>
+	</service-->
+
+</definitions>
+

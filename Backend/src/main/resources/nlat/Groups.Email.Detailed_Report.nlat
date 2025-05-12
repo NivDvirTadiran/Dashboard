@@ -1,0 +1,48 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="855x255">
+<nla:obj ref="Group" type="email">
+	<nla:pane caption="ContactsInQ" width="280">
+		<nla:pane caption="Inbound" cols="2">
+			<nla:data key="6_3_1_2_19"/>
+			<nla:data key="6_3_1_2_20"/>
+			<nla:data key="6_3_1_2_22" format="time"/>
+			<nla:data key="6_3_1_2_21" format="time"/>
+		</nla:pane>
+	</nla:pane>
+	<nla:pane caption="Agents" width="280" cols="2">
+		<nla:data key="6_3_1_3_1"/>
+		<nla:data key="6_3_1_3_4"/>
+		<nla:data key="6_3_1_3_2"/>
+		<nla:data key="6_3_1_3_5"/>
+		<nla:data key="6_3_1_3_3"/>
+		<nla:data key="6_3_1_3_6"/>
+		<nla:data key="6_3_1_3_9"/>
+		<nla:data key="6_3_1_3_15"/>
+	</nla:pane>
+	<nla:pane caption="OnCurrentInterval (${refObject.data['6_3_1_1_4'].value}min)" align="right,top" width="550">
+		<nla:pane caption="Inbound" cols="4">
+			<nla:data-title text="ACDCalls"/>
+				<nla:data key="6_3_1_4_90"/>
+				<nla:data key="6_3_1_4_93"/>
+				<nla:data key="6_3_1_4_99"/>
+			<nla:data-title text="AvgTime"/>
+				<nla:data key="6_3_1_4_109" format="time"/>
+				<nla:data key="6_3_1_4_112" format="time"/>
+				<nla:data key="6_3_1_4_103" format="time"/>
+			<nla:data-title text="MaxTime"/>
+				<nla:data key="6_3_1_4_110" format="time"/>
+				<nla:data key="6_3_1_4_113" format="time"/>
+				<nla:data key="6_3_1_4_104" format="time"/>
+			<nla:data-title text="Statistics"/>
+				<nla:data key="6_3_1_4_1"/>
+				<nla:data key="6_3_1_4_11"/>
+				<nla:data key="6_3_1_4_16" format="time"/>
+		</nla:pane>
+	</nla:pane>
+	<nla:pane caption="CurrentCallsTalkTime" align="right,bottom" width="550" cols="2">
+		<nla:data key="6_3_1_3_7"/>
+		<nla:data key="6_3_1_3_8"/>
+	</nla:pane>
+</nla:obj>
+</nla:window>

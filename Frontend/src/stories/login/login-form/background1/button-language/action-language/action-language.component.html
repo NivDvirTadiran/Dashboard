@@ -1,0 +1,64 @@
+<div class="password-alert-text">
+  <form name="languages" >
+
+  <div [hidden]="!this.availableLanguages.eng" >
+    <input
+           type="radio"
+           id="English"
+           name="fav_language"
+           (click)="changeLanguage('eng')"
+           value="English"
+           [checked]="this._translate?.currentLang == 'eng'">
+    <label for="English">English</label><br>
+  </div>
+
+  <span [hidden]="!this.availableLanguages.heb" >
+    <input
+           type="radio"
+           id="Hebrew"
+           name="fav_language"
+           (click)="changeLanguage('heb')"
+           value="Hebrew"
+           [checked]="this._translate?.currentLang == 'heb'">
+    <label  for="Hebrew">עברית</label><br>
+  </span>
+
+  <div [hidden]="!availableLanguages.esp" >
+    <input
+           type="radio"
+           id="Spanish"
+           name="fav_language"
+           (click)="changeLanguage('esp')"
+           value="Spanish"
+           [checked]="this._translate?.currentLang == 'esp'">
+    <label  for="Spanish">Español</label><br>
+  </div>
+
+  <div [hidden]="!this.availableLanguages.chi" >
+    <input
+           type="radio"
+           id="Chainese"
+           name="fav_language"
+           (click)="changeLanguage('chi')"
+           value="Chainese"
+           [checked]="this._translate?.currentLang == 'chi'">
+    <label  for="Chainese">中文</label><br>
+  </div>
+
+  <div [hidden]="!this.availableLanguages.rus" >
+    <input
+           type="radio"
+           id="Russian"
+           name="fav_language"
+           (click)="changeLanguage('rus')"
+           value="Russian">
+    <label  for="Russian">Русский</label><br>
+  </div>
+
+  </form>
+
+  <!-- Show Current lang -->
+<!--p>"{{this._translate.currentLang}}"</p>
+<p>"{{this._translate.currentDir}}"</p-->
+
+</div>

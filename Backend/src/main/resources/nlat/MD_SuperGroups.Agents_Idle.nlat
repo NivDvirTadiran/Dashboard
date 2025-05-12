@@ -1,0 +1,8 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
+
+<nla:window size="450x300">
+	<nla:caption text="Agents_Idle" type="caption"/>
+	<nla:obj ref="SuperGroup">
+		<nla:data key="6_3_4_3_4"/>
+	</nla:obj>
+</nla:window>

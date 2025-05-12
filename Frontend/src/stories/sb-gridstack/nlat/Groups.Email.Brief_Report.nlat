@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="700x250">
+	<nla:obj ref="Groups" type="email">
+		<nla:table keys="6_3_1_1_1" optionalInKeys="6_3_1_1_2,6_3_1_2_19,6_3_1_3_1,6_3_1_3_2,6_3_1_3_4,6_3_1_3_5,6_3_1_4_90,6_3_1_4_93,6_3_1_4_99," optionalOutKeys="6_3_1_4_1,6_3_1_2_20,6_3_1_2_21"/>
+	</nla:obj>
+</nla:window>

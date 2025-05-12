@@ -1,0 +1,3 @@
+native2ascii -encoding UTF-8 messages_ru(ascii).properties messages_ru(utf8).properties
+
+native2ascii -reverse -encoding UTF-8 messages_ru(utf8).properties messages_ru(ascii).properties

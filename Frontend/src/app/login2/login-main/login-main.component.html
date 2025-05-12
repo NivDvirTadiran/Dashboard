@@ -1,0 +1,80 @@
+
+<html >
+<head>
+  <style>
+
+  </style>
+  <title></title>
+</head>
+<body>
+
+<!--article><div class="Frame-1 relative">
+<section class="relative " Style="{ 'background': backgroundColor }"-->
+
+<!--storybook-button-globe></storybook-button-globe-->
+
+<storybook-background1
+  (changeLang)="changLanguage($event)"
+  [ACC_VERSION]="this.ACC_VERSION">
+</storybook-background1>
+
+
+<!--button mat-raised-button (click)="openReplacePassForm()">ReplacePassForm</button>
+<button mat-raised-button (click)="openRegisterForm()">RegisterForm</button>
+<button mat-raised-button (click)="openVerificationForm()">VerificationForm</button>
+<button mat-raised-button (click)="openForgotPassForm()">forgotPassForm</button>
+<button mat-raised-button (click)="configuratin()">configuratin</button
+<button mat-raised-button (click)="dashboardPage()">dashboard</button>-->
+<button mat-raised-button (click)="gridstackDashboard()">gridstack-dashboard</button>
+<button mat-raised-button (click)="gsOmniDashboard()">gs-omni-dashboard</button>
+
+
+
+
+<storybook-login-form
+  [isLoggedIn]="false"
+  [isLoading]="isLoading"
+  [isLoginFailed]="isLoginFailed"
+  [loginErrorMessage]="loginErrorMessage"
+  [mForm]="loginForm"
+  [storyInputs]="storyInputsInOrder"
+  (sendLoginReq)="onSubmit()"
+></storybook-login-form>
+
+
+
+
+
+
+<!--form class="custom-form" method="post" style="position: relative">
+  <br>
+  <br>
+  <h1>Login</h1>
+  <input
+    type="email"
+    [(ngModel)]="user"
+    name="email"
+    placeholder="Email"
+    required="required"
+  />
+  <br>
+  <input
+    type="password"
+    [(ngModel)]="pass"
+    name="password"
+    placeholder="Password"
+    required="required"
+  />
+  <br>
+  <br>
+  <button type="submit" (click)="onSubmit()">Log in</button>
+</form-->
+
+<!--storybook-spinner1 *ngIf="isLoading"  class="storybook-spinner1"></storybook-spinner1-->
+<!--/section></div>
+</article-->
+
+</body>
+</html>
+
+

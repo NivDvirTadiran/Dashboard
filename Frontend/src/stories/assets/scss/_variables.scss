@@ -1,0 +1,19 @@
+/* Global CSS variables for the dashboard components */
+:root {
+  /* Dashboard theme variables */
+  --dashboard-bg: #f5f8fa;
+  --widget-bg: #ffffff;
+  --widget-header-bg: #fafbfc;
+  --primary-color: #3D8ECF;
+  --primary-hover: #2a7ab8;
+  --primary-light: rgba(61, 142, 207, 0.1);
+  --accent-color: #58A6E4;
+  --text-primary: #333333;
+  --text-secondary: #6c757d;
+  --border-color: #e9ecef;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --widget-radius: 0.75rem;
+  --transition-speed: 250ms;
+}

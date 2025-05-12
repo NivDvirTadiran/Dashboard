@@ -1,0 +1,7 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="450x300">
+	<nla:obj ref="Groups" type="voice">
+		<nla:chart type="bar" keys="6_3_1_2_1" title="Queued_Calls_Graph"/>
+	</nla:obj>
+</nla:window>

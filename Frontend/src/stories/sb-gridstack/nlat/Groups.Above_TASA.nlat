@@ -1,0 +1,8 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
+<%String dynamicFrontSize=(String)session.getAttribute("dynamicFrontSize"); %>
+<nla:window size="450x300">
+	<nla:caption text="Above_TASA" type="caption ${dynamicFrontSize}"/>
+	<nla:obj ref="Groups">
+		<nla:data key="6_3_1_2_2"/>
+	</nla:obj>
+</nla:window>

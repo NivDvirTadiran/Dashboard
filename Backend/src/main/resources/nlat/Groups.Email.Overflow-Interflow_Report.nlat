@@ -1,0 +1,22 @@
+<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
+
+<nla:window size="325x320">
+<nla:obj ref="Group" type="email">
+	<nla:pane caption="ContactsPresentedtoGroup" width="310">
+		<nla:data key="6_3_1_4_90"/>
+		<nla:data key="6_3_1_4_91"/>
+		<nla:data key="6_3_1_4_92"/>
+	</nla:pane>
+	<nla:pane caption="TreatmentofContactsPresentedtoGroup" width="310">
+		<nla:data key="6_3_1_4_93"/>
+		<nla:data key="6_3_1_4_94"/>
+		<nla:data key="6_3_1_4_95"/>
+		<nla:data key="6_3_1_4_96"/>
+		<nla:data key="6_3_1_4_97"/>
+		<nla:data key="6_3_1_4_98"/>
+		<nla:data key="6_3_1_4_99"/>
+		<nla:data key="6_3_1_4_100"/>
+		<nla:data key="6_3_1_4_101"/>
+	</nla:pane>
+</nla:obj>
+</nla:window>
