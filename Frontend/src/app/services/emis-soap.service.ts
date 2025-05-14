@@ -103,6 +103,17 @@ export interface ModernizedDetailResponseType {
   returnArrayOfBlocks: BlockItemType[];
 }
 
+export interface GroupDetailInfoDataItemType {
+  id: number;
+  name: string;
+  returnArray: DataItemType[]; // Nested list of groups
+}
+
+export interface GroupDetailInfoResponseType {
+  responseInfoHeader: ResponseInfoHeaderType;
+  returnArrayOfBlocks: GroupDetailInfoDataItemType[];
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -154,7 +165,7 @@ export class EmisSoapService {
    }
 
   getDnisList(): Observable<DnisListItemType[]> {
-    return this.http.get<DnisListReturnType>(`${this.basePath}/DnisList`).pipe(
+    return this.http.get<DnisListReturnType>(`${this.basePath}/dnis-list`).pipe(
       map(response => {
         if (response && response.returnArray) {
           return response.returnArray;
@@ -167,11 +178,11 @@ export class EmisSoapService {
     );
   }
 
-  getGroupDetailFullInfo(groupId: number): Observable<DataItemType[]> {
-    return this.http.get<DetailResponseType>(`${this.basePath}/group-detail/${groupId}`).pipe(
+  getGroupDetailFullInfo(groupId: number): Observable<GroupDetailInfoDataItemType[]> {
+    return this.http.get<GroupDetailInfoResponseType>(`${this.basePath}/group/${groupId}/detail-full`).pipe(
       map(response => {
-        if (response && response.returnArray) {
-          return response.returnArray;
+        if (response && response.returnArrayOfBlocks) {
+          return response.returnArrayOfBlocks;
         }
         if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
           console.error('SOAP service error in getGroupDetailFullInfo:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
@@ -181,11 +192,11 @@ export class EmisSoapService {
     );
   }
 
-  getGroupQueInfo(groupId: number): Observable<DataItemType[]> {
-    return this.http.get<DetailResponseType>(`${this.basePath}/group-queue/${groupId}`).pipe(
+  getGroupQueInfo(groupId: number): Observable<GroupDetailInfoDataItemType[]> {
+    return this.http.get<GroupDetailInfoResponseType>(`${this.basePath}/group/${groupId}/queue`).pipe(
       map(response => {
-        if (response && response.returnArray) {
-          return response.returnArray;
+        if (response && response.returnArrayOfBlocks) {
+          return response.returnArrayOfBlocks;
         }
         if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
           console.error('SOAP service error in getGroupQueInfo:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);

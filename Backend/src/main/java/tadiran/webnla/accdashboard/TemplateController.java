@@ -1319,7 +1319,7 @@ public class TemplateController {
 
     @GetMapping("/api/soap/brief-group")
     public ResponseEntity<?> getBriefGroupData() { // Renamed method and DTO
-        logger.info("Received request for /api/modernized/brief-group");
+        logger.info("Received request for /api/soap/brief-group");
 
         if (wsEMIS_port == null) {
             try {
@@ -1405,7 +1405,7 @@ public class TemplateController {
 
     @GetMapping("/api/soap/brief-super-group")
     public ResponseEntity<?> getBriefSuperGroupData() { // Renamed method and DTO
-        logger.info("Received request for /api/modernized/brief-super-group");
+        logger.info("Received request for /api/soap/brief-super-group");
 
         if (wsEMIS_port == null) {
             try {
@@ -1490,7 +1490,7 @@ public class TemplateController {
     }
 
     private ResponseEntity<?> getDetailInfo(String operationName, Integer id, DetailInfoFunction detailFunction) {
-        logger.info("Received request for /api/modernized/{}/{}", operationName, id);
+        logger.info("Received request for /api/soap/{}/{}", operationName, id);
 
         if (wsEMIS_port == null) {
             try {

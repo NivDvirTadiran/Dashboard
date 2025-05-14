@@ -1,0 +1,63 @@
+<!-- Widget Header -->
+<div class="widget-header">
+    <h3>{{ widget.title || 'Widget ' + widget.id }}</h3>
+    <div class="widget-controls">
+        <button (click)="refreshWidget(widget.id)" class="refresh-btn" title="Refresh Widget">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+</div>
+
+
+<div class="widget-content" >
+  <!-- Loading indicator -->
+  <div *ngIf="widget.state?.loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+
+  <!-- Error message -->
+  <div *ngIf="widget.state?.error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ widget.state?.error }}
+  </div>
+
+  <!-- Widget Content based on type -->
+  <div class="table-widget">
+    <ng-container *ngIf="widget?.state?.data?.length > 0; else noData">
+      <table class="table">
+        <thead>
+        <tr>
+          <!-- <th>Agent ID</th>
+          <th>Name</th>
+          <th>Number</th> -->
+          <!-- Display column headers -->
+          <ng-container *ngFor="let column of displayedColumns">
+            <th>{{ column }}</th>
+          </ng-container>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let agent of widgetManager.getWidgetState(widget.id)?.data">
+          <td>{{ agent.agentId }}</td>
+          <td>{{ agent.agentName }}</td>
+          <td>{{ agent.agentNumber }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-container>
+    <ng-template #noData>
+      <p>No agent data to display.</p>
+    </ng-template>
+  </div>
+
+</div>
+
+
+
+<!-- Widget Footer -->
+<div class="widget-footer" *ngIf="widget?.state?.lastUpdated">
+    <i class="fas fa-clock"></i> Last updated: {{ widget?.state?.lastUpdated | date:'medium'  }}
+</div>

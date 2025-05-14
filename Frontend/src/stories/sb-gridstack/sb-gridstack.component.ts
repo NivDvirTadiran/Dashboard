@@ -13,6 +13,12 @@ import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgG
 import { GridStackWidget } from "gridstack/dist/types";
 import {GsNlatTableComponent} from "./gs-nlat-table/gs-nlat-table.component";
 import {SuperGroupListWidgetComponent} from "./super-group-list-widget/super-group-list-widget.component";
+import {AgentsListWidgetComponent} from "./agents-list-widget/agents-list-widget.component";
+import {GroupListWidgetComponent} from "./group-list-widget/group-list-widget.component";
+import {BriefAgentsWidgetComponent} from "./brief-agents-widget/brief-agents-widget.component";
+import {DnisListWidgetComponent} from "./dnis-list-widget/dnis-list-widget.component";
+import {GroupDetailFullInfoWidgetComponent} from "./group-detail-full-info-widget/group-detail-full-info-widget.component";
+import {GroupQueueInfoWidgetComponent} from "./group-queue-info-widget/group-queue-info-widget.component";
 
 @Component({
   selector: "sb-gridstack",
@@ -48,9 +54,16 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     GridstackComponent.addComponentToSelectorType([
       GsWidgetComponent,
       SuperGroupListWidgetComponent,
-      GsNlatTableComponent
+      GsNlatTableComponent,
+      AgentsListWidgetComponent,
+      GroupListWidgetComponent,
+      BriefAgentsWidgetComponent,
+      DnisListWidgetComponent,
+      GroupDetailFullInfoWidgetComponent,
+      GroupQueueInfoWidgetComponent
     ]);
   }
+
 
     public exampleDataNew: string =
       '[{"agentName":"Agent Name","agentExten":"Agent Exten.","state":"State","agentNo":"Agent No.","stateTime":"State Time","releaseCode":"Release Code","aCDCalls":"ACD Calls","nonACDCalls":"Non ACD Calls","dNIS":"DNIS","aN":"ANI"},' +
@@ -105,16 +118,19 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showAddWidgetModal = true;
   }
 
+
+
+
   public addSuperGroupListWidget(): void {
     const SUPER_GROUP_LIST_WIDGET_ID = 'super-group-list-table';
     let newWidgetConfig: Partial<WidgetConfig> = {};
     const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
 
     newWidgetConfig = {
-      type: 'super-group-list-table',
+      type: 'super-group-list-widget',
       title: 'Super Group Status',
       dataSource: 'modernized-api-super-groups',
-      updateInterval: 2000
+      updateInterval: 6000
     };
 
     this.widgetManager.initGsWidget({
@@ -122,9 +138,105 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       position: { x: 0, y: currentGridHeight }, // y is 0-based
       ...newWidgetConfig
     } as WidgetConfig);
-
-
   }
+
+  public addAgentsListWidget(): void {
+    const AGENTS_LIST_WIDGET_ID = 'agents-list-table';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'agents-list-widget',
+      title: 'Agent Status',
+      dataSource: 'AgentList',
+      updateInterval: 6000
+    };
+
+    this.widgetManager.initGsWidget({
+      id: AGENTS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  public addGroupListWidget(): void {
+    const GROUP_LIST_WIDGET_ID = 'group-list-table';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'group-list-widget',
+      title: 'Group Status',
+      dataSource: 'GroupList',
+      updateInterval: 6000
+    };
+
+    this.widgetManager.initGsWidget({
+      id: GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  public addDnisListWidget(): void {
+    const DNIS_LIST_WIDGET_ID = 'dnis-list-table';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'dnis-list-widget',
+      title: 'DNIS Status',
+      dataSource: 'DnisList',
+      updateInterval: 5000
+    };
+
+    this.widgetManager.initGsWidget({
+      id: DNIS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  public addGroupDetailFullInfoWidget(): void {
+    const GROUP_DETAIL_FULL_INFO_WIDGET_ID = 'group-detail-full-info-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'group-detail-full-info-widget',
+      title: 'Group Detail Full Info',
+      dataSource: 'GroupDetailFullInfo',
+      updateInterval: 6000,
+      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
+    };
+
+    this.widgetManager.initGsWidget({
+      id: GROUP_DETAIL_FULL_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  addGroupQueueInfoWidget() {
+    const GROUP_QUEUE_INFO_WIDGET_ID = 'group-queue-info-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'group-queue-info-widget',
+      title: 'Group Queue Info',
+      dataSource: 'Group Queue Info',
+      updateInterval: 6000,
+      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
+    };
+
+    this.widgetManager.initGsWidget({
+      id: GROUP_QUEUE_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
 
 
   public addWidgetByType(type: string): void {
@@ -187,6 +299,23 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
           dataSource: 'group/{id}/abandoned-info',
           updateInterval: 45000,
           settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
+        };
+        break;
+      case 'group-detail-full-info-table':
+        newWidgetConfig = {
+          type: 'group-detail-full-info-table',
+          title: 'Group Detail Full Info',
+          dataSource: 'GroupDetailFullInfo',
+          updateInterval: 15000,
+          settings: { groupId: 1 }
+        };
+        break;
+      case 'dnis-list-table':
+        newWidgetConfig = {
+          type: 'dnis-list-table',
+          title: 'DNIS Status Table',
+          dataSource: 'DnisList',
+          updateInterval: 15000
         };
         break;
       default:
@@ -290,21 +419,27 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private registerWidgets(): void {
-    this.addWidgetByType('pie-chart');
-    this.addWidgetByType('doughnut');
-    this.addWidgetByType('agent-list-table');
-    this.addWidgetByType('group-list-table');
-    this.addWidgetByType('brief-agents-data');
-    this.addSuperGroupListWidget();
+    //this.addWidgetByType('pie-chart');
+    //this.addWidgetByType('doughnut');
+    //this.addWidgetByType('agent-list-table');
+    //this.addWidgetByType('group-list-table');
+    //this.addWidgetByType('brief-agents-data');
     // For group-abandoned-info, it might be better to add it manually via UI
     // as it requires a specific group ID. Or add a default one:
-    this.addWidgetByType('group-abandoned-info');
+    //this.addWidgetByType('group-abandoned-info');
+
+    this.addSuperGroupListWidget();
+    this.addAgentsListWidget();
+    this.addGroupListWidget();
+    this.addDnisListWidget();
+    this.addGroupDetailFullInfoWidget();
+    this.addGroupQueueInfoWidget();
   }
 
 
   private subscribeToWidget(config: WidgetConfig): void {
     const subscription = this.widgetManager.registerWidget(config)
-      .subscribe(data => {
+      .subscribe( data => {
         if (data) {
           this.widgetData.set(config.id, data);
           this.updateWidgetDisplay(config.id, data);
@@ -326,5 +461,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateWidgetPositions(): void {}
+
 
 }

@@ -41,9 +41,17 @@
     <li (click)="addWidgetByType('agent-list-table')">Agent List Table</li>
     <li (click)="addWidgetByType('group-list-table')">Group List Table</li>
     <li (click)="addWidgetByType('brief-agents-data')">Brief Agents Data</li>
+    <li (click)="addWidgetByType('group-detail-full-info-table')">Group Detail Full Info</li>
+    <li (click)="addWidgetByType('group-abandoned-info')">Group Abandoned Info (Group 1)</li>
+
+    <br>
     <!--<li (click)="addWidgetByType('super-group-list-table')">Super Group List Table</li>-->
     <li (click)="addSuperGroupListWidget()">Super Group List Table</li>
-    <li (click)="addWidgetByType('group-abandoned-info')">Group Abandoned Info (Group 1)</li>
+    <li (click)="addAgentsListWidget()">Agents List Table</li>
+    <li (click)="addGroupListWidget()">Group List Table</li>
+    <li (click)="addDnisListWidget()">DNIS List Table</li>
+    <li (click)="addGroupDetailFullInfoWidget()">Group Detail Full Info</li>
+    <li (click)="addGroupQueueInfoWidget()">Group Queue Info</li>
     <!-- Add more widget types here -->
   </ul>
   <button (click)="showAddWidgetModal = false">Close</button>

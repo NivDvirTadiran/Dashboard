@@ -34,8 +34,6 @@ export interface WidgetState {
 export class GsDashboardWidgetManagerService {
     private activeWidgets = new Map<string, BehaviorSubject<any>>();
     private widgetConfigs = new Map<string, WidgetConfig>();
-    //private widgetStates = new Map<string, WidgetState>();
-    private gridStackWidget = new Map<string, GridStackWidget>();
     private lastUpdates = new Map<string, number>();
     private unsubscribe = new Map<string, Subject<void>>();
 
@@ -79,32 +77,12 @@ export class GsDashboardWidgetManagerService {
         }
     }
 
-    // Method to get widgets that are in the grid
-    getWidgetInGrid(widgetId: string): GridItemHTMLElement | null {
-        if (this.grid) {
-          let gridItemHTMLElement: GridItemHTMLElement = this.grid.getGridItems().find(g => g.id = widgetId);
-          return gridItemHTMLElement;
-        } else {
-            console.error('Grid component reference can`t find widget ID: ' + widgetId);
-        }
-
-        return null;
-    }
-
-    // Method to update widgets that are in the grid
-    updateWidgetInGrid(widget: NgGridStackWidget): void {
-        if (this.grid) {
-          let widgets: NgGridStackWidget[] = [widget]
-          this.grid.load(widgets)
-        } else {
-            console.error('Grid component reference can`t find widget ID: ' + widget.id);
-        }
-
-        return null;
-    }
-
     setWidgetConfig(config: WidgetConfig): void {
         this.widgetConfigs.set(config.id, config);
+    }
+
+    getWidgetConfig(widgetId: string): WidgetConfig | undefined {
+      return this.widgetConfigs.get(widgetId);
     }
 
     setWidgetState(config: WidgetConfig): void {
@@ -118,6 +96,10 @@ export class GsDashboardWidgetManagerService {
         };
       this.widgetConfigs.set(config.id, config);
     }
+
+    getWidgetState(widgetId: string): WidgetState | undefined {
+    return this.widgetConfigs.get(widgetId).state;
+  }
 
     getRegisteredWidgets(): WidgetConfig[] {
         return Array.from(this.widgetConfigs.values());
@@ -188,7 +170,7 @@ export class GsDashboardWidgetManagerService {
           autoPosition: true,
           w: 2,
           h: 1,
-          selector: 'super-group-list-widget',
+          selector: config.type,
           input: { widget: config},
           id: String(config.id),
         } as NgGridStackWidget;
@@ -351,6 +333,31 @@ export class GsDashboardWidgetManagerService {
                 })
             );
         }
+        if (config.type === 'dnis-list-table') {
+            return this.emisSoapService.getDnisList().pipe(
+                map(data => {
+                    console.log('Fetched dnis list data in manager:', data);
+                    return data;
+                }),
+                catchError(err => {
+                    console.error('Error fetching dnis list data in manager:', err);
+                    return throwError(err);
+                })
+            );
+        }
+        if (config.type === 'group-detail-full-info-table' && config.settings?.['groupId']) {
+            const groupId = config.settings['groupId'];
+            return this.emisSoapService.getGroupDetailFullInfo(groupId).pipe(
+                map(data => {
+                    console.log(`Fetched group-detail-full-info for group ${config.settings?.['groupId']}:`, data);
+                    return data;
+                }),
+                catchError(err => {
+                    console.error(`Error fetching group-detail-full-info for group ${config.settings?.['groupId']}:`, err);
+                    return throwError(err);
+                })
+            );
+        }
         if (config.type === 'group-abandoned-info' && config.settings?.['groupId']) {
             return this.emisSoapService.getGroupAbandonedInfo(config.settings['groupId']).pipe(
                 map(data => {
@@ -428,57 +435,34 @@ export class GsDashboardWidgetManagerService {
         });
     }
 
-    getWidgetState(widgetId: string): WidgetState | undefined {
-        return this.widgetConfigs.get(widgetId).state;
-    }
-
     getLastUpdateTime(widgetId: string): number | undefined {
         return this.lastUpdates.get(widgetId);
     }
 
-    updateWidgetConfig(widgetId: string, updates: Partial<WidgetConfig>): void {
-        const config = this.widgetConfigs.get(widgetId);
-        if (config) {
-            this.widgetConfigs.set(widgetId, { ...config, ...updates });
-        }
+
+    refreshWidget(widgetId: string): void {
+        // Manually trigger a widget data refresh
+        this.updateWidget(widgetId);
     }
 
-  /** called whenever items change size/position/etc.. */
-  public onChange(data: nodesCB) {
-    // TODO: update our TEMPLATE list to match ?
-    // NOTE: no need for dynamic as we can always use grid.save() to get latest layout, or grid.engine.nodes
-    console.log('change ', data.nodes.length > 1 ? data.nodes : data.nodes[0]);
-  }
-
-  public onResizeStop(data: elementCB) {
-    console.log('resizestop ', data.el.gridstackNode);
-  }
-
-
-  refreshWidget(widgetId: string): void {
-      // Manually trigger a widget data refresh
-      this.updateWidget(widgetId);
-  }
-
-  removeWidget(widgetId: string): void {
-    this.widgetConfigs.delete(widgetId);
-  }
-
-
-  unregisterWidget(widgetId: string): void {
-        // Stop ongoing subscriptions
-        const stopSignal = this.unsubscribe.get(widgetId);
-        if (stopSignal) {
-            stopSignal.next();
-            stopSignal.complete();
-            this.unsubscribe.delete(widgetId);
-        }
-
-        // Clean up all data structures
-        this.activeWidgets.delete(widgetId);
-        this.widgetConfigs.delete(widgetId);
-        this.lastUpdates.delete(widgetId);
-
-        this.subscription?.unsubscribe();
+    removeWidget(widgetId: string): void {
+      this.widgetConfigs.delete(widgetId);
     }
+
+    unregisterWidget(widgetId: string): void {
+          // Stop ongoing subscriptions
+          const stopSignal = this.unsubscribe.get(widgetId);
+          if (stopSignal) {
+              stopSignal.next();
+              stopSignal.complete();
+              this.unsubscribe.delete(widgetId);
+          }
+
+          // Clean up all data structures
+          this.activeWidgets.delete(widgetId);
+          this.widgetConfigs.delete(widgetId);
+          this.lastUpdates.delete(widgetId);
+
+          this.subscription?.unsubscribe();
+      }
 }
