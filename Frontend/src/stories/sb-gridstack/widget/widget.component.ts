@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule, JsonPipe, DatePipe } from '@angular/common';
 import { GsDashboardWidgetManagerService, WidgetConfig } from '../gs-dashboard-widget-manager.service';
-import { WidgetTableComponent } from '../../sb-dashboard/widget-table/widget-table.component';
+import { WidgetTableComponent } from '../widget-table/widget-table.component';
 import { WidgetPieChartComponent } from '../widget-pie-chart/widget-pie-chart.component';
 import { WidgetPieDoughnutComponent } from '../widget-pie-doughnut/widget-pie-doughnut.component';
 

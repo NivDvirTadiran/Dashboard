@@ -122,3 +122,57 @@
   background: #ccc;
   border-radius: 3px;
 }
+
+
+.table {
+  width: 100%;
+  border-collapse: separate; // Use separate for border-spacing
+  border-spacing: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--widget-bg, #fff); // Ensure table background matches widget bg
+
+  th, td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+
+    &:first-child {
+      padding-left: 1rem;
+    }
+
+    &:last-child {
+      padding-right: 1rem;
+    }
+  }
+
+  th {
+    font-weight: 600;
+    color: var(--text-primary-on-light-bg, #495057); // Ensure good contrast on header bg
+    background-color: var(--table-header-bg, #f8f9fa); // Use a variable for header bg
+    border-bottom: 2px solid var(--border-color-strong, #dee2e6); // Stronger border for header
+    position: sticky;
+    top: 0; // This makes the header sticky
+    z-index: 10; // Ensure header is above table content when scrolling
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--table-row-hover-bg, rgba(61, 142, 207, 0.05)); // Use variable
+    }
+
+    &:nth-child(even) {
+      background-color: var(--table-row-even-bg, #f9fbfd); // Use variable
+    }
+  }
+
+  td {
+    font-size: 0.9rem;
+    color: var(--text-secondary-on-light-bg, #333); // Ensure good contrast
+  }
+}

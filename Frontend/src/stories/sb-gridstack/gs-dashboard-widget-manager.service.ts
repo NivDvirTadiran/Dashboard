@@ -1,17 +1,17 @@
 // dashboard-widget-manager.service.ts
-import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable, Subject, interval, throwError, Subscription, of} from 'rxjs';
-import { catchError, retry, shareReplay, takeUntil, map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, interval, Observable, Subject, Subscription, throwError} from 'rxjs';
+import {catchError, map, retry, shareReplay, takeUntil} from 'rxjs/operators';
 import {TableRow} from 'src/app/dashboard/dashboard.service'; // Adjusted path
-import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget, elementCB, gsCreateNgComponents, nodesCB} from 'gridstack/dist/angular';
-import { GridStackWidget } from 'gridstack/dist/types';
-import { EmisSoapService, AgentsListDataItemType } from '../../app/services/emis-soap.service'; // Corrected path
+import {elementCB, GridstackComponent, NgGridStackWidget, nodesCB} from 'gridstack/dist/angular';
+import {GridItemHTMLElement, GridStackWidget} from 'gridstack/dist/types';
+import {AgentsListDataItemType, EmisSoapService, SuperGroupListItemType} from '../../app/services/emis-soap.service'; // Corrected path
 
 export interface WidgetConfig {
     id: string; // Unique identifier for the widget
     type: string; // Widget type (e.g., 'table', 'chart', etc.)
     nlat: string; // Position on the dashboard grid
+    state?: WidgetState | null; // Optional title for the widget
     dataSource: string; // API endpoint or data source for the widget
     updateInterval: number; // Data refresh interval in milliseconds
     title?: string; // Optional title for the widget
@@ -34,7 +34,7 @@ export interface WidgetState {
 export class GsDashboardWidgetManagerService {
     private activeWidgets = new Map<string, BehaviorSubject<any>>();
     private widgetConfigs = new Map<string, WidgetConfig>();
-    private widgetStates = new Map<string, WidgetState>();
+    //private widgetStates = new Map<string, WidgetState>();
     private gridStackWidget = new Map<string, GridStackWidget>();
     private lastUpdates = new Map<string, number>();
     private unsubscribe = new Map<string, Subject<void>>();
@@ -72,11 +72,51 @@ export class GsDashboardWidgetManagerService {
 
     // Method to add widgets to the grid
     addWidgetToGrid(widget: NgGridStackWidget): void {
-        if (this._gridCompRef?.grid) {
-            this._gridCompRef.grid.addWidget(widget);
+        if (this.grid) {
+          this.grid.addWidget(widget);
         } else {
             console.error('Grid component reference not set or grid not initialized');
         }
+    }
+
+    // Method to get widgets that are in the grid
+    getWidgetInGrid(widgetId: string): GridItemHTMLElement | null {
+        if (this.grid) {
+          let gridItemHTMLElement: GridItemHTMLElement = this.grid.getGridItems().find(g => g.id = widgetId);
+          return gridItemHTMLElement;
+        } else {
+            console.error('Grid component reference can`t find widget ID: ' + widgetId);
+        }
+
+        return null;
+    }
+
+    // Method to update widgets that are in the grid
+    updateWidgetInGrid(widget: NgGridStackWidget): void {
+        if (this.grid) {
+          let widgets: NgGridStackWidget[] = [widget]
+          this.grid.load(widgets)
+        } else {
+            console.error('Grid component reference can`t find widget ID: ' + widget.id);
+        }
+
+        return null;
+    }
+
+    setWidgetConfig(config: WidgetConfig): void {
+        this.widgetConfigs.set(config.id, config);
+    }
+
+    setWidgetState(config: WidgetConfig): void {
+        // Initialize widget state
+     config.state = {
+          id: config.id,
+          data: null,
+          loading: false,
+          error: null,
+          lastUpdated: null
+        };
+      this.widgetConfigs.set(config.id, config);
     }
 
     getRegisteredWidgets(): WidgetConfig[] {
@@ -84,16 +124,10 @@ export class GsDashboardWidgetManagerService {
     }
 
     registerWidget(config: WidgetConfig): Observable<any> {
-        this.widgetConfigs.set(config.id, config);
+        this.setWidgetConfig(config);
 
         // Initialize widget state
-        this.widgetStates.set(config.id, {
-            id: config.id,
-            data: null,
-            loading: false,
-            error: null,
-            lastUpdated: null
-        });
+        this.setWidgetState(config);
 
         let gridWidget: NgGridStackWidget = {
           autoPosition: true,
@@ -105,9 +139,8 @@ export class GsDashboardWidgetManagerService {
         } as NgGridStackWidget;
 
         // Add the widget to grid if grid is available
-        if (this._gridCompRef?.grid) {
-            this._gridCompRef.grid.addWidget(gridWidget);
-        }
+        this.addWidgetToGrid(gridWidget);
+
 
         if (!this.activeWidgets.has(config.id)) {
             // Create BehaviorSubject for this widget
@@ -138,9 +171,38 @@ export class GsDashboardWidgetManagerService {
         return this.activeWidgets.get(config.id).asObservable();
     }
 
+
+    initGsWidget(config: WidgetConfig): WidgetConfig {
+        // Initialize widget state
+        config.state = {
+          id: config.id,
+          data: null,
+          loading: false,
+          error: null,
+          lastUpdated: null
+        };
+
+        this.setWidgetConfig(config);
+
+        let gridWidget: NgGridStackWidget = {
+          autoPosition: true,
+          w: 2,
+          h: 1,
+          selector: 'super-group-list-widget',
+          input: { widget: config},
+          id: String(config.id),
+        } as NgGridStackWidget;
+
+        // Add the widget to grid if grid is available
+        this.addWidgetToGrid(gridWidget);
+
+        return config;
+
+    }
+
     private updateWidget(widgetId: string) {
-        const config = this.widgetConfigs.get(widgetId);
-        const state = this.widgetStates.get(widgetId);
+      const config = this.widgetConfigs.get(widgetId);
+      const state = config.state;
 
         if (config && state) {
             state.loading = true;
@@ -172,7 +234,7 @@ export class GsDashboardWidgetManagerService {
         }
     }
 
-    private fetchWidgetData(config: WidgetConfig): Observable<any> {
+    public fetchWidgetData(config: WidgetConfig): Observable<any> {
         // USE THE NEW EMIS SOAP SERVICE FOR SPECIFIC WIDGET TYPES
         if (config.type === 'agent-list-table') {
             return this.emisSoapService.getAgentsList().pipe(
@@ -289,20 +351,6 @@ export class GsDashboardWidgetManagerService {
                 })
             );
         }
-        if (config.type === 'super-group-list-table') {
-            return this.emisSoapService.getSuperGroupList().pipe(
-                map(data => {
-                    console.log(`Fetched super-group-list-table:`, data);
-                    // Assuming data structure is { responseInfoHeader: ..., returnArray: [...] }
-                    // And we want to return the array part for the widget
-                    return data.returnArray || [];
-                }),
-                catchError(err => {
-                    console.error('Error fetching super-group-list-table data in manager:', err);
-                    return throwError(err);
-                })
-            );
-        }
         if (config.type === 'group-abandoned-info' && config.settings?.['groupId']) {
             return this.emisSoapService.getGroupAbandonedInfo(config.settings['groupId']).pipe(
                 map(data => {
@@ -381,7 +429,7 @@ export class GsDashboardWidgetManagerService {
     }
 
     getWidgetState(widgetId: string): WidgetState | undefined {
-        return this.widgetStates.get(widgetId);
+        return this.widgetConfigs.get(widgetId).state;
     }
 
     getLastUpdateTime(widgetId: string): number | undefined {
@@ -412,6 +460,11 @@ export class GsDashboardWidgetManagerService {
       this.updateWidget(widgetId);
   }
 
+  removeWidget(widgetId: string): void {
+    this.widgetConfigs.delete(widgetId);
+  }
+
+
   unregisterWidget(widgetId: string): void {
         // Stop ongoing subscriptions
         const stopSignal = this.unsubscribe.get(widgetId);
@@ -424,7 +477,6 @@ export class GsDashboardWidgetManagerService {
         // Clean up all data structures
         this.activeWidgets.delete(widgetId);
         this.widgetConfigs.delete(widgetId);
-        this.widgetStates.delete(widgetId);
         this.lastUpdates.delete(widgetId);
 
         this.subscription?.unsubscribe();

@@ -1,4 +1,3 @@
-import { SbMainDeskComponent } from "../../sb-main-desk/sb-main-desk.component";
 import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";

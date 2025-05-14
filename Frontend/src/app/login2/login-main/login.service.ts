@@ -1,6 +1,5 @@
 import { TokenStorageService } from "../../_helpers/token-storage.service";
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import {Injectable} from "@angular/core";
 import {AuthService} from "../../_helpers/auth.service";
 import {AppConfig} from "../../app.config";
@@ -17,7 +16,7 @@ export default class LoginService {
     loginErrorMessage = '';
 
 
-    constructor(public dialog: MatDialog, public authService: AuthService,
+    constructor(public authService: AuthService,
                 private tokenStorage: TokenStorageService, private router: Router) {
         this.updateLoginStatus();
     }

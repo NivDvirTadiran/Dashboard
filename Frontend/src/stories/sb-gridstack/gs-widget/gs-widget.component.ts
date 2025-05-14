@@ -6,6 +6,7 @@ import { WidgetPieChartComponent } from '../widget-pie-chart/widget-pie-chart.co
 import { WidgetPieDoughnutComponent } from '../widget-pie-doughnut/widget-pie-doughnut.component';
 import {BaseWidget} from 'gridstack/dist/angular';
 import {WidgetTable2Component} from "../widget-table-2/widget-table2.component";
+import {NlatTableComponent} from "../nlat-table/nlat-table.component";
 
 
 @Component({
@@ -16,9 +17,9 @@ import {WidgetTable2Component} from "../widget-table-2/widget-table2.component";
   imports: [
     CommonModule,
     WidgetTableComponent,
-    WidgetTable2Component,
     WidgetPieChartComponent,
-    WidgetPieDoughnutComponent
+    WidgetPieDoughnutComponent,
+    NlatTableComponent
   ]
 })
 export class GsWidgetComponent extends BaseWidget {
@@ -26,6 +27,8 @@ export class GsWidgetComponent extends BaseWidget {
 
   constructor(public widgetManager: GsDashboardWidgetManagerService) {
     super();
+
+    console.log("constructor GsWidgetComponent")
   }
 
   /**

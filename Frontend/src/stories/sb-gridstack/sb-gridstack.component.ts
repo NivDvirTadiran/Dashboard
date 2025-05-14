@@ -4,18 +4,15 @@ import { WidgetTableComponent } from "./widget-table/widget-table.component";
 import { WidgetPieChartComponent } from "./widget-pie-chart/widget-pie-chart.component";
 import { WidgetPieDoughnutComponent } from "./widget-pie-doughnut/widget-pie-doughnut.component";
 import { GsDashboardWidgetManagerService, WidgetConfig } from "./gs-dashboard-widget-manager.service";
-import {DashboardService, TableRow} from "src/app/dashboard/dashboard.service";
-import {CdkDropList, CdkDrag} from "@angular/cdk/drag-drop";
+import {TableRow} from "src/app/dashboard/dashboard.service";
 import { Subscription } from 'rxjs';
-import {round} from "@popperjs/core/lib/utils/math";
-import {WinTemplateComponent} from "./win-template/win-template.component";
-//import { NgModule } from "@angular/core";
-import { CommonModule, JsonPipe, DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from "@angular/common";
+import { CommonModule, NgIf} from "@angular/common";
 import { GsWidgetComponent } from "./gs-widget/gs-widget.component";
 
 import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget, elementCB, gsCreateNgComponents, nodesCB} from 'gridstack/dist/angular';
 import { GridStackWidget } from "gridstack/dist/types";
-import { GridStack } from "gridstack";
+import {GsNlatTableComponent} from "./gs-nlat-table/gs-nlat-table.component";
+import {SuperGroupListWidgetComponent} from "./super-group-list-widget/super-group-list-widget.component";
 
 @Component({
   selector: "sb-gridstack",
@@ -49,10 +46,12 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     public widgetManager: GsDashboardWidgetManagerService
   ) {
     GridstackComponent.addComponentToSelectorType([
-      GsWidgetComponent
+      GsWidgetComponent,
+      SuperGroupListWidgetComponent,
+      GsNlatTableComponent
     ]);
   }
-  /*
+
     public exampleDataNew: string =
       '[{"agentName":"Agent Name","agentExten":"Agent Exten.","state":"State","agentNo":"Agent No.","stateTime":"State Time","releaseCode":"Release Code","aCDCalls":"ACD Calls","nonACDCalls":"Non ACD Calls","dNIS":"DNIS","aN":"ANI"},' +
       '{"agentName":"Agent1","agentExten":"0","state":"Logout","agentNo":"1001","stateTime":"0:00","releaseCode":"","aCDCalls":"0","nonACDCalls":"0","dNIS":"0","aN":"0"},' +
@@ -61,17 +60,25 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       '{"agentName":"Agent3","agentExten":"0","state":"Logout","agentNo":"1003","stateTime":"0:00","releaseCode":"","aCDCalls":"0","nonACDCalls":"0","dNIS":"0","aN":"0"},' +
       '{"agentName":"Agent6","agentExten":"0","state":"Logout","agentNo":"1006","stateTime":"0:00","releaseCode":"","aCDCalls":"0","nonACDCalls":"0","dNIS":"0"aN":"0"}]';
 
-    pieChartConfig: WidgetConfig = {
+    newWidgetConfig: Partial<WidgetConfig> = {};
+
+  pieChartConfig: WidgetConfig = {
+      id: 'pie-chart-widget' + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: 1 }, // y is 0-based
+      ...this.newWidgetConfig
+    } as WidgetConfig;
+
+/*    pieChartConfig: WidgetConfig = {
       id: 'pie-chart-widget',
+      position: { x: 0, y: 2 }, // y is 0-based
       type: 'pie-chart',
       title: 'Pie-Chart Type Example',
-      position: { x: 4, y: 0 },  // Position next to table widget
-      size: { width: 2, height: 1 },
       dataSource: 'api/dashboard/pie-chart-data',
       updateInterval: 30000, // Update every 30 seconds
       resizable: true,
-      draggable: true
-    };
+      draggable: true,
+      ...this.newWidgetConfig
+    };*/
 
 
   setTableData(tableObj: TableRow[]) {
@@ -79,11 +86,11 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
     public wItems: NgGridStackWidget[] = [
-      { autoPosition: true, w: 2, h: 1, selector: 'app-decorator-based', input: { title: 'Item (decorator)'}, id: String(1)}  as NgGridStackWidget,
-      { autoPosition: true, w: 2, h: 1, selector: 'gs-widget-table', input: { tableObj: JSON.parse(this.exampleDataNew)}, id: String(2)}  as NgGridStackWidget,
-      { autoPosition: true, w: 2, h: 1, selector: 'gs-widget', input: { widget: this.pieChartConfig}, id: String(8)}  as NgGridStackWidget,
+      //{ autoPosition: true, w: 2, h: 1, selector: 'app-decorator-based', input: { title: 'Item (decorator)'}, id: String(1)}  as NgGridStackWidget,
+      //{ autoPosition: true, w: 2, h: 1, selector: 'gs-nlat-table', input: { tableObj: JSON.parse(this.exampleDataNew)}, id: String(2)}  as NgGridStackWidget,
+      //{ autoPosition: true, w: 2, h: 1, selector: 'gs-widget', input: { widget: this.pieChartConfig}, id: String(8)}  as NgGridStackWidget,
     ];
-  */
+
   public ngOnInit(): void {
     this.loadLayout(); // Load layout on init if available
   }
@@ -97,6 +104,28 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   presentAddWidgetOptions(): void {
     this.showAddWidgetModal = true;
   }
+
+  public addSuperGroupListWidget(): void {
+    const SUPER_GROUP_LIST_WIDGET_ID = 'super-group-list-table';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'super-group-list-table',
+      title: 'Super Group Status',
+      dataSource: 'modernized-api-super-groups',
+      updateInterval: 2000
+    };
+
+    this.widgetManager.initGsWidget({
+      id: SUPER_GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+
+
+  }
+
 
   public addWidgetByType(type: string): void {
     let newWidgetConfig: Partial<WidgetConfig> = {};
@@ -228,6 +257,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.gridComp()) {
       this.widgetManager.setGridComponent(this.gridComp());
     }
+    this.gridComp()?.grid.load(this.wItems)
     this.registerWidgets();
   }
 
@@ -243,6 +273,9 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   refreshAllWidgets(): void {
+    this.widgetManager.getRegisteredWidgets().forEach(widget => {
+      console.log("refreshWidget: " + widget.id);
+    });
     this.widgetManager.getRegisteredWidgets().forEach(widget => {
       this.refreshWidget(widget.id);
     });
@@ -262,7 +295,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addWidgetByType('agent-list-table');
     this.addWidgetByType('group-list-table');
     this.addWidgetByType('brief-agents-data');
-    this.addWidgetByType('super-group-list-table');
+    this.addSuperGroupListWidget();
     // For group-abandoned-info, it might be better to add it manually via UI
     // as it requires a specific group ID. Or add a default one:
     this.addWidgetByType('group-abandoned-info');
@@ -294,16 +327,4 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateWidgetPositions(): void {}
 
-
-  public onChange(data: nodesCB) {
-    console.log('change ', data.nodes.length > 1 ? data.nodes : data.nodes[0]);
-  }
-
-  public onResizeStop(data: elementCB) {
-    console.log('resizestop ', data.el.gridstackNode);
-  }
-
-  public identify(index: number, gridStackWidget: GridStackWidget) {
-    return gridStackWidget.id;
-  }
 }

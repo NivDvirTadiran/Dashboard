@@ -8,7 +8,7 @@ import {ActionInput} from "./action-input/action-input.interface";
 import {TranslateService} from "src/stories/pipes/translate/translate.service";
 import {NgClass, NgIf, NgSwitch, NgSwitchCase} from "@angular/common";
 import {TranslatePipe} from "../../../pipes/translate/translate.pipe";
-import {MatIcon, MatIconModule} from "@angular/material/icon";
+import {MatIcon} from "@angular/material/icon";
 import {MatListItemIcon} from "@angular/material/list";
 
 
@@ -33,8 +33,7 @@ export interface ValidationForm {
     NgSwitch,
     NgSwitchCase,
     NgIf,
-    MatIcon,
-    MatIconModule
+    MatIcon
   ],
   styleUrls: ['./story-inpu.component.scss']
 })

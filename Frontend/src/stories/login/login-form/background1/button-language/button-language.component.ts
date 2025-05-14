@@ -9,7 +9,7 @@ import {PopoverLanguageDirective} from "./directive-language/bubble-language/pop
 @Component({
   selector: 'storybook-button-language',
   templateUrl: './button-language.component.html',
-  styleUrls: ['./button-language.component.css'],
+  styleUrls: ['./button-language.component.scss'],
   imports: [NgClass, NgStyle, PopoverLanguageDirective]
 })
 export class ButtonLanguageComponent {

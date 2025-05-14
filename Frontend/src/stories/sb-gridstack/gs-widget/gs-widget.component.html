@@ -10,57 +10,57 @@
 
 <!-- Widget Content based on type -->
 <div class="widget-content" [ngSwitch]="widget.type">
-    <!-- Loading indicator -->
-    <div *ngIf="widgetManager.getWidgetState(widget.id)?.loading" class="loading-spinner">
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+  <!-- Loading indicator -->
+  <div *ngIf="widgetManager.getWidgetState(widget.id)?.loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
     </div>
+  </div>
 
-    <!-- Error message -->
-    <div *ngIf="widgetManager.getWidgetState(widget.id)?.error" class="error-message">
-        <i class="fas fa-exclamation-triangle"></i>
-        {{ widgetManager.getWidgetState(widget.id)?.error }}
-    </div>
+  <!-- Error message -->
+  <div *ngIf="widgetManager.getWidgetState(widget.id)?.error" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ widgetManager.getWidgetState(widget.id)?.error }}
+  </div>
 
 
-    <!-- Table widget -->
-    <div *ngSwitchCase="'agent-list-table'" class="table-widget">
-      <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
-    </div>
+  <!-- Table widget -->
+  <div *ngSwitchCase="'agent-list-table'" class="table-widget">
+    <widget-table [tableObj]="widget.state?.data"></widget-table>
+  </div>
 
-    <div *ngSwitchCase="'group-list-table'" class="table-widget">
-      <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
-    </div>
+  <div *ngSwitchCase="'group-list-table'" class="table-widget">
+    <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
+  </div>
 
-    <div *ngSwitchCase="'brief-agents-data'" class="table-widget">
-        <widget-table-2 [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table-2>
-    </div>
+  <div *ngSwitchCase="'brief-agents-data'" class="table-widget">
+    <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
+  </div>
 
-    <div *ngSwitchCase="'super-group-list-table'" class="table-widget">
-        <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
-    </div>
+  <div *ngSwitchCase="'super-group-list-table'" class="table-widget">
+    <nla-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></nla-table>
+  </div>
 
-    <div *ngSwitchCase="'group-abandoned-info'" class="table-widget">
-        <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
-    </div>
+  <div *ngSwitchCase="'group-abandoned-info'" class="table-widget">
+    <widget-table [tableObj]="widgetManager.getWidgetState(widget.id)?.data"></widget-table>
+  </div>
 
-    <!-- Chart widgets -->
-    <div *ngSwitchCase="'pie-chart'" class="chart-widget">
-        <widget-pie-chart> </widget-pie-chart>
-    </div>
+  <!-- Chart widgets -->
+  <div *ngSwitchCase="'pie-chart'" class="chart-widget">
+    <widget-pie-chart> </widget-pie-chart>
+  </div>
 
-    <div *ngSwitchCase="'doughnut'" class="chart-widget">
-        <widget-pie-doughnut [attId]="'chart-' + widget.id"> </widget-pie-doughnut>
-    </div>
+  <div *ngSwitchCase="'doughnut'" class="chart-widget">
+    <widget-pie-doughnut [attId]="'chart-' + widget.id"> </widget-pie-doughnut>
+  </div>
 
-    <!-- Default content -->
-    <div *ngSwitchDefault class="default-widget">
-        <pre>{{ widgetManager.getWidgetState(widget.id)?.data  }}</pre>
-    </div>
+  <!-- Default content -->
+  <div *ngSwitchDefault class="default-widget">
+    <pre>{{ widgetManager.getWidgetState(widget.id)?.data  }}</pre>
+  </div>
 </div>
 
 <!-- Widget Footer -->
 <div class="widget-footer" *ngIf="widgetManager.getLastUpdateTime(widget.id)">
-    <i class="fas fa-clock"></i> Last updated: {{ widgetManager.getLastUpdateTime(widget.id)  }}
+    <i class="fas fa-clock"></i> Last updated: {{ widgetManager.getLastUpdateTime(widget.id)  | date:'medium'   }}
 </div>
