@@ -22,9 +22,42 @@ export class BriefAgentsWidgetComponent extends BaseWidget implements OnInit, On
   widgetSubject: BehaviorSubject<any> = null;
   stopSignal: Subject<void> = null;
   lastUpdate: number;
+  //..:"0;f6_3_2_1_0;Agent Id;5,0;f6_3_2_1_1;Agent Name;AgentS1,0;f6_3_2_1_2;Agent No;1011,0;f6_3_2_1_3;Agent Exten.;,16777215;f6_3_2_2_1;State;Logout,0;f6_3_2_2_2;State Time;0,0;f6_3_2_2_7;ACD Calls;0,0;f6_3_2_2_10;O.ACD Calls;0,0;f6_3_2_2_8;Chat Contacts;0,0;f6_3_2_2_9;Email Contacts;0,0;f6_3_2_3_4;ACD Calls Answered;0,0;f6_3_2_3_44;O.ACD Calls Answered;0,0;f6_3_2_3_36;Chat Contacts Answered;0,0;f6_3_2_3_40;Email Contacts Answered;0,0;f6_3_2_3_9;Total ACD Talk Time;0,0;f6_3_2_2_3;Held Calls;0,0;f6_3_2_2_12;Longest On Held Time;0,0;f6_3_2_3_5;Total Held Calls;0,0;f6_3_2_3_45;Total Held Time;0,0;f6_3_2_2_13;Conference;0,0;f6_3_2_2_14;Time In Conference;0,0;f6_3_2_3_15;Total Txfr Out Calls;0,0;f6_3_2_2_6;NON-ACD Calls;0,0;f6_3_2_3_26;Total Inc NON-ACD Calls;0,0;f6_3_2_3_28;Total Out NON-ACD Calls;0,0;f6_3_2_3_11;Total NON-ACD Talk Time;0,0;f6_3_2_3_12;Total Release Time;0,0;f6_3_2_2_4;DNIS;,0;f6_3_2_2_5;ANI;,0;f6_3_1_1_2;Current ACD Group;
 
-
-  displayedColumns: string[] = ["Agent Name", "Agent Exten.", "State", "Agent No.", "State Time", "Total Release Time", "ACD Calls", "NON-ACD Calls", "DNIS", "ANI"];
+  // Translated and updated column headers based on Figma design
+  displayedColumns: string[] = [
+    "Agent Id",
+    "Agent Name",
+    "Agent No.",
+    "Agent Exten.",
+    "State",
+    "State Time",
+    "ACD Calls",
+    "O.ACD Calls",
+    "Chat Contacts",
+    "Email Contacts",
+    "ACD Calls Answered",
+    "O.ACD Calls Answered",
+    "Chat Contacts Answered",
+    "Email Contacts Answered",
+    "Total ACD Talk Time",
+    "Held Calls",
+    "Longest On Held Time",
+    "Total Held Calls",
+    "Total Held Time",
+    "Conference",
+    "Time In Conference",
+    "Total Txfr Out Calls",
+    "NON-ACD Calls",
+    "Total Inc NON-ACD Calls",
+    "Total Out NON-ACD Calls",
+    "Total NON-ACD Talk Time",
+    "Total Release Time",
+    "DNIS",
+    "ANI",
+    "Current ACD Group",
+    "Username",
+  ];
   row: string[] = [];
   table: any;
 
@@ -166,19 +199,23 @@ export class BriefAgentsWidgetComponent extends BaseWidget implements OnInit, On
 
     const result: string[] = [];
     // Define mappings from displayedColumn names to the keys expected in the rawDataString
+    // Best guess mapping based on semantic similarity
     const keyMappings: { [colName: string]: string } = {
-      "Agent Name": "Agent Name",
-      "Agent Exten.": "Agent Exten.",
-      "State": "State",
-      "Agent No.": "Agent No", // Key in string is "Agent No"
-      "State Time": "State Time",
-      "Total Release Time": "Total Release Time", // Updated from "Release Code"
-      "ACD Calls": "ACD Calls",
-      "NON-ACD Calls": "NON-ACD Calls", // Updated from "Non ACD Calls"
-      "DNIS": "DNIS",
-      "ANI": "ANI",
+      "Username": "Agent Name",
+      "Status": "State",
+      "Opened": "Opened", // No direct old mapping, using new name
+      "Open": "Open", // No direct old mapping, using new name
+      "Pending": "Pending", // No direct old mapping, using new name
+      "Scheduled": "Scheduled", // No direct old mapping, using new name
+      "Closed": "Closed", // No direct old mapping, using new name
+      "Total": "ACD Calls", // Guess: Total calls might be ACD calls
+      "Avg. Response Time": "State Time", // Guess: State Time might relate to response
+      "Avg. Closing Time": "Total Release Time", // Guess: Release time might relate to closing
+      "Avg. Handle Time": "Avg. Handle Time", // No direct old mapping, using new name
+      "Max. Wait Time": "Max. Wait Time", // No direct old mapping, using new name
+      "Avg. Hourly Calls": "Avg. Hourly Calls", // No direct old mapping, using new name
+      "Initiated": "Initiated" // No direct old mapping, using new name
     };
-
 
     //dataMap.forEach((value, key) => {result.push(value);} )
 

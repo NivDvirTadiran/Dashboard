@@ -1,0 +1,22 @@
+<!-- Modal or Dropdown for Adding Widgets -->
+<div class="add-widget-modal">
+  <h4>Select Widget Type to Add</h4>
+  <ul>
+    <br>
+    <li (click)="selectWidget('examplePieChart')">Example Pie Chart Widget</li>
+    <li (click)="selectWidget('chart')">Chart Widget (API)</li>
+    <li (click)="selectWidget('superGroupList')">Super Group List Table</li>
+    <li (click)="selectWidget('agentsList')">Agents List Table</li>
+    <li (click)="selectWidget('groupList')">Group List Table</li>
+    <li (click)="selectWidget('dnisList')">DNIS List Table</li>
+    <li (click)="selectWidget('groupDetailFullInfo')">Group Detail Full Info</li>
+    <li (click)="selectWidget('groupQueueInfo')">Group Queue Info</li>
+    <li (click)="selectWidget('groupAgentsInfo')">Group Agents Info</li>
+    <li (click)="selectWidget('ivrApplicationInfo')">IVR Application Info</li>
+    <li (click)="selectWidget('ivrPortInfo')">IVR Port Info</li>
+    <li (click)="selectWidget('groupAbandonedInfo')">Group Abandoned Info</li>
+    <li (click)="selectWidget('briefAgents')">Brief Agents</li>
+    <!-- Add more widget types here -->
+  </ul>
+  <button (click)="closeMenu.emit()">Close</button>
+</div>

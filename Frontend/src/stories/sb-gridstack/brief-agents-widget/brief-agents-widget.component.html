@@ -1,14 +1,20 @@
 <!-- Widget Header -->
 <div class="widget-header">
-    <h3>{{ widget.title || 'Widget ' + widget.id }}</h3>
-    <div class="widget-controls">
-        <button (click)="refreshWidget(widget.id)" class="refresh-btn" title="Refresh Widget">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-    </div>
+  <div class="widget-title-group">
+    <h3>Agents Table</h3>
+    <p class="widget-subtitle">Table displaying extensive call data</p>
+  </div>
+  <div class="widget-controls">
+    <button class="control-btn" title="Filter">
+      <i class="fas fa-filter"></i> <!-- Placeholder for filter icon -->
+    </button>
+    <button class="control-btn" title="Options">
+      <i class="fas fa-ellipsis-v"></i> <!-- Placeholder for options icon -->
+    </button>
+  </div>
 </div>
 
-<div class="widget-content" >
+<div class="widget-content">
   <!-- Loading indicator -->
   <div *ngIf="widget.state?.loading" class="loading-spinner">
     <div class="spinner-border" role="status">
@@ -24,22 +30,28 @@
 
   <!-- Widget Content based on type -->
   <div class="table-widget">
-    <ng-container >
+    <ng-container *ngIf="widget.state?.data?.returnMatrix?.length > 0; else noData">
       <table class="table">
         <thead>
-        <tr>
-          <!-- Display column headers -->
-          <ng-container *ngFor="let column of displayedColumns">
-            <th>{{ column }}</th>
-          </ng-container>
-        </tr>
+          <tr>
+            <!-- Display column headers -->
+            <ng-container *ngFor="let column of displayedColumns">
+              <th>{{ column }}</th>
+            </ng-container>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let item of widget.state?.data?.returnMatrix">
-          <ng-container *ngFor="let dataItem of this.parseAgentDataString(item.returnArray[1].value)">
-            <td>{{ dataItem }}</td>
-          </ng-container>
-        </tr>
+          <tr *ngFor="let item of widget.state?.data?.returnMatrix">
+            <ng-container *ngFor="let dataValue of parseAgentDataString(item.returnArray[1].value); let i = index">
+              <td>
+                <ng-container *ngIf="displayedColumns[i] === 'Agent Exten.'; else defaultCell">
+                  <!-- Placeholder for status icon + text -->
+                  <span class="status-icon"></span> {{ dataValue }}
+                </ng-container>
+                <ng-template #defaultCell>{{ dataValue }}</ng-template>
+              </td>
+            </ng-container>
+          </tr>
         </tbody>
       </table>
     </ng-container>
@@ -51,5 +63,5 @@
 
 <!-- Widget Footer -->
 <div class="widget-footer" *ngIf="widget?.state?.lastUpdated">
-    <i class="fas fa-clock"></i> Last updated: {{ widget?.state?.lastUpdated | date:'medium'  }}
+  <i class="fas fa-clock"></i> Last updated: {{ widget?.state?.lastUpdated | date:'medium' }}
 </div>
