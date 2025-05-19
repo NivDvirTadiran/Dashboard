@@ -23,7 +23,22 @@ export class AgentsListWidgetComponent extends BaseWidget implements OnInit, OnD
   lastUpdate: number;
 
 
-  displayedColumns: string[] = ['Agent ID', 'Name', 'Number'];
+  displayedColumns: string[] = [
+    'שם משתמש',
+    'סטטוס',
+    'נפתחו',
+    'פתוח',
+    'ממתין',
+    'מתוזמן',
+    'סגור',
+    'סה״כ',
+    'ז.תגובה',
+    'ז.סגירה',
+    'ז.טיפול ממוצע',
+    'ז.המתנה מקס׳',
+    'ממוצע קריאות שעתי',
+    'הת׳'
+  ];
 
   constructor(public widgetManager: GsDashboardWidgetManagerService,
               private emisSoapService: EmisSoapService) {

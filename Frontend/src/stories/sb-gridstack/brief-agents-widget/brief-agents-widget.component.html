@@ -24,7 +24,7 @@
 
   <!-- Widget Content based on type -->
   <div class="table-widget">
-    <ng-container *ngIf="widget?.state?.data?.length > 0; else noData">
+    <ng-container >
       <table class="table">
         <thead>
         <tr>
@@ -35,9 +35,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let item of widgetManager.getWidgetState(widget.id)?.data?.returnMatrix">
-          <ng-container *ngFor="let dataItem of item.returnArray">
-            <td>{{ dataItem.value }}</td>
+        <tr *ngFor="let item of widget.state?.data?.returnMatrix">
+          <ng-container *ngFor="let dataItem of this.parseAgentDataString(item.returnArray[1].value)">
+            <td>{{ dataItem }}</td>
           </ng-container>
         </tr>
         </tbody>

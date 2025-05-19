@@ -6,6 +6,7 @@ import {TableRow} from "src/app/dashboard/dashboard.service";
 // import { Subscription } from 'rxjs'; // Not explicitly used
 import { CommonModule, NgIf} from "@angular/common";
 import { DashboardHeaderComponent } from "./dashboard-header/dashboard-header.component"; // Import the new header component
+import { AddWidgetMenuComponent } from "./add-widget-menu/add-widget-menu.component"; // Import the new menu component
 
 import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget, elementCB, gsCreateNgComponents, nodesCB} from 'gridstack/dist/angular';
 import { GridStackWidget } from "gridstack/dist/types";
@@ -30,7 +31,7 @@ import {ExamplePieChartWidgetComponent} from "./example-pie-chart-widget/example
   styleUrls: ["./sb-gridstack.component.scss"],
   standalone: true,
   imports: [
-    CommonModule, NgIf, GridstackComponent, GridstackModule, DashboardHeaderComponent // Add DashboardHeaderComponent here
+    CommonModule, NgIf, GridstackComponent, GridstackModule, DashboardHeaderComponent, AddWidgetMenuComponent // Add AddWidgetMenuComponent here
   ]
 })
 export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -185,22 +186,59 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private registerWidgets(): void {
-
+    // Widgets are now added via the menu
+    // You might want to load a default set of widgets here or leave it empty
+    // For now, let's add a couple of default ones to have something on the screen
     this.addExamplePieChartWidget();
-    this.addChartWidget(); // Add a default chart widget on init
-    this.addSuperGroupListWidget();
-    this.addAgentsListWidget();
-    this.addGroupListWidget();
-    this.addDnisListWidget();
-    this.addGroupDetailFullInfoWidget();
-    this.addGroupQueueInfoWidget();
-    this.addGroupAbandonedInfoWidget();
-    this.addGroupAgentsInfoWidget();
-    //this.addIvrApplicationInfoWidget();
-    //this.addIvrPortInfoWidget();
+    this.addChartWidget();
   }
 
-
+  public onWidgetSelected(widgetType: string): void {
+    switch (widgetType) {
+      case 'examplePieChart':
+        this.addExamplePieChartWidget();
+        break;
+      case 'chart':
+        this.addChartWidget();
+        break;
+      case 'superGroupList':
+        this.addSuperGroupListWidget();
+        break;
+      case 'agentsList':
+        this.addAgentsListWidget();
+        break;
+      case 'groupList':
+        this.addGroupListWidget();
+        break;
+      case 'dnisList':
+        this.addDnisListWidget();
+        break;
+      case 'groupDetailFullInfo':
+        this.addGroupDetailFullInfoWidget();
+        break;
+      case 'groupQueueInfo':
+        this.addGroupQueueInfoWidget();
+        break;
+      case 'groupAgentsInfo':
+        this.addGroupAgentsInfoWidget();
+        break;
+      case 'ivrApplicationInfo':
+        this.addIvrApplicationInfoWidget();
+        break;
+      case 'ivrPortInfo':
+        this.addIvrPortInfoWidget();
+        break;
+      case 'groupAbandonedInfo':
+        this.addGroupAbandonedInfoWidget();
+        break;
+      case 'briefAgents':
+        this.addBriefAgentsWidget();
+        break;
+      default:
+        console.warn(`Unknown widget type: ${widgetType}`);
+    }
+    this.showAddWidgetModal = false; // Close modal after selection
+  }
 
   public addExamplePieChartWidget(): void {
     const EXAMPLE_PIE_CHART_WIDGET_ID = 'example-pie-chart-widget';
@@ -474,6 +512,25 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.widgetManager.initGsWidget({
       id: GROUP_ABANDONED_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  public addBriefAgentsWidget(): void {
+    const BRIEF_AGENTS_WIDGET_ID = 'brief-agents-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'brief-agents-widget',
+      title: 'Brief Agents',
+      dataSource: 'BriefAgents',
+      updateInterval: 6000
+    };
+
+    this.widgetManager.initGsWidget({
+      id: BRIEF_AGENTS_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       position: { x: 0, y: currentGridHeight }, // y is 0-based
       ...newWidgetConfig
     } as WidgetConfig);

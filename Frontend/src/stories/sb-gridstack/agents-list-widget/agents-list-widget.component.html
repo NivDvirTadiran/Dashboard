@@ -1,6 +1,6 @@
 <!-- Widget Header -->
 <div class="widget-header">
-    <h3>{{ widget.title || 'Widget ' + widget.id }}</h3>
+    <h3>טבלת נציגים</h3>
     <div class="widget-controls">
         <button (click)="refreshWidget(widget.id)" class="refresh-btn" title="Refresh Widget">
             <i class="fas fa-sync-alt"></i>
@@ -30,9 +30,6 @@
       <table class="table">
         <thead>
         <tr>
-          <!-- <th>Agent ID</th>
-          <th>Name</th>
-          <th>Number</th> -->
           <!-- Display column headers -->
           <ng-container *ngFor="let column of displayedColumns">
             <th>{{ column }}</th>
@@ -41,15 +38,42 @@
         </thead>
         <tbody>
         <tr *ngFor="let agent of widgetManager.getWidgetState(widget.id)?.data">
-          <td>{{ agent.agentId }}</td>
-          <td>{{ agent.agentName }}</td>
-          <td>{{ agent.agentNumber }}</td>
+          <!-- Correlate these with the actual data structure once available -->
+          <td>{{ agent.agentName || agent.username }}</td> <!-- Assuming agentName can be used for 'שם משתמש' -->
+          <td class="status-cell">
+            <!-- Placeholder for status logic -->
+            <ng-container [ngSwitch]="agent.type">
+              <ng-container *ngSwitchCase="'bot'">
+                <img src="assets/icons/agents-list-widget/bot-icon.svg" alt="Bot" class="status-icon">
+                <span [style.color]="agent.statusColor || '#2E2E2E'">{{ agent.statusText || 'פעיל' }}</span>
+              </ng-container>
+              <ng-container *ngSwitchCase="'user'">
+                <img src="assets/icons/agents-list-widget/status-user-icon.svg" alt="User" class="status-icon">
+                <span [style.color]="agent.statusColor || '#1FC777'">{{ agent.statusText || 'פעיל' }}</span>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <span>{{ agent.status }}</span> <!-- Fallback if type is not bot/user -->
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>{{ agent.opened }}</td> <!-- Placeholder for 'נפתחו' -->
+          <td>{{ agent.open }}</td> <!-- Placeholder for 'פתוח' -->
+          <td>{{ agent.waiting }}</td> <!-- Placeholder for 'ממתין' -->
+          <td>{{ agent.scheduled }}</td> <!-- Placeholder for 'מתוזמן' -->
+          <td>{{ agent.closed }}</td> <!-- Placeholder for 'סגור' -->
+          <td>{{ agent.total }}</td> <!-- Placeholder for 'סה״כ' -->
+          <td>{{ agent.avgResponseTime }}</td> <!-- Placeholder for 'ז.תגובה' -->
+          <td>{{ agent.avgClosingTime }}</td> <!-- Placeholder for 'ז.סגירה' -->
+          <td>{{ agent.avgHandlingTime }}</td> <!-- Placeholder for 'ז.טיפול ממוצע' -->
+          <td>{{ agent.maxWaitTime }}</td> <!-- Placeholder for 'ז.המתנה מקס׳' -->
+          <td>{{ agent.avgHourlyCalls }}</td> <!-- Placeholder for 'ממוצע קריאות שעתי' -->
+          <td>{{ agent.agentId || agent.initials }}</td> <!-- Assuming agentId can be used for 'הת׳' -->
         </tr>
         </tbody>
       </table>
     </ng-container>
     <ng-template #noData>
-      <p>No agent data to display.</p>
+      <p>אין נתונים להצגה.</p> <!-- Translated "No agent data to display" -->
     </ng-template>
   </div>
 

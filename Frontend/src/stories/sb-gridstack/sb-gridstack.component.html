@@ -16,25 +16,9 @@
 
 </div>
 
-<!-- Modal or Dropdown for Adding Widgets (Conceptual) -->
-<div *ngIf="showAddWidgetModal" class="add-widget-modal">
-  <h4>Select Widget Type to Add</h4>
-  <ul>
-
-    <br>
-    <li (click)="addExamplePieChartWidget()">Example Pie Chart Widget</li>
-    <li (click)="addChartWidget()">Chart Widget (API)</li>
-    <li (click)="addSuperGroupListWidget()">Super Group List Table</li>
-    <li (click)="addAgentsListWidget()">Agents List Table</li>
-    <li (click)="addGroupListWidget()">Group List Table</li>
-    <li (click)="addDnisListWidget()">DNIS List Table</li>
-    <li (click)="addGroupDetailFullInfoWidget()">Group Detail Full Info</li>
-    <li (click)="addGroupQueueInfoWidget()">Group Queue Info</li>
-    <li (click)="addGroupAgentsInfoWidget()">Group Agents Info</li>
-    <li (click)="addIvrApplicationInfoWidget()">IVR Application Info</li>
-    <li (click)="addIvrPortInfoWidget()">IVR Port Info</li>
-    <li (click)="addGroupAbandonedInfoWidget()">Group Abandoned Info</li>
-    <!-- Add more widget types here -->
-  </ul>
-  <button (click)="showAddWidgetModal = false">Close</button>
-</div>
+<!-- New Add Widget Menu Component -->
+<app-add-widget-menu
+  *ngIf="showAddWidgetModal"
+  (widgetSelected)="onWidgetSelected($event)"
+  (closeMenu)="showAddWidgetModal = false">
+</app-add-widget-menu>
