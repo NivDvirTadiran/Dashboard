@@ -1,0 +1,75 @@
+/* Styles for DashboardHeaderComponent based on Figma design */
+
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #FFFFFF;
+  box-shadow: 1px 1px 10px 0px rgba(67, 165, 255, 0.15);
+  border-radius: 20px; // Applied from parent in Figma, makes sense here
+  font-family: "Noto Sans Hebrew", sans-serif; // Fallback to sans-serif
+
+  h2 {
+    font-family: "Noto Sans Hebrew", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #43A5FF; // Blue color from Figma style_P3I3VD
+    margin: 0; // Remove default margin
+  }
+
+  .dashboard-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px; // Spacing between buttons
+
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 5px; // Space between icon and text
+      padding: 6px 12px; // Adjusted from Figma's 4px 9px 6px
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.36;
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      i {
+        font-size: 1em; // Match text size or adjust as needed
+      }
+
+      // Specific styling for "Add Widget" button (like "Component Library" in Figma)
+      &[title="Add New Widget"] {
+        background-color: #FFFFFF;
+        color: #43A5FF; // Blue text
+        border: 1px solid #43A5FF; // Adding a border for better visibility on white bg
+
+        i {
+          color: #43A5FF; // Blue icon
+        }
+
+        &:hover {
+          background-color: #eaf5ff; // Light blue hover
+        }
+      }
+
+      // Styling for other control buttons (Save, Load, Refresh All)
+      &:not([title="Add New Widget"]) {
+        background-color: #43A5FF; // Blue background
+        color: #FFFFFF; // White text
+
+        i {
+          color: #FFFFFF; // White icon
+        }
+
+        &:hover {
+          background-color: #3687d1; // Darker blue hover
+        }
+      }
+    }
+  }
+}

@@ -1,24 +1,12 @@
 <div class="dashboard-container">
 
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-      <h2>Contact Center Dashboard</h2>
-      <div class="dashboard-controls">
-        <!-- New general Add Widget button (could open a modal or dropdown) -->
-        <button class="btn-refresh" (click)="this.presentAddWidgetOptions()" title="Add New Widget">
-          <i class="fas fa-puzzle-piece"></i> Add Widget
-        </button>
-        <button class="btn-refresh" (click)="this.saveLayout()" title="Save Dashboard Layout">
-          <i class="fas fa-save"></i> Save Layout
-        </button>
-        <button class="btn-refresh" (click)="this.loadLayout()" title="Load Dashboard Layout">
-          <i class="fas fa-folder-open"></i> Load Layout
-        </button>
-        <button class="btn-refresh" title="Refresh All Widgets" (click)="refreshAllWidgets()">
-          <i class="fas fa-sync-alt"></i> Refresh All
-        </button>
-      </div>
-    </div>
+    <!-- New Dashboard Header Component -->
+    <app-dashboard-header
+      (addWidget)="presentAddWidgetOptions()"
+      (save)="saveLayout()"
+      (load)="loadLayout()"
+      (refreshAll)="refreshAllWidgets()">
+    </app-dashboard-header>
 
     <!-- Dashboard Grid -->
     <div class="grid-container">

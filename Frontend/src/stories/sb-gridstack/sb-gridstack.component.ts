@@ -1,10 +1,11 @@
-import { Component, AfterViewInit, Input, OnDestroy, input, viewChild, OnInit } from "@angular/core";
+import { Component, AfterViewInit, Input, OnDestroy, viewChild, OnInit } from "@angular/core"; // Removed 'input' as it's not used directly here, viewChild is used
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { WidgetPieDoughnutComponent } from "./widget-pie-doughnut/widget-pie-doughnut.component";
 import { GsDashboardWidgetManagerService, WidgetConfig } from "./gs-dashboard-widget-manager.service";
 import {TableRow} from "src/app/dashboard/dashboard.service";
-import { Subscription } from 'rxjs';
+// import { Subscription } from 'rxjs'; // Not explicitly used
 import { CommonModule, NgIf} from "@angular/common";
+import { DashboardHeaderComponent } from "./dashboard-header/dashboard-header.component"; // Import the new header component
 
 import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget, elementCB, gsCreateNgComponents, nodesCB} from 'gridstack/dist/angular';
 import { GridStackWidget } from "gridstack/dist/types";
@@ -29,16 +30,16 @@ import {ExamplePieChartWidgetComponent} from "./example-pie-chart-widget/example
   styleUrls: ["./sb-gridstack.component.scss"],
   standalone: true,
   imports: [
-    CommonModule, NgIf, GridstackComponent, GridstackModule
+    CommonModule, NgIf, GridstackComponent, GridstackModule, DashboardHeaderComponent // Add DashboardHeaderComponent here
   ]
 })
 export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  title = 'Angular 17 Multiple Files Upload example';
+  // title = 'Angular 17 Multiple Files Upload example'; // This was not used
 
   private gridComp = viewChild(GridstackComponent);
 
-  private ids = 0;
+  private ids = 0; // Used for layout loading logic
   public showAddWidgetModal = false; // For managing the visibility of the add widget modal
 
   gridOptions: NgGridStackOptions = {
