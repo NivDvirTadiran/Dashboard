@@ -57,15 +57,9 @@
     <session-config>
         <session-timeout>10</session-timeout>
     </session-config>
-    <servlet>
-        <servlet-name>NLAStart</servlet-name>
-        <servlet-class>tadiran.webnla.servlet.NLAService</servlet-class>
-        <load-on-startup>5</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>NLAStart</servlet-name>
-        <url-pattern>/nlatRescan</url-pattern>
-    </servlet-mapping>
+
+    <!-- Removed DrawChart servlet configuration -->
+    <!--
     <servlet>
         <servlet-name>DrawChart</servlet-name>
         <servlet-class>tadiran.webnla.servlet.DrawChart</servlet-class>
@@ -74,6 +68,7 @@
         <servlet-name>DrawChart</servlet-name>
         <url-pattern>/drawChart</url-pattern>
     </servlet-mapping>
+    -->
 
     <context-param>
         <param-name>ACCVersion</param-name>

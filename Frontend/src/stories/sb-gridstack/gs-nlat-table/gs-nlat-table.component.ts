@@ -55,7 +55,7 @@ export class GsNlatTableComponent extends BaseWidget {
    */
   refreshWidget(widgetId: string): void {
     // Call the widget manager's refresh method for this specific widget
-    this.widgetManager.refreshWidget(widgetId);
+    //this.widgetManager.refreshWidget(widgetId);
   }
 
 }

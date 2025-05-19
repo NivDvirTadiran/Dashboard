@@ -1,6 +1,5 @@
 package tadiran.webnla.servlet;
 
-import jakarta.servlet.annotation.WebServlet;
 import org.springframework.core.io.ClassPathResource;
 import tadiran.emisweb.ApplicationKeepAliveRequestType;
 import tadiran.emisweb.ApplicationRegisterRequestType;
@@ -25,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
  * NLA loader class, initiated when webNLA application started at the first time
  * @author evgeniv
  */
-@WebServlet(urlPatterns = "/nlat",name = "NLAStart")
 public class NLAService extends HttpServlet {
 	private static final Logger log = LogManager.getLogger("NLAService");
 	private static EMISwebPort wsEMIS_port_P;

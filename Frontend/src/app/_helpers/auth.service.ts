@@ -6,7 +6,7 @@ import {AppConfig} from "../app.config";
 import {catchError, map} from "rxjs/operators";
 
 
-const AUTH_API = AppConfig.accServer.ACCWEBServers+ + '/Aeonix-App-Center/auth/';
+const AUTH_API = AppConfig.accServer.ACCWEBServers + '/Aeonix-App-Center/auth/';
 const API_URL = AppConfig.accServer.ACCWEBServers + '/accDashboard/auth/';
 
 

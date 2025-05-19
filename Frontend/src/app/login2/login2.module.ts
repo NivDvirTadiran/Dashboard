@@ -24,7 +24,7 @@ import {NgForOf} from "@angular/common";
     FormsModule,
     Background1Component,
     MatButton,
-    NgForOf,
+    NgForOf
   ],
   exports: [
 

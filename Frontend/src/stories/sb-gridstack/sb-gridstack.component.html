@@ -4,10 +4,6 @@
     <div class="dashboard-header">
       <h2>Contact Center Dashboard</h2>
       <div class="dashboard-controls">
-        <!-- Existing buttons for adding specific widgets -->
-        <button class="btn-refresh" (click)="this.addWidgetTable()" title="Add Signal-based Table Widget">
-          <i class="fas fa-table"></i> Add Table Widget
-        </button>
         <!-- New general Add Widget button (could open a modal or dropdown) -->
         <button class="btn-refresh" (click)="this.presentAddWidgetOptions()" title="Add New Widget">
           <i class="fas fa-puzzle-piece"></i> Add Widget
@@ -36,22 +32,20 @@
 <div *ngIf="showAddWidgetModal" class="add-widget-modal">
   <h4>Select Widget Type to Add</h4>
   <ul>
-    <li (click)="addWidgetByType('pie-chart')">Pie Chart</li>
-    <li (click)="addWidgetByType('doughnut')">Doughnut Chart</li>
-    <li (click)="addWidgetByType('agent-list-table')">Agent List Table</li>
-    <li (click)="addWidgetByType('group-list-table')">Group List Table</li>
-    <li (click)="addWidgetByType('brief-agents-data')">Brief Agents Data</li>
-    <li (click)="addWidgetByType('group-detail-full-info-table')">Group Detail Full Info</li>
-    <li (click)="addWidgetByType('group-abandoned-info')">Group Abandoned Info (Group 1)</li>
 
     <br>
-    <!--<li (click)="addWidgetByType('super-group-list-table')">Super Group List Table</li>-->
+    <li (click)="addExamplePieChartWidget()">Example Pie Chart Widget</li>
+    <li (click)="addChartWidget()">Chart Widget (API)</li>
     <li (click)="addSuperGroupListWidget()">Super Group List Table</li>
     <li (click)="addAgentsListWidget()">Agents List Table</li>
     <li (click)="addGroupListWidget()">Group List Table</li>
     <li (click)="addDnisListWidget()">DNIS List Table</li>
     <li (click)="addGroupDetailFullInfoWidget()">Group Detail Full Info</li>
     <li (click)="addGroupQueueInfoWidget()">Group Queue Info</li>
+    <li (click)="addGroupAgentsInfoWidget()">Group Agents Info</li>
+    <li (click)="addIvrApplicationInfoWidget()">IVR Application Info</li>
+    <li (click)="addIvrPortInfoWidget()">IVR Port Info</li>
+    <li (click)="addGroupAbandonedInfoWidget()">Group Abandoned Info</li>
     <!-- Add more widget types here -->
   </ul>
   <button (click)="showAddWidgetModal = false">Close</button>

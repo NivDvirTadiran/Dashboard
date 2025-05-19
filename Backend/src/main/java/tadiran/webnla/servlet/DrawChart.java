@@ -137,8 +137,7 @@ public class DrawChart extends HttpServlet {
         dataAxisProperties.setShowEndBorder(false);
     }
 
-    private DataSeries getChartDataSet(HttpServletRequest request, ChartType type) throws ChartDataException, UnsupportedEncodingException
-    {
+    private DataSeries getChartDataSet(HttpServletRequest request, ChartType type) throws ChartDataException, UnsupportedEncodingException, InterruptedException {
         String langName=(String)request.getSession().getAttribute("Accept-Language");
         String title;
         
@@ -305,8 +304,7 @@ public class DrawChart extends HttpServlet {
     }
 
     
-    private PieChartDataSet getPieChartDataSet(HttpServletRequest request) throws ChartDataException, UnsupportedEncodingException 
-    {
+    public PieChartDataSet getPieChartDataSet(HttpServletRequest request) throws ChartDataException, UnsupportedEncodingException, InterruptedException {
         String langName=(String)request.getSession().getAttribute("Accept-Language");
         String title=LocaleMessage.getMessage((String)request.getAttribute("title"),langName);
         

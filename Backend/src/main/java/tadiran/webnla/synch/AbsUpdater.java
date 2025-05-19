@@ -34,7 +34,7 @@ public abstract class AbsUpdater extends TimerTask {
 	protected HashMap collectionData;
     
     static {
-        log = LogManager.getLogger("NLAUpdater");
+        log = LogManager.getLogger("AbsUpdater");
         try {
             switch (NLAService.getConnectedServer()) {
                 case NLAService.PRIMARY_SERVER:
@@ -82,7 +82,7 @@ public abstract class AbsUpdater extends TimerTask {
         for (int i=0; i<sessions.size(); i++)
         {
             //log.info("Session(" + i + ":" + sessions.get(i).getHttpSession() + ") updateServerTime - " + server_time);
-            sessions.get(i).getHttpSession().setAttribute("accServerTime", server_time);
+            //sessions.get(i).getHttpSession().setAttribute("accServerTime", server_time);
         }
     }
     
@@ -180,7 +180,7 @@ public abstract class AbsUpdater extends TimerTask {
                 log.warn("NLAUpdater Cought Exception - " + e.getMessage());
                 try {
                     log.error("object update task error: "+e);
-                    if (log.isDebugEnabled())
+                    //if (log.isDebugEnabled())
                         e.printStackTrace();
                 }
                 catch(Exception e2) {

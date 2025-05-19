@@ -120,8 +120,7 @@ public class JFreeChartDrawChart extends HttpServlet {
         }
 
     
-        private PieDataset createPieChartDataset3D(HttpServletRequest request) 
-        {
+        private PieDataset createPieChartDataset3D(HttpServletRequest request) throws InterruptedException {
                 String[] fields = (String[])request.getAttribute("fields");
                 DefaultPieDataset dataset = new DefaultPieDataset( );
 

@@ -32,8 +32,7 @@ public abstract class AbsCollection
      * (also create updated if required)
      * @return HashMap
      */
-    public HashMap getData()
-    {
+    public HashMap getData() throws InterruptedException {
         if (collectionUpdaterInitialized==0)
         {
             collectionUpdaterInitialized=1;
@@ -47,11 +46,8 @@ public abstract class AbsCollection
         {
             synchronized(collection)
             {
-                try {
-                    log.trace("initial wait for collection data update...");
-                    collection.wait();
-                } catch (InterruptedException ex) {
-                }
+                log.info("initial wait for collection data update...");
+                //collection.wait();
             }
             collectionUpdaterInitialized=2;
         }

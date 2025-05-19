@@ -96,6 +96,8 @@ public class RefObject extends SimpleTagSupport
         }
         catch (java.lang.IllegalStateException ex) {
             log.error(ex);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

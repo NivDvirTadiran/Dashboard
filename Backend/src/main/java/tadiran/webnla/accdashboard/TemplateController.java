@@ -19,11 +19,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import tadiran.emisweb.*;
 import tadiran.webnla.AbsCollection;
 import tadiran.webnla.NLAContext;
-import tadiran.webnla.accdashboard.payload.*;
-import tadiran.webnla.accdashboard.payload.request.LoginRequest;
-import tadiran.webnla.accdashboard.payload.response.LoginInfoResponse;
-import tadiran.webnla.accdashboard.payload.response.ResponseMessage;
+import tadiran.webnla.accdashboard.payload.request.*;
+import tadiran.webnla.accdashboard.payload.response.*;
 import tadiran.webnla.bean.Agent;
+import tadiran.webnla.bean.SessionData;
 import tadiran.webnla.config.PropertiesManager;
 import tadiran.webnla.endpoint.EMISwebServiceClient;
 import tadiran.webnla.servlet.NLAService;
@@ -49,6 +48,16 @@ public class TemplateController {
 
     protected static EMISwebPort wsEMIS_port;
     private   static int updater_connected_server = NLAService.NOT_CONNECTED;
+
+    private static final Logger log = LogManager.getLogger("TemplateController");
+    private static String appId;
+    private LoginRequestType loginData = new LoginRequestType();
+    protected RequestInfoHeaderType reqHeader = new RequestInfoHeaderType();
+    //protected AbsCollection collection;
+    protected HashMap collectionData;
+    LoginReturnType loginResp = null;
+    long supLevel;
+    private GenRequestType reqData=new GenRequestType();
 
     AuthenticationManager authenticationManager;
 
@@ -307,15 +316,7 @@ public class TemplateController {
         }
     }
 
-    private static final Logger log = LogManager.getLogger("TemplateController");
-    private static String appId;
-    private LoginRequestType loginData = new LoginRequestType();
-    protected RequestInfoHeaderType reqHeader = new RequestInfoHeaderType();
-    protected AbsCollection collection;
-    protected HashMap collectionData;
-    LoginReturnType loginResp = null;
-    long supLevel;
-    private GenRequestType reqData=new GenRequestType();
+
     //EMISwebPort wsEMIS_port = null;
 
     @CrossOrigin(origins = "https://localhost:4200", allowedHeaders = "Requestor-Type", exposedHeaders = "X-Get-Header")
@@ -387,8 +388,17 @@ public class TemplateController {
                             .body(new LoginInfoResponse(
                                     user,
                                     sessionId)
-                            );//.body("{\"user\": \"" + user + "\"}");
+                            );
+
                     log.info("Create new SessionData");
+                    log.info("Create new SessionData");
+                    SessionData sessionData = new SessionData();
+                    if(!sessionData.isValid())
+                    {
+                        log.warn("sessionData Created is NOT VALID");
+                    }
+                    sessionData.init(loginData,loginResp);
+                    NLAContext.getInstance().getSessions().add(sessionData);
 
                     return resp;
                 }

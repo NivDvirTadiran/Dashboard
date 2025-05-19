@@ -123,7 +123,7 @@ export class DnisListWidgetComponent extends BaseWidget implements OnInit, OnDes
    */
   refreshWidget(widgetId: string): void {
     // Call the widget manager's refresh method for this specific widget
-    this.widgetManager.refreshWidget(widgetId);
+     this.updateGsWidget(this.widget.id);
   }
 
   ngOnDestroy(): void {

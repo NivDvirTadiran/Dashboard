@@ -1,10 +1,10 @@
 package tadiran.webnla;
 
+import tadiran.webnla.accdashboard.services.ChartService;
 import tadiran.webnla.bean.AbsDataClass;
 import tadiran.webnla.bean.Group;
 import tadiran.webnla.bean.IVRGroup;
 import tadiran.webnla.bean.PeriodData;
-import tadiran.webnla.bean.RCode;
 import tadiran.webnla.bean.SessionData;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class NLAContext
 {
-    private static final Logger log = LogManager.getLogger("NLAContext");
+    private static final Logger log = LogManager.getLogger(ChartService.class);
     public static String ACCServerAddress1;
     public static String ACCServerPort1;
     public static String ACCServerAddress2;
@@ -173,8 +173,7 @@ public class NLAContext
      * @param ref - objects name, for example: Groups or Group:1,Group:2
      * @return Map
      */
-    public Map<Integer,? extends AbsDataClass> getObjectMap(String ref)
-    {
+    public Map<Integer,? extends AbsDataClass> getObjectMap(String ref) throws InterruptedException {
         if (ref==null)
             return null;
 
@@ -240,10 +239,11 @@ public class NLAContext
      * @param name - object name, for example: Group:1
      * @return AbsDataClass
      */
-    public AbsDataClass getObject(String name)
-    {
+    public AbsDataClass getObject(String name) throws InterruptedException {
+
         if (name==null || name.indexOf(':')==-1)
             return null;
+
 
         String[] names=name.split("\\.");
         String[] objRef=names[0].split(":");

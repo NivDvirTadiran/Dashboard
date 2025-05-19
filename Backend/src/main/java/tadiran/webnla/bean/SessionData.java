@@ -31,7 +31,7 @@ public class SessionData
     private UpdaterTask ut;
 
     private static ServletContext ctx;
-    private static NLAContext nlaCtx=NLAContext.getInstance();
+    private static NLAContext nlaCtx = NLAContext.getInstance();
     private static final int MaxAgentsInBriefReport=NLAContext.MaxAgentsInBriefReport;
 
     private RequestInfoHeaderType reqHeader=new RequestInfoHeaderType();
@@ -76,6 +76,9 @@ public class SessionData
         }
     }
 
+    public SessionData() {
+
+    }
 
     public SessionData(ServletContext m_ctx, HttpSession session)
     {
@@ -223,11 +226,11 @@ public class SessionData
         DefaultWorkspaceReturnType workspaceResponceData=wsEMIS_port.defaultWorkspace(workspaceRequestData);
         this.userWorkspace = workspaceResponceData.getReturnArray();
         log.info("LOAD Workspace - Font Size " + workspaceResponceData.getFontSize() + ", Lang " + workspaceResponceData.getLanguage());
-        http_session.setAttribute("dynamicFrontSize", workspaceResponceData.getFontSize());
+        //http_session.setAttribute("dynamicFrontSize", workspaceResponceData.getFontSize());
         //12-Jul-2020 YR BZ#52732
         //http_session.setAttribute("Accept-Language", workspaceResponceData.getLanguage());
-        http_session.setAttribute("ws_dynamicFrontSize", workspaceResponceData.getFontSize());
-        http_session.setAttribute("ws_Accept-Language", workspaceResponceData.getLanguage());
+        //http_session.setAttribute("ws_dynamicFrontSize", workspaceResponceData.getFontSize());
+        //http_session.setAttribute("ws_Accept-Language", workspaceResponceData.getLanguage());
     }
 
     public List<DefaultWorkspaceItemType> getWorkspace() {

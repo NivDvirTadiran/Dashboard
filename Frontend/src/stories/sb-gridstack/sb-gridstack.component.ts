@@ -1,13 +1,10 @@
 import { Component, AfterViewInit, Input, OnDestroy, input, viewChild, OnInit } from "@angular/core";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { WidgetTableComponent } from "./widget-table/widget-table.component";
-import { WidgetPieChartComponent } from "./widget-pie-chart/widget-pie-chart.component";
 import { WidgetPieDoughnutComponent } from "./widget-pie-doughnut/widget-pie-doughnut.component";
 import { GsDashboardWidgetManagerService, WidgetConfig } from "./gs-dashboard-widget-manager.service";
 import {TableRow} from "src/app/dashboard/dashboard.service";
 import { Subscription } from 'rxjs';
 import { CommonModule, NgIf} from "@angular/common";
-import { GsWidgetComponent } from "./gs-widget/gs-widget.component";
 
 import {BaseWidget, GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget, elementCB, gsCreateNgComponents, nodesCB} from 'gridstack/dist/angular';
 import { GridStackWidget } from "gridstack/dist/types";
@@ -19,6 +16,12 @@ import {BriefAgentsWidgetComponent} from "./brief-agents-widget/brief-agents-wid
 import {DnisListWidgetComponent} from "./dnis-list-widget/dnis-list-widget.component";
 import {GroupDetailFullInfoWidgetComponent} from "./group-detail-full-info-widget/group-detail-full-info-widget.component";
 import {GroupQueueInfoWidgetComponent} from "./group-queue-info-widget/group-queue-info-widget.component";
+import {GroupAbandonedInfoWidgetComponent} from "./group-abandoned-info-widget/group-abandoned-info-widget.component";
+import {GroupAgentsInfoWidgetComponent} from "./group-agents-info-widget/group-agents-info-widget.component";
+import {IvrApplicationInfoWidgetComponent} from "./ivr-application-info-widget/ivr-application-info-widget.component";
+import {IvrPortInfoWidgetComponent} from "./ivr-port-info-widget/ivr-port-info-widget.component";
+import {ChartWidgetComponent} from "./chart-widget/chart-widget.component";
+import {ExamplePieChartWidgetComponent} from "./example-pie-chart-widget/example-pie-chart-widget.component";
 
 @Component({
   selector: "sb-gridstack",
@@ -52,7 +55,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     public widgetManager: GsDashboardWidgetManagerService
   ) {
     GridstackComponent.addComponentToSelectorType([
-      GsWidgetComponent,
       SuperGroupListWidgetComponent,
       GsNlatTableComponent,
       AgentsListWidgetComponent,
@@ -60,7 +62,13 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       BriefAgentsWidgetComponent,
       DnisListWidgetComponent,
       GroupDetailFullInfoWidgetComponent,
-      GroupQueueInfoWidgetComponent
+      GroupQueueInfoWidgetComponent,
+      GroupAbandonedInfoWidgetComponent,
+      GroupAgentsInfoWidgetComponent,
+      IvrApplicationInfoWidgetComponent,
+      IvrPortInfoWidgetComponent,
+      ChartWidgetComponent,
+      ExamplePieChartWidgetComponent
     ]);
   }
 
@@ -81,18 +89,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       ...this.newWidgetConfig
     } as WidgetConfig;
 
-/*    pieChartConfig: WidgetConfig = {
-      id: 'pie-chart-widget',
-      position: { x: 0, y: 2 }, // y is 0-based
-      type: 'pie-chart',
-      title: 'Pie-Chart Type Example',
-      dataSource: 'api/dashboard/pie-chart-data',
-      updateInterval: 30000, // Update every 30 seconds
-      resizable: true,
-      draggable: true,
-      ...this.newWidgetConfig
-    };*/
-
 
   setTableData(tableObj: TableRow[]) {
     this.tableObj = tableObj;
@@ -109,17 +105,182 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
-
-  addWidgetTable() {
-    this.addWidgetByType('agent-list-table');
-  }
-
   presentAddWidgetOptions(): void {
     this.showAddWidgetModal = true;
   }
 
+  saveLayout(): void {
+    const layout = this.gridComp()?.grid?.save(true, true);
+    if (layout) {
+      localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+      console.log('Dashboard layout saved.');
+    }
+  }
+
+  loadLayout(): void {
+    const savedLayout = localStorage.getItem('dashboardLayout');
+    if (savedLayout) {
+      try {
+        const layout = JSON.parse(savedLayout);
+        this.gridComp()?.grid?.load(layout);
+        console.log('Dashboard layout loaded.');
+        let maxId = 0;
+        if (Array.isArray(layout)) {
+          layout.forEach((node: any) => {
+            const nodeId = parseInt(node.id, 10);
+            if (!isNaN(nodeId) && nodeId > maxId) {
+              maxId = nodeId;
+            }
+          });
+        } else if (typeof layout === 'object' && layout !== null && Array.isArray(layout.children)) {
+          layout.children.forEach((node: any) => {
+            const nodeId = parseInt(node.id, 10);
+            if (!isNaN(nodeId) && nodeId > maxId) {
+              maxId = nodeId;
+            }
+          });
+        }
+        this.ids = maxId;
+      } catch (e) {
+        console.error('Error loading dashboard layout:', e);
+      }
+    }
+  }
 
 
+  items = ['Zero', 'One', 'Two'];
+  frames: any = [WidgetPieDoughnutComponent];
+  axes = ['both', 'x', 'y'];
+
+
+  ngAfterViewInit(): void {
+    if (this.gridComp()) {
+      this.widgetManager.setGridComponent(this.gridComp());
+    }
+    this.gridComp()?.grid.load(this.wItems)
+    this.registerWidgets();
+  }
+
+  ngOnDestroy(): void {
+  }
+
+  refreshWidget(widgetId: string): void {
+    //this.widgetManager.refreshWidget(widgetId);
+  }
+
+  refreshAllWidgets(): void {
+    this.widgetManager.getRegisteredWidgets().forEach(widget => {
+      console.log("refreshWidget: " + widget.id);
+      this.refreshWidget(widget.id);
+    });
+  }
+
+  getTableHeaders(widgetId: string): string[] {
+    const widgetState = this.widgetManager.getWidgetState(widgetId);
+    if (widgetState?.data && Array.isArray(widgetState.data) && widgetState.data.length > 0) {
+      return Object.keys(widgetState.data[0]).map(key => key.charAt(0).toUpperCase() + key.slice(1));
+    }
+    return [];
+  }
+
+  private registerWidgets(): void {
+
+    this.addExamplePieChartWidget();
+    this.addChartWidget(); // Add a default chart widget on init
+    this.addSuperGroupListWidget();
+    this.addAgentsListWidget();
+    this.addGroupListWidget();
+    this.addDnisListWidget();
+    this.addGroupDetailFullInfoWidget();
+    this.addGroupQueueInfoWidget();
+    this.addGroupAbandonedInfoWidget();
+    this.addGroupAgentsInfoWidget();
+    //this.addIvrApplicationInfoWidget();
+    //this.addIvrPortInfoWidget();
+  }
+
+
+
+  public addExamplePieChartWidget(): void {
+    const EXAMPLE_PIE_CHART_WIDGET_ID = 'example-pie-chart-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+    // const currentGridHeight = this.gridComp()?.grid?.getRow() || 0; // Not used if autoPosition is handled by initGsWidget
+
+    // Default settings for a chart widget, based on the provided example.
+    const chartSettings = {
+      type: '3Dpie',
+      refObjectName: 'Group:4',
+      keys: '6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24',
+      title: 'Email.Contacts_Distribution_Graph', // Title for chart generation API
+      size: '428x270'
+      // keys: 'status,count', // Temporarily removed
+      // refObjectName: 'agentStatusSummary' // Temporarily removed
+    };
+
+    newWidgetConfig = {
+      id: `${EXAMPLE_PIE_CHART_WIDGET_ID}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'example-pie-chart-widget', // This must match the selector of ChartWidgetComponent
+      title: 'Example Pie Chart', // This is the title displayed on the widget header
+      dataSource: 'api/chart/agentStatus', // Placeholder, actual endpoint is called by ChartWidgetComponent's service call
+      updateInterval: 60000, // e.g., 60 seconds
+      settings: chartSettings,
+      nlat: 'auto', // Placeholder for the required nlat property. Its actual meaning/use needs clarification.
+      // resizable: true, // Can be part of WidgetConfig
+      // draggable: true  // Can be part of WidgetConfig
+    };
+
+    // initGsWidget in GsDashboardWidgetManagerService will handle autoPositioning and default w/h (currently 2,1)
+    // If specific w/h are needed for chart-widget by default, initGsWidget should be modified
+    // or these properties should be added to NgGridStackWidget within initGsWidget based on config.type.
+    this.widgetManager.initGsWidget({
+      id: EXAMPLE_PIE_CHART_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
+  }
+
+  public addChartWidget(): void {
+    const CHART_WIDGET_ID_BASE = 'pie-chart-widget';
+    // const currentGridHeight = this.gridComp()?.grid?.getRow() || 0; // Not used if autoPosition is handled by initGsWidget
+
+    //type=3Dpie&refObjectName=Group:1&keys=20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13&title=Calls_Distribution_Graph&size=532x400&ts=0.9598353875845604
+
+    // Default settings for a chart widget, based on the provided example.
+    const chartSettings = {
+      type: '3Dpie',
+      refObjectName: 'Group:1',// refObjectName: 'agentStatusSummary' // Temporarily removed
+      keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',  // keys: 'status,count', // Temporarily removed
+      title: 'Calls_Distribution_Graph', // Title for chart generation API
+      size: '532x400'
+    };
+
+/*    const chartSettings = {
+      type: '3Dpie',
+      refObjectName: 'Group:4',// refObjectName: 'agentStatusSummary' // Temporarily removed
+      keys: '6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24',  // keys: 'status,count', // Temporarily removed
+      title: 'Email.Contacts_Distribution_Graph', // Title for chart generation API
+      size: '428x270'
+    };*/
+
+    const newWidgetConfig: WidgetConfig = {
+      id: `${CHART_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'chart-widget', // This must match the selector of ChartWidgetComponent
+      title: 'Agent Status Chart', // This is the title displayed on the widget header
+      dataSource: 'api/chart/agentStatus', // Placeholder, actual endpoint is called by ChartWidgetComponent's service call
+      updateInterval: 60000, // e.g., 60 seconds
+      settings: chartSettings,
+      nlat: 'auto', // Placeholder for the required nlat property. Its actual meaning/use needs clarification.
+      // resizable: true, // Can be part of WidgetConfig
+      // draggable: true  // Can be part of WidgetConfig
+    };
+
+    // initGsWidget in GsDashboardWidgetManagerService will handle autoPositioning and default w/h (currently 2,1)
+    // If specific w/h are needed for chart-widget by default, initGsWidget should be modified
+    // or these properties should be added to NgGridStackWidget within initGsWidget based on config.type.
+    this.widgetManager.initGsWidget(newWidgetConfig);
+    console.log(`Chart widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized with settings:`, chartSettings);
+  }
 
   public addSuperGroupListWidget(): void {
     const SUPER_GROUP_LIST_WIDGET_ID = 'super-group-list-table';
@@ -217,7 +378,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     } as WidgetConfig);
   }
 
-  addGroupQueueInfoWidget() {
+  public addGroupQueueInfoWidget() {
     const GROUP_QUEUE_INFO_WIDGET_ID = 'group-queue-info-widget';
     let newWidgetConfig: Partial<WidgetConfig> = {};
     const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
@@ -237,216 +398,84 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     } as WidgetConfig);
   }
 
-
-
-  public addWidgetByType(type: string): void {
+  public addGroupAgentsInfoWidget(): void {
+    const GROUP_AGENTS_INFO_WIDGET_ID = 'group-agents-info-widget';
     let newWidgetConfig: Partial<WidgetConfig> = {};
     const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
 
-    switch (type) {
-      case 'pie-chart':
-        newWidgetConfig = {
-          type: 'pie-chart',
-          title: 'New Pie Chart',
-          dataSource: 'mock-pie-data',
-          updateInterval: 60000
-        };
-        break;
-      case 'doughnut':
-        newWidgetConfig = {
-          type: 'doughnut',
-          title: 'New Doughnut Chart',
-          dataSource: 'mock-doughnut-data',
-          updateInterval: 60000,
-        };
-        break;
-      case 'agent-list-table':
-        newWidgetConfig = {
-          type: 'agent-list-table',
-          title: 'Agent Status Table',
-          dataSource: 'AgentList',
-          updateInterval: 15000,
-        };
-        break;
-      case 'group-list-table':
-        newWidgetConfig = {
-          type: 'group-list-table',
-          title: 'Group Status Table',
-          dataSource: 'GroupList',
-          updateInterval: 15000
-        };
-        break;
-      case 'brief-agents-data':
-        newWidgetConfig = {
-          type: 'brief-agents-data',
-          title: 'Brief Agents Data',
-          dataSource: 'BriefAgents', // Or modernized API endpoint
-          updateInterval: 20000
-        };
-        break;
-      case 'super-group-list-table':
-        newWidgetConfig = {
-          type: 'super-group-list-table',
-          title: 'Super Group Status',
-          dataSource: 'modernized-api-super-groups',
-          updateInterval: 30000
-        };
-        break;
-      case 'group-abandoned-info': // This one needs a groupId
-        newWidgetConfig = {
-          type: 'group-abandoned-info',
-          title: 'Group Abandoned Calls (Example Group 1)', // Title might be dynamic
-          dataSource: 'group/{id}/abandoned-info',
-          updateInterval: 45000,
-          settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
-        };
-        break;
-      case 'group-detail-full-info-table':
-        newWidgetConfig = {
-          type: 'group-detail-full-info-table',
-          title: 'Group Detail Full Info',
-          dataSource: 'GroupDetailFullInfo',
-          updateInterval: 15000,
-          settings: { groupId: 1 }
-        };
-        break;
-      case 'dnis-list-table':
-        newWidgetConfig = {
-          type: 'dnis-list-table',
-          title: 'DNIS Status Table',
-          dataSource: 'DnisList',
-          updateInterval: 15000
-        };
-        break;
-      default:
-        console.warn('Unknown widget type:', type);
-        return;
-    }
+    newWidgetConfig = {
+      type: 'group-agents-info-widget',
+      title: 'Group Agents Info',
+      dataSource: 'GroupAgentsInfo',
+      updateInterval: 6000,
+      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
+    };
 
-    const fullConfig: WidgetConfig = {
-      id: type + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+    this.widgetManager.initGsWidget({
+      id: GROUP_AGENTS_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       position: { x: 0, y: currentGridHeight }, // y is 0-based
       ...newWidgetConfig
-    } as WidgetConfig;
-
-    this.widgetManager.registerWidget(fullConfig).subscribe(data => {
-      console.log(`Widget ${fullConfig.id} of type ${type} added and received data/state:`, data);
-    });
+    } as WidgetConfig);
   }
 
-  saveLayout(): void {
-    const layout = this.gridComp()?.grid?.save(true, true);
-    if (layout) {
-      localStorage.setItem('dashboardLayout', JSON.stringify(layout));
-      console.log('Dashboard layout saved.');
-    }
+  public addIvrApplicationInfoWidget(): void {
+    const IVR_APPLICATION_INFO_WIDGET_ID = 'ivr-application-info-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'ivr-application-info-widget',
+      title: 'IVR Application Info',
+      dataSource: 'IvrApplicationInfo',
+      updateInterval: 6000,
+      settings: { ivrId: 1 } // Example: Default to IVR ID 1, or prompt user
+    };
+
+    this.widgetManager.initGsWidget({
+      id: IVR_APPLICATION_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
   }
 
-  loadLayout(): void {
-    const savedLayout = localStorage.getItem('dashboardLayout');
-    if (savedLayout) {
-      try {
-        const layout = JSON.parse(savedLayout);
-        this.gridComp()?.grid?.load(layout);
-        console.log('Dashboard layout loaded.');
-        let maxId = 0;
-        if (Array.isArray(layout)) {
-          layout.forEach((node: any) => {
-            const nodeId = parseInt(node.id, 10);
-            if (!isNaN(nodeId) && nodeId > maxId) {
-              maxId = nodeId;
-            }
-          });
-        } else if (typeof layout === 'object' && layout !== null && Array.isArray(layout.children)) {
-          layout.children.forEach((node: any) => {
-            const nodeId = parseInt(node.id, 10);
-            if (!isNaN(nodeId) && nodeId > maxId) {
-              maxId = nodeId;
-            }
-          });
-        }
-        this.ids = maxId;
-      } catch (e) {
-        console.error('Error loading dashboard layout:', e);
-      }
-    }
+  public addIvrPortInfoWidget(): void {
+    const IVR_PORT_INFO_WIDGET_ID = 'ivr-port-info-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    newWidgetConfig = {
+      type: 'ivr-port-info-widget',
+      title: 'IVR Port Info',
+      dataSource: 'IvrPortInfo',
+      updateInterval: 6000,
+      settings: { portId: 1 } // Example: Default to Port ID 1, or prompt user
+    };
+
+    this.widgetManager.initGsWidget({
+      id: IVR_PORT_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
   }
 
-  private subscriptions: Map<string, Subscription> = new Map();
-  widgetData: Map<string, any> = new Map();
+  public addGroupAbandonedInfoWidget(): void {
+    const GROUP_ABANDONED_INFO_WIDGET_ID = 'group-abandoned-info-widget';
+    let newWidgetConfig: Partial<WidgetConfig> = {};
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
 
-  items = ['Zero', 'One', 'Two'];
-  frames: any = [WidgetTableComponent, WidgetPieChartComponent, WidgetPieDoughnutComponent];
-  axes = ['both', 'x', 'y'];
+    newWidgetConfig = {
+      type: 'group-abandoned-info-widget',
+      title: 'Group Abandoned Info',
+      dataSource: 'GroupAbandonedInfo',
+      updateInterval: 6000,
+      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
+    };
 
-  defaultWidth = 20;
-  defaultHeight = 26;
-
-  ngAfterViewInit(): void {
-    if (this.gridComp()) {
-      this.widgetManager.setGridComponent(this.gridComp());
-    }
-    this.gridComp()?.grid.load(this.wItems)
-    this.registerWidgets();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    ['table-widget', 'pie-chart-widget', 'doughnut-widget'].forEach(id => {
-      this.widgetManager.unregisterWidget(id);
-    });
-  }
-
-  refreshWidget(widgetId: string): void {
-    this.widgetManager.refreshWidget(widgetId);
-  }
-
-  refreshAllWidgets(): void {
-    this.widgetManager.getRegisteredWidgets().forEach(widget => {
-      console.log("refreshWidget: " + widget.id);
-    });
-    this.widgetManager.getRegisteredWidgets().forEach(widget => {
-      this.refreshWidget(widget.id);
-    });
-  }
-
-  getTableHeaders(widgetId: string): string[] {
-    const widgetState = this.widgetManager.getWidgetState(widgetId);
-    if (widgetState?.data && Array.isArray(widgetState.data) && widgetState.data.length > 0) {
-      return Object.keys(widgetState.data[0]).map(key => key.charAt(0).toUpperCase() + key.slice(1));
-    }
-    return [];
-  }
-
-  private registerWidgets(): void {
-    //this.addWidgetByType('pie-chart');
-    //this.addWidgetByType('doughnut');
-    //this.addWidgetByType('agent-list-table');
-    //this.addWidgetByType('group-list-table');
-    //this.addWidgetByType('brief-agents-data');
-    // For group-abandoned-info, it might be better to add it manually via UI
-    // as it requires a specific group ID. Or add a default one:
-    //this.addWidgetByType('group-abandoned-info');
-
-    this.addSuperGroupListWidget();
-    this.addAgentsListWidget();
-    this.addGroupListWidget();
-    this.addDnisListWidget();
-    this.addGroupDetailFullInfoWidget();
-    this.addGroupQueueInfoWidget();
-  }
-
-
-  private subscribeToWidget(config: WidgetConfig): void {
-    const subscription = this.widgetManager.registerWidget(config)
-      .subscribe( data => {
-        if (data) {
-          this.widgetData.set(config.id, data);
-          this.updateWidgetDisplay(config.id, data);
-        }
-      });
-
-    this.subscriptions.set(config.id, subscription);
+    this.widgetManager.initGsWidget({
+      id: GROUP_ABANDONED_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      ...newWidgetConfig
+    } as WidgetConfig);
   }
 
   private updateWidgetDisplay(widgetId: string, data: any): void {
@@ -455,12 +484,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  drop(event: CdkDragDrop<string[]>): void {
-    moveItemInArray(this.frames, event.previousIndex, event.currentIndex);
-    this.updateWidgetPositions();
-  }
-
-  updateWidgetPositions(): void {}
 
 
 }

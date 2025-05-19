@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map, throwError } from 'rxjs';
+import {AppConfig} from "../app.config";
 
 // Define interfaces based on WSDL (ensure these match the actual structure from WSDL/Java types)
 
@@ -114,6 +115,16 @@ export interface GroupDetailInfoResponseType {
   returnArrayOfBlocks: GroupDetailInfoDataItemType[];
 }
 
+// Interface for Chart parameters
+export interface ChartRequestParams {
+  type?: string;
+  title?: string;
+  keys?: string;
+  size?: string;
+  refObjectName?: string;
+  // Add any other parameters the chart endpoint might need
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -122,7 +133,8 @@ export class EmisSoapService {
   // The base path for these proxied SOAP calls should align with TemplateController's @RequestMapping
   // If TemplateController is under "/auth", and new endpoints are "/api/soap/...",
   // then the full path is like "/auth/api/soap/OperationName"
-  private basePath = 'accDashboard/auth/api/soap'; // For existing SOAP proxied calls
+  private basePath = AppConfig.accServer.ACCWEBServers + '/accDashboard/auth/api/soap'; // For existing SOAP proxied calls
+  private chartBasePath = AppConfig.accServer.ACCWEBServers + '/accDashboard/auth'; // For non-SOAP calls like chart
 
   constructor(private http: HttpClient) { }
 
@@ -274,4 +286,22 @@ export class EmisSoapService {
   }
   // Add other soap API calls here as needed...
 
+  getChart(params: ChartRequestParams): Observable<Blob> {
+    return this.http.get(`${this.chartBasePath}/chart`, {
+      params: { ...params }, // Spread parameters into HttpParams
+      responseType: 'blob'   // Expect a Blob response (image data)
+    }).pipe(
+      map(response => {
+        if (!response) {
+          console.error('Chart data response is null or undefined');
+          throw new Error('Failed to load chart: No data received');
+        }
+        return response;
+      }),
+      catchError(err => {
+        console.error('Error fetching chart data in EmisSoapService:', err);
+        return throwError(() => new Error(`Failed to load chart: ${err.message || 'Server error'}`));
+      })
+    );
+  }
 }

@@ -126,7 +126,7 @@ public class GroupsUpdater extends AbsUpdater
 
             //10-Aug-2022 YR BZ#56641
             //log.info("GroupsUpdater:onUpdate - ServerInfo " + result[i].getResponseInfoHeader().getServersInfo());
-            super.updateServerTime(result[1].getResponseInfoHeader().getServersInfo());
+            //super.updateServerTime(result[1].getResponseInfoHeader().getServersInfo());
         
             // update groups data
             BlockItemType groupItem;
