@@ -1,0 +1,98 @@
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.loading-text {
+  font-family: Poppins, sans-serif;
+  color: rgb(59, 78, 141);
+  animation: blink 1s ease-in-out infinite;
+}
+
+.spinner-container {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.32);
+  z-index: 2000;
+}
+
+
+$speed: 1s;
+$rotation-style: cubic-bezier(0.41,-0.01, 0.58, 1);
+//$rotation-style: linear;
+$perspective: 1000px;
+$boxsize: 100px;
+$size: 50px;
+
+
+.box {
+
+  display: flex;
+  --strip-size: 100px;
+  width: $boxsize;
+  aspect-ratio: 1;
+  transform-origin: center;
+  perspective: $perspective;
+  animation-iteration-count:infinite;
+  align-items: center;
+  justify-content: center;
+}
+
+.box1 {
+  position: absolute;
+  --strip-size: 400px;
+  width: $size;
+  aspect-ratio: calc(3 / 2);
+  transform: rotate3d(1, 0, 0.6, 180deg);
+  perspective: $perspective;
+}
+
+.box2 {
+  position: absolute;
+  --strip-size: 400px;
+  width: $size;
+  aspect-ratio: calc(3 / 2);
+  transform: rotate3d(1, -0.5, 0, 63deg);
+  perspective: $perspective;
+}
+
+.box3 {
+  position: absolute;
+  --strip-size: 400px;
+  width: $size;
+  aspect-ratio: calc(3 / 2);
+  transform: rotate3d(-1, 0, 1, 90deg);
+  perspective: $perspective;
+}
+
+
+.face {
+  /*position: absolute;*/
+  transform-origin: center;
+
+  /*
+    perspective-origin: center;*/
+
+  /*width: 500px;
+  height: 500px;*/
+  aspect-ratio: 1;
+  border-radius: 100%;
+  /*box-shadow: 35px -35px 20px 2px rgb(33, 94, 151, 0),
+  rgb(177, 208, 239) 12px -11px 7px 11px,
+  rgb(108, 159, 211) 7px -13px 7px 9px,
+  rgb(108, 159, 211) 7px -13px 7px 9px,
+  rgb(3, 139, 206) 7px -13px 7px 9px;*/
+  /*box-shadow: 30px -35px 20px 2px rgb(33, 94, 151, 0),
+  rgba(33, 94, 151, 1) 2px -60px 2px 4px;*/
+   box-shadow: rgb(59, 78, 141) 0px 2px 4px,
+   rgb(59, 78, 141) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
