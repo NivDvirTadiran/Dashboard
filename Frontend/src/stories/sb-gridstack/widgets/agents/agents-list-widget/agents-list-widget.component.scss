@@ -1,0 +1,90 @@
+@use "stories/sb-gridstack/tokens";
+
+.table {
+  width: 100%;
+  border-collapse: separate; // Use separate for border-spacing
+  border-spacing: 0;
+  font-family: 'Noto Sans Hebrew', sans-serif; // Default from Figma
+  background-color: #fff;
+
+  th, td {
+    padding: 5px 10px; // Adjusted padding, Figma has 5px bottom padding on header row items
+    vertical-align: middle;
+    text-align: center; // Figma style_OI80L5 (data cells), style_KDFUZU (some headers)
+    border-bottom: 1px solid #DFF0FF; // from Figma stroke_39VFP2
+
+    &:first-child {
+      padding-left: 15px; // Adjust as needed
+    }
+
+    &:last-child {
+      padding-right: 15px; // Adjust as needed
+    }
+  }
+
+  th {
+    font-family: 'Noto Sans Hebrew', sans-serif; // from Figma
+    font-weight: 700; // from Figma style_5UDK8B, style_KDFUZU
+    font-size: 12px; // from Figma style_5UDK8B, style_KDFUZU
+    color: #2E2E2E; // from Figma fill_285L54
+    background-color: #fff; // Figma shows white background
+    border-bottom-width: 1px; // Figma stroke_39VFP2 is 1px
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    line-height: 1.36; // from Figma
+    letter-spacing: -0.011em; // from Figma
+     // text-align will be mostly center, can be overridden for specific columns if needed
+     // e.g., some headers in Figma are right-aligned (style_5UDK8B)
+  }
+
+  // Specific alignment for right-aligned headers if needed by index or class
+  // For example, the first column 'שם משתמש' (Username) and 'סטטוס' (Status) might be left/right aligned
+  // th:nth-child(1), th:nth-child(2) { text-align: right; } // Example for RTL context if needed
+
+  tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(223, 240, 255, 0.5); // Lighter version of #DFF0FF for hover
+    }
+
+    // Figma doesn't specify alternating row colors, so removing for now
+    // &:nth-child(even) {
+    //   background-color: var(--table-row-even-bg, #f9fbfd);
+    // }
+  }
+
+  td {
+    font-family: 'Noto Sans Hebrew', sans-serif; // from Figma style_OI80L5
+    font-size: 12px; // from Figma style_OI80L5
+    color: #2E2E2E; // Default from Figma fill_285L54
+    line-height: 1.36; // from Figma style_OI80L5
+    letter-spacing: -0.011em; // from Figma style_OI80L5
+
+    // For highlighted data like '4.3' or times
+    &.highlighted-data {
+      color: #43A5FF; // from Figma fill_AHPZO0
+    }
+
+    // Styling for the status cell with icon and text
+    &.status-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center; // Since general text-align is center
+      gap: 4px; // from Figma layout_1HELEO
+
+      .status-icon {
+        width: 14px; // Adjust size as needed, Figma icons are around this
+        height: 14px; // Adjust size as needed
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+  }
+}

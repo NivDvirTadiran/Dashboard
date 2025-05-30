@@ -37,7 +37,9 @@ public class RCodes extends AbsCollection {
 			RCode rcode=new RCode(id);
 			collection.put(id, rcode);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

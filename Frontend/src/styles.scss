@@ -97,8 +97,42 @@ gridstack {
 
 gridstack-item {
   text-align: center;
-  background-color: var(--widget-bg);
+  //background-color: var(--widget-bg);
 }
+
+
+.grid-stack {
+  > .grid-stack-item {
+
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    > div {border-radius: var(--widget-radius);}
+  }
+}
+
+.grid-stack {
+  > .grid-stack-item > .grid-stack-item-content,
+  > .grid-stack-placeholder > .placeholder-content {
+    background: #fff;
+    position: static !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    //overflow: auto;
+    top: var(--gs-item-margin-top);
+    right: var(--gs-item-margin-right);
+    bottom: var(--gs-item-margin-bottom);
+    left: var(--gs-item-margin-left);
+  }
+}
+
+tbody {
+  //position: absolute;
+  overflow: scroll;
+}
+
 
 /* Global CSS variables for the dashboard components */
 :root {

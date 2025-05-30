@@ -641,9 +641,9 @@ public class TemplateController {
         return this.reqHeader != null && this.reqHeader.getTicket() != null && !this.reqHeader.getTicket().isEmpty();
     }
 
-    @GetMapping("/api/soap/BriefAgents")
-    public ResponseEntity<?> getBriefAgentsProxy() {
-        logger.info("Received request for BriefAgents proxy");
+    @GetMapping("/api/soap/brief-agents")
+    public ResponseEntity<?> getBriefAgentsProxy(@RequestParam(name = "agentIds", required = false) String agentIdsParam) {
+        logger.info("Received request for BriefAgents proxy. Requested agentIds: {}", agentIdsParam);
         try {
             if (wsEMIS_port == null) {
                 wsEMIS_port = establishServerConnection();
@@ -665,13 +665,72 @@ public class TemplateController {
                 return new ResponseEntity<>("Invalid response from SOAP service for BriefAgents", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             if (response.getResponseInfoHeader().getErrorCause() != 0) {
-                logger.error("SOAP error in BriefAgents response: " + response.getResponseInfoHeader().getErrorCause() + " Info: " + response.getResponseInfoHeader().getServersInfo());
+                logger.error("SOAP error in BriefAgents response: {} Info: {}", response.getResponseInfoHeader().getErrorCause(), response.getResponseInfoHeader().getServersInfo());
                 return new ResponseEntity<>("SOAP service error (BriefAgents): " + response.getResponseInfoHeader().getErrorCause(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            // Filter if agentIdsParam is provided
+            if (agentIdsParam != null && !agentIdsParam.isEmpty()) {
+                Set<String> requestedAgentIds = Arrays.stream(agentIdsParam.split(","))
+                                                     .map(String::trim)
+                                                     .collect(Collectors.toSet());
+                if (!requestedAgentIds.isEmpty()) {
+                    logger.info("Filtering BriefAgents data for agent IDs: {}", requestedAgentIds);
+                    List<DataItemRow> filteredMatrix = response.getReturnMatrix().stream()
+                        .filter(dataItemRow -> {
+                            if (dataItemRow == null || dataItemRow.getReturnArray() == null || dataItemRow.getReturnArray().isEmpty()) {
+                                return false;
+                            }
+                            // Let's assume "Agent No." (ersname) or its corresponding value holds the ID.
+                            // The ersid for "Agent No." might be "ER_AGENT_NUM" or similar.
+                            // Example: value might be "xxx;fAgent No.;Agent No.;1001"
+                            for (DataItemType item : dataItemRow.getReturnArray()) {
+                                if (item != null && item.getErsid() != null && Objects.equals(item.getErsname(), "ALL") && item.getValue() != null) {
+                                    logger.info("item(DataItemType): ersid-{}, ersname-{}, value-{}",
+                                            item.getErsid(),item.getErsname(),item.getValue());
+                                    // The value of field 'value' contain long string with many column,
+                                    // one after another, that separated by the char symbol `,`.
+                                    // Assuming the ID column value can be found in one of the columns objects
+                                    // within the long string of field 'value'.
+                                    // We need to identify which column content data represents the Key ID.
+                                    String[] columns = item.getValue().split(",");
+                                    String column = Arrays.stream(columns)
+                                            .filter(col -> col.contains(item.getErsid()))
+                                            .findFirst()
+                                            .orElse(null);
+                                    assert column != null;
+                                    String[] fields = column.split(";");
+                                    // fields[0] = ersId (e.g., 0)
+                                    // fields[1] = "f" + ersname (e.g., f6_3_2_1_0)
+                                    // fields[2] = ersname (e.g., Agent Id)
+                                    // fields[3] = actual value (e.g., 1)
+                                    if (fields.length >= 4) {
+                                        String fieldId = fields[1];
+                                        String fieldName = fields[2];
+                                        String fieldValue = fields[3];
+                                        // verify again that the fieldId matches the requested agent IDs
+                                        if (item.getErsid().equalsIgnoreCase(fieldId) && requestedAgentIds.contains(fieldValue)) {
+                                            return true; // This row matches one of the requested agent IDs
+                                        }
+                                    }
+                                }
+                            }
+                            return false; // Row does not match any requested agent ID
+                        })
+                        .collect(Collectors.toList());
+                    
+                    ReturnMatrixDataTypeBG filteredResponse = new ReturnMatrixDataTypeBG();
+                    filteredResponse.setResponseInfoHeader(response.getResponseInfoHeader());
+                    filteredResponse.getReturnMatrix().addAll(filteredMatrix);
+                    logger.info("Filtered BriefAgents. Original rows: {}, Filtered rows: {}", response.getReturnMatrix().size(), filteredMatrix.size());
+                    return new ResponseEntity<>(filteredResponse, HttpStatus.OK);
+                }
+            }
+            // If no filtering needed or agentIdsParam is empty, return original response
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error calling BriefAgents SOAP operation", e);
-            wsEMIS_port = null;
+            wsEMIS_port = null; // Consider resetting on error
             return new ResponseEntity<>("Failed to fetch brief agents data: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -961,9 +1020,9 @@ public class TemplateController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping("/api/soap/voice-dnis")
+    @GetMapping("/api/soap/brief-dnis")
     public ResponseEntity<?> getVoiceDnisList() {
-        logger.info("Received request for /api/modernized/voice-dnis");
+        logger.info("Received request for /api/modernized/brief-dnis");
 
         if (wsEMIS_port == null) {
             try {
@@ -979,7 +1038,7 @@ public class TemplateController {
 
         RequestInfoHeaderType currentAuthHeader = getRequestInfoHeader();
         if (currentAuthHeader == null || currentAuthHeader.getTicket() == null || currentAuthHeader.getTicket().isEmpty() || "placeholder_ticket".equals(currentAuthHeader.getTicket())) {
-            logger.warn("RequestInfoHeader is missing or has placeholder ticket for /voice-dnis. Authentication required.");
+            logger.warn("RequestInfoHeader is missing or has placeholder ticket for /brief-dnis. Authentication required.");
             return new ResponseEntity<>("User not authenticated or session expired. Please login again.", HttpStatus.UNAUTHORIZED);
         }
 

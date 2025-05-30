@@ -34,7 +34,9 @@ public class SuperGroupPeriods extends AbsCollection
             log.debug("NLA SuperGroupPeriods collection ADD period id="+id);
             PeriodData period=new PeriodData(id);
             collection.put(id, period);
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
         }
     }
 

@@ -19,6 +19,6 @@
 <!-- New Add Widget Menu Component -->
 <app-add-widget-menu
   *ngIf="showAddWidgetModal"
-  (widgetSelected)="onWidgetSelected($event)"
+  (widgetsSelected)="onWidgetSelected($event)"
   (closeMenu)="showAddWidgetModal = false">
 </app-add-widget-menu>

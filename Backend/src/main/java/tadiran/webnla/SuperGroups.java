@@ -30,7 +30,9 @@ public class SuperGroups extends AbsCollection {
 			SuperGroup superGroup=new SuperGroup(id);
 			collection.put(id, superGroup);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

@@ -1,0 +1,45 @@
+.widget-category {
+  margin-bottom: 0;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  height: auto;
+  border-bottom: 1px solid #DFF0FF;
+  cursor: pointer;
+  background-color: #FFFFFF;
+}
+
+.toggle-icon {
+  color: #2E2E2E;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.category-icon {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #2E2E2E;
+}
+
+.category-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #2E2E2E;
+  flex-grow: 1;
+}
+
+.widget-count {
+  font-size: 14px;
+  color: #43A5FF;
+}
+
+.category-content {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  background-color: #F8FBFE;
+}

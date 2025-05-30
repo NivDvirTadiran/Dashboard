@@ -55,12 +55,12 @@ public class GroupsUpdater extends AbsUpdater
         String ticket = reqData.getRequestInfoHeader().getTicket();
 
         //30-Oct-2022 YR BZ#55845
-        if(ticket.isEmpty())
-        {
-            log.warn("GroupsUpdater:onUpdate TICKET is EMPTY.  Trying reconnect...");
-            reconnect();
-            return;
-        }
+        //if(ticket.isEmpty())
+        //{
+        //    log.warn("GroupsUpdater:onUpdate TICKET is EMPTY.  Trying reconnect...");
+        //    reconnect();
+        //    return;
+        //}
         
         List<Long> groupIdsData= reqData.getId();
         // get active groups ids

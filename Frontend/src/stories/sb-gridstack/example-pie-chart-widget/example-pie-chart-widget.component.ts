@@ -1,158 +1,77 @@
-import {Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
-import {BaseWidget} from 'gridstack/dist/angular';
-import {BehaviorSubject, interval, Observable, Subject, takeUntil, retry, catchError, throwError, shareReplay, map } from 'rxjs';
-import { Chart, ChartOptions } from 'chart.js';
-
-import {SbGridstackComponent} from "../sb-gridstack.component";
-import {FrameComponent} from "./frame-component/frame-component.component";
-import {StatusFilterComponent} from "./status-filter/status-filter.component";
-import {CommonModule, NgIf } from "@angular/common";
-import {GsDashboardWidgetManagerService, WidgetConfig} from "../gs-dashboard-widget-manager.service";
-import {ChartRequestParams, EmisSoapService} from "../../../app/services/emis-soap.service";
-
-const EXAMPLE_PIE_CHART_WIDGET_ID = 'example-pie-chart-widget';
+import { Component, HostBinding, OnDestroy } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import { GsDashboardWidgetManagerService, WidgetConfig } from '../gs-dashboard-widget-manager.service';
+import { GSBaseWidget } from '../base-widget/base-widget.component';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { EmisSoapService, ChartRequestParams } from '../../../app/services/emis-soap.service';
+import { FrameComponent } from './frame-component/frame-component.component';
+import { StatusFilterComponent } from './status-filter/status-filter.component';
 
 @Component({
-  selector: "example-pie-chart-widget",
-  templateUrl: "./example-pie-chart-widget.component.html",
-  styleUrls: ["./example-pie-chart-widget.component.scss"],
+  selector: 'example-pie-chart-widget',
+  templateUrl: './example-pie-chart-widget.component.html',
+  styleUrls: ['./example-pie-chart-widget.component.scss'],
   standalone: true,
-  imports: [FrameComponent, StatusFilterComponent, NgIf, CommonModule]
+  imports: [FrameComponent, StatusFilterComponent, NgIf, CommonModule, GSBaseWidget]
 })
-export class ExamplePieChartWidgetComponent extends BaseWidget implements OnInit, OnDestroy {
-    @HostBinding("style.display") display = "contents";
+export class ExamplePieChartWidgetComponent extends GSBaseWidget implements OnDestroy {
+  @HostBinding('style.display') display = 'contents';
 
-    @Input() widget!: WidgetConfig;
+  // These inputs are likely for Storybook or specific internal logic, not directly tied to BaseWidget
+  // They should be kept if still used within the component's specific template/logic.
+  // For now, assuming they are still needed.
+  showWidgetPieChart: boolean = true;
+  prop: string = 'קריאות שנפתחו לפי ערוצים';
+  showDiv: boolean = true;
+  property1: number = 1;
+  state: string = 'Default';
 
+  constructor(
+    protected override widgetManager: GsDashboardWidgetManagerService,
+    public override emisSoapService: EmisSoapService
+  ) {
+    super(widgetManager);
+    console.log('constructor ExamplePieChartWidgetComponent');
+  }
 
+  public override fetchData(): void {
+    if (this.widget && this.widget.state) {
+      this.widget.state.loading = true;
+      this.widget.state.error = undefined;
 
-    widgetSubject: BehaviorSubject<any> = null;
-    stopSignal: Subject<void> = null;
-    lastUpdate: number;
+      const chartParams: ChartRequestParams = this.widget.settings || {};
 
-    constructor(public widgetManager: GsDashboardWidgetManagerService,
-                //public parent: SbGridstackComponent,
-                private emisSoapService: EmisSoapService) {
-      super();
-
-      console.log("constructor ExamplePieChartWidgetComponent");
-
-    }
-
-
-    /** Value props */
-    @Input() showWidgetPieChart: boolean = true;
-    @Input() prop: string = "קריאות שנפתחו לפי ערוצים";
-    @Input() showDiv: boolean = true;
-    /** Variant props */
-    @Input() property1: number = 1;
-    @Input() state: string = "Default";
-
-
-    ngOnInit(): void {
-      this.registerGsWidget(this.widget)
-        .subscribe(data => {
-          console.log(`Widget ${this.widget.id} of type ${EXAMPLE_PIE_CHART_WIDGET_ID} added and received data/state:`, data);
-        });
-    }
-
-    registerGsWidget(config: WidgetConfig): Observable<any> {
-      if (!this.widgetSubject) {
-        // Create BehaviorSubject for this widget
-        this.widgetSubject = new BehaviorSubject<any>(null);
-
-        // Create unsubscribe subject for this widget
-        this.stopSignal = new Subject<void>();
-
-        // Set up initial data fetch
-        this.updateGsWidget(this.widget.id);
-
-        // Set up periodic data fetching
-        interval(config.updateInterval)
-          .pipe(
-            takeUntil(this.stopSignal),
-            retry(3),
-            catchError(error => {
-              console.error(`Widget ${config.id} update failed:`, error);
-              return throwError(() => error);
-            }),
-            shareReplay(1)
-          )
-          .subscribe(() => this.updateGsWidget(this.widget.id));
-      }
-
-      return this.widgetSubject.asObservable();
-    }
-
-
-    public updateGsWidget(widgetId: string) {
-      const config = this.widget;
-      //const state = config.state;
-
-      if (config && config.state) {
-        config.state.loading = true;
-
-        // Update the active widget BehaviorSubject with current state
-        this.widgetSubject?.next(config.state);
-
-        // Actual data fetching (replace with real implementation)
-        this.fetchWidgetData(config).subscribe({
-          next: (dataBlob: Blob) => {
-            //config.title = data.responseInfoHeader.serversInfo;
-            config.state.data = dataBlob;
-            config.state.loading = false;
-            config.state.error = null;
-            config.state.lastUpdated = Date.now();
-            this.lastUpdate = Date.now();
-
-            // Notify subscribers about the updated data
-            this.widgetSubject?.next(config.state);
-          },
-          error: (error) => {
-            config.state.loading = false;
-            config.state.error = error.message || 'Failed to update widget data';
-            console.error(`Widget ${widgetId} update failed:`, error);
-
-            // Notify subscribers about the error state
-            this.widgetSubject?.next(config.state.data);
-          }
-        });
-      }
-    }
-
-    public fetchWidgetData(config: WidgetConfig): Observable<Blob> {
-      const chartParams: ChartRequestParams = config.settings || {};
-
-      return this.emisSoapService.getChart(chartParams).pipe(
+      this.emisSoapService.getChart(chartParams).pipe(
         map(data => {
           console.log(`Fetched example-pie-chart-widget:`, data);
           return data;
         }),
         catchError(err => {
           console.error('Error fetching example-pie-chart-widget data in manager:', err);
-          return throwError(err);
+          this.widget.state!.error = err.message || 'Failed to fetch chart data';
+          return throwError(() => err);
         })
-      );
+      ).subscribe({
+        next: (dataBlob: Blob) => {
+          if (this.widget.state) {
+            this.widget.state.data = dataBlob;
+            this.widget.state.loading = false;
+            this.widget.state.lastUpdated = Date.now();
+          }
+        },
+        error: (error) => {
+          if (this.widget.state) {
+            this.widget.state.loading = false;
+            this.widget.state.error = error.message || 'Failed to update widget data';
+          }
+          console.error(`Widget ${this.widget.id} update failed:`, error);
+        }
+      });
     }
+  }
 
-    /**
-     * Refresh the data for this widget
-     * @param widgetId The ID of the widget to refresh
-     */
-    refreshWidget(widgetId: string): void {
-      // Call the widget manager's refresh method for this specific widget
-       this.updateGsWidget(this.widget.id);
-    }
-
-    ngOnDestroy(): void {
-      this.widgetSubject.unsubscribe();
-
-      // Stop ongoing subscriptions
-      if (this.stopSignal) {
-        this.stopSignal.next();
-        this.stopSignal.complete();
-      }
-
-      this.widgetManager.removeWidget(this.widget.id);
-    }
+  override ngOnDestroy(): void {
+    super.ngOnDestroy(); // Call base class OnDestroy
+  }
 }

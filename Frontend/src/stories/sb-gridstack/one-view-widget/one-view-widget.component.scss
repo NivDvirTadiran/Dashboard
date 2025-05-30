@@ -1,0 +1,47 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; // Consistent with base widget
+}
+
+.one-view-widget-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around; // Adjusted from space-between for better vertical centering if needed
+  align-items: center; // Centering text horizontally
+  flex-grow: 1; // Ensure it takes available space within the widget-content of base
+  padding: 15px; // General padding, can be adjusted
+  text-align: center; // Center align text by default
+  height: 100%; // Ensure it fills the parent .widget-content area
+
+  .main-text {
+    font-family: 'Noto Sans', sans-serif; // Using Noto Sans, fallback to sans-serif
+    font-weight: 500;
+    font-size: 16px; // As per Figma
+    line-height: 1.36;
+    letter-spacing: -0.011em; // Converted from percentage
+    color: #2E2E2E; // As per Figma
+    margin-bottom: 10px; // Add some space between main text and value
+  }
+
+  .value-text {
+    font-family: 'Noto Sans', sans-serif; // Using Noto Sans
+    font-weight: 700;
+    font-size: 26px; // As per Figma
+    line-height: 1.36;
+    letter-spacing: -0.011em;
+    color: #43A5FF; // As per Figma
+  }
+}
+
+// Note: The overall widget background, border-radius, and box-shadow
+// are typically handled by the base widget or gridstack item styling.
+// If specific overrides are needed for this widget type, they can be added here.
+// For example, if the base widget's padding interferes:
+// :host ::ng-deep .widget-content {
+//   padding: 0; // Override base widget padding if one-view-widget-content handles all padding
+// }
+// However, it's generally better to let the base widget manage its own padding.
+// The padding on .one-view-widget-content is for internal spacing.

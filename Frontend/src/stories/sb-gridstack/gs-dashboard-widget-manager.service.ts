@@ -109,7 +109,7 @@ export class GsDashboardWidgetManagerService {
           h: 1,
           selector: config.type,
           input: { widget: config},
-          id: String(config.id),
+          id: String(config.id)
         } as NgGridStackWidget;
 
         // Add the widget to grid if grid is available

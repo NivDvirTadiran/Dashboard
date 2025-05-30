@@ -1,0 +1,27 @@
+<div
+  class="widget-thumbnail"
+  [class.selected]="isSelected"
+  (click)="onThumbnailClick($event)"
+>
+  <div class="thumbnail-header">
+    <span class="widget-icon">{{ widget.icon }}</span>
+    <span class="widget-title">{{ widget.title }}</span>
+  </div>
+  <div class="thumbnail-footer">
+    <a
+      *ngIf="widget.showPreview !== false"
+      href="#"
+      class="preview-link"
+      (click)="onPreviewClick($event)"
+    >
+      👁️ Preview
+    </a>
+    <input
+      type="checkbox"
+      class="widget-checkbox"
+      [checked]="isSelected"
+      (change)="onCheckboxChange($event)"
+      (click)="$event.stopPropagation()"
+    />
+  </div>
+</div>

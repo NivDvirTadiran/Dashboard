@@ -30,7 +30,9 @@ public class Groups extends AbsCollection {
 			Group group=new Group(id);
 			collection.put(id, group);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

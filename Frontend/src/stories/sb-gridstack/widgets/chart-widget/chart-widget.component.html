@@ -1,0 +1,10 @@
+<app-base-widget [widget]="widget">
+  <div class="chart-display-area">
+    <ng-container *ngIf="chartImageUrl; else noChartData">
+      <img [src]="chartImageUrl" alt="{{ widget.title || 'Chart' }}" class="chart-image" />
+    </ng-container>
+    <ng-template #noChartData>
+      <p>No chart data to display.</p>
+    </ng-template>
+  </div>
+</app-base-widget>

@@ -1,0 +1,18 @@
+<div class="widget-category">
+  <div class="category-header" (click)="onHeaderClick()">
+    <span class="toggle-icon">{{ category.isOpen ? '▼' : '►' }}</span>
+    <span class="category-icon">{{ category.icon }}</span>
+    <span class="category-title">{{ category.title }}</span>
+    <span class="widget-count">{{ getCountText() }}</span>
+  </div>
+  <div class="category-content" [style.display]="category.isOpen ? 'grid' : 'none'">
+    <app-widget-thumbnail
+      *ngFor="let widget of category.widgets"
+      [widget]="widget"
+      [isSelected]="isWidgetSelected(widget.id)"
+      (selectionChange)="onWidgetSelectionChange($event)"
+      (thumbnailClick)="onWidgetThumbnailClick($event)"
+      (previewClick)="onWidgetPreviewClick($event)"
+    ></app-widget-thumbnail>
+  </div>
+</div>

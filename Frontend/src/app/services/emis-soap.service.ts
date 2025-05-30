@@ -125,6 +125,22 @@ export interface ChartRequestParams {
   // Add any other parameters the chart endpoint might need
 }
 
+// Interfaces for Chart Data API
+export interface ChartDataset {
+  label: string;
+  data: number[];
+  backgroundColor: string[];
+  borderColor?: string[];
+  borderWidth?: number;
+}
+
+export interface ChartDataResponse {
+  type: string;
+  title?: string;
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -170,11 +186,49 @@ export class EmisSoapService {
   }
 
   // Example for BriefAgents - define parameters if needed
-   getBriefAgents(params?: any): Observable<ReturnMatrixDataTypeBG> {
-     // If BriefInfoRequestType is complex, backend might expect it in POST body
-     // For now, assuming it's a GET or simple POST
-     return this.http.get<ReturnMatrixDataTypeBG>(`${this.basePath}/BriefAgents`);
-   }
+  getBriefAgents(agentIds?: string[]): Observable<ReturnMatrixDataTypeBG> {
+    let requestUrl = `${this.basePath}/brief-agents`;
+    if (agentIds && agentIds.length > 0) {
+      const agentIdsParam = agentIds.join(',');
+      requestUrl += `?agentIds=${agentIdsParam}`; // Ensure backend expects 'agentIds'
+    }
+    // For now, assuming it's a GET. If POST is needed for complex params, this would change.
+    return this.http.get<ReturnMatrixDataTypeBG>(requestUrl).pipe(
+      map(response => {
+        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
+          console.error('SOAP service error in getBriefAgents:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+          // Depending on requirements, you might throw an error here or return a modified response
+          // For now, let the component handle the error display based on the full response.
+        }
+        return response; // Return the full response object
+      }),
+      catchError(err => {
+        console.error('HTTP error fetching BriefAgents:', err);
+        return throwError(() => new Error(`Failed to fetch BriefAgents data: ${err.message || 'Server error'}`));
+      })
+    );
+  }
+
+  // New method for Brief DNIS
+  getBriefDnis(dnisIds?: string[]): Observable<ReturnMatrixDataTypeBG> {
+    let requestUrl = `${this.basePath}/brief-dnis`;
+    if (dnisIds && dnisIds.length > 0) {
+      const dnisIdsParam = dnisIds.join(',');
+      requestUrl += `?dnisIds=${dnisIdsParam}`; // Ensure backend expects 'dnisIds'
+    }
+    return this.http.get<ReturnMatrixDataTypeBG>(requestUrl).pipe(
+      map(response => {
+        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
+          console.error('SOAP service error in getBriefDnis:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+        }
+        return response; // Return the full response object
+      }),
+      catchError(err => {
+        console.error('HTTP error fetching BriefDnis:', err);
+        return throwError(() => new Error(`Failed to fetch BriefDnis data: ${err.message || 'Server error'}`));
+      })
+    );
+  }
 
   getDnisList(): Observable<DnisListItemType[]> {
     return this.http.get<DnisListReturnType>(`${this.basePath}/dnis-list`).pipe(
@@ -219,7 +273,7 @@ export class EmisSoapService {
   }
 
   getGroupAgentsInfo(groupId: number): Observable<DataItemType[]> {
-    return this.http.get<DetailResponseType>(`${this.basePath}/group-agents/${groupId}`).pipe(
+    return this.http.get<DetailResponseType>(`${this.basePath}/group/${groupId}/agents-info`).pipe(
       map(response => {
         if (response && response.returnArray) {
           return response.returnArray;
@@ -233,7 +287,7 @@ export class EmisSoapService {
   }
 
   getIvrApplicationInfo(appId: number): Observable<DataItemType[]> {
-    return this.http.get<DetailResponseType>(`${this.basePath}/ivr-detail/${appId}`).pipe(
+    return this.http.get<DetailResponseType>(`${this.basePath}/ivr/application/${appId}`).pipe(
       map(response => {
         if (response && response.returnArray) {
           return response.returnArray;
@@ -247,7 +301,7 @@ export class EmisSoapService {
   }
 
   getIvrPortInfo(setting: any): Observable<DataItemType[]> {
-    return this.http.get<DetailResponseType>(`${this.basePath}/ivr-port/${setting}`).pipe(
+    return this.http.get<DetailResponseType>(`${this.basePath}/ivr/port/${setting}`).pipe(
       map(response => {
         if (response && response.returnArray) {
           return response.returnArray;
@@ -301,6 +355,24 @@ export class EmisSoapService {
       catchError(err => {
         console.error('Error fetching chart data in EmisSoapService:', err);
         return throwError(() => new Error(`Failed to load chart: ${err.message || 'Server error'}`));
+      })
+    );
+  }
+
+  getChartData(params: ChartRequestParams): Observable<ChartDataResponse> {
+    return this.http.get<ChartDataResponse>(`${this.chartBasePath}/chart-data`, {
+      params: { ...params } // Spread parameters into HttpParams
+    }).pipe(
+      map(response => {
+        if (!response) {
+          console.error('Chart data response is null or undefined');
+          throw new Error('Failed to load chart data: No data received');
+        }
+        return response;
+      }),
+      catchError(err => {
+        console.error('Error fetching chart data in EmisSoapService:', err);
+        return throwError(() => new Error(`Failed to load chart data: ${err.message || 'Server error'}`));
       })
     );
   }

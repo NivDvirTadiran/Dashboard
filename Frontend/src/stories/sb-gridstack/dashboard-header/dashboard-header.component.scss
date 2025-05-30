@@ -1,7 +1,71 @@
 /* Styles for DashboardHeaderComponent based on Figma design */
+@use "../tokens";
+@use "../../assets/scss/tokens.scss" as global-tokens;
 
-.dashboard-header {
+
+.main {
+  width: 100%;
+}
+
+.dashboardCustomize ,.settings {
+  font-family: 'Material Icons Round', serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.5rem;
+  line-height: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+mat-icon {
+  background: -moz-linear-gradient(to top, #3D8ECF 0%, #58A6E4 100%);
+  background: -webkit-linear-gradient(to top, #3D8ECF 0%, #58A6E4 100%);
+  background: linear-gradient(to bottom, #3D8ECF 0%, #58A6E4 100%);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-name {
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  color: var(--DarkBlue, #43A5FF);
+  text-align: right;
+  line-height: normal;
+}
+.dashboard-components {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  color: var(--DarkBlue, #43A5FF);
+  text-align: center;
+  line-height: normal;
+
+}
+
+
+
+.components {
+  aspect-ratio: 286 / 68;
+  height: 100%;
+  text-align: center;
+}
+
+
+
+
+.dashboard-header ,.dashboard-menu {
+  display: inline-flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -11,11 +75,23 @@
   border-radius: 20px; // Applied from parent in Figma, makes sense here
   font-family: "Noto Sans Hebrew", sans-serif; // Fallback to sans-serif
 
+
+
   h2 {
     font-family: "Noto Sans Hebrew", sans-serif;
     font-weight: 700;
     font-size: 16px;
-    color: #43A5FF; // Blue color from Figma style_P3I3VD
+    background: -moz-linear-gradient(to top, #3D8ECF 0%, #58A6E4 100%);
+    background: -webkit-linear-gradient(to top, #3D8ECF 0%, #58A6E4 100%);
+    background: linear-gradient(to bottom, #3D8ECF 0%, #58A6E4 100%);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: -0.011rem;
     margin: 0; // Remove default margin
   }
 
@@ -74,3 +150,7 @@
   }
 }
 
+
+.dashboard-menu {
+  justify-content: center
+}

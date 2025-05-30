@@ -1,0 +1,75 @@
+.widget-thumbnail {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0px 2px 8px 0px rgba(84, 159, 229, 0.07);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.widget-thumbnail:hover {
+  border-color: #43A5FF;
+}
+
+.widget-thumbnail.selected {
+  border-color: #1FC777;
+}
+
+.widget-thumbnail.selected .widget-title {
+  color: #1FC777;
+}
+
+.widget-thumbnail.selected .widget-icon {
+  color: #1FC777;
+}
+
+.widget-thumbnail.selected .widget-checkbox {
+  accent-color: #1FC777;
+}
+
+.thumbnail-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.widget-icon {
+  font-size: 18px;
+  color: #43A5FF;
+}
+
+.widget-title {
+  font-weight: bold;
+  font-size: 12px;
+  color: #2E2E2E;
+}
+
+.thumbnail-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.preview-link {
+  font-size: 11px;
+  color: #2E2E2E;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.preview-link:hover {
+  text-decoration: underline;
+}
+
+.widget-checkbox {
+  cursor: pointer;
+}

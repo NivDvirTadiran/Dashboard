@@ -27,7 +27,9 @@ public class IVRApps extends AbsCollection {
 			IVRApp ivr=new IVRApp(id);
 			collection.put(id, ivr);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

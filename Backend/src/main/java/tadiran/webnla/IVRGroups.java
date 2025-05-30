@@ -27,7 +27,9 @@ public class IVRGroups extends AbsCollection {
 			IVRGroup ivr=new IVRGroup(id);
 			collection.put(id, ivr);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

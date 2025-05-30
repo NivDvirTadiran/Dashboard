@@ -32,7 +32,9 @@ public class Periods extends AbsCollection {
 			PeriodData period=new PeriodData(id);
 			collection.put(id, period);
             
-            collectionUpdater.forceUpdate();
+            if (collectionUpdater != null) {
+                collectionUpdater.forceUpdate();
+            }
 		}
 	}
 

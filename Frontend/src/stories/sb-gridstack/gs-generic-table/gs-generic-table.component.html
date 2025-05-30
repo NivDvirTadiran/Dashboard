@@ -1,0 +1,31 @@
+<div class="table-widget">
+  <ng-container *ngIf="data.length > 0; else noData">
+    <table class="table">
+      <thead>
+        <tr>
+          @for (column of columns; track column.key; let colIndex = $index) {
+            <th>
+              {{ column.header }}
+              <div class="resize-handle" (mousedown)="startResize($event, colIndex)"></div>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data">
+          <td *ngFor="let column of columns; index as i">
+            <!-- Basic cell rendering -->
+            <span *ngIf="column.key !== 'State'">{{ getCellData(row, column.key) }}</span>
+            <!-- Special rendering for 'State' column, assuming it might need an icon -->
+            <span *ngIf="column.key === 'State'">
+              <span class="status-icon"></span> {{ getCellData(row, column.key) }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+  <ng-template #noData>
+    <p>No data to display.</p>
+  </ng-template>
+</div>
