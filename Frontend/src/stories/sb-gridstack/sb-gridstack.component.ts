@@ -21,7 +21,7 @@ import { GroupAbandonedInfoWidgetComponent } from './widgets/groups/group-abando
 import { GroupAgentsInfoWidgetComponent } from './widgets/groups/group-agents-info-widget/group-agents-info-widget.component';
 import { IvrApplicationInfoWidgetComponent } from './widgets/ivr-applications/ivr-application-info-widget/ivr-application-info-widget.component';
 import { IvrPortInfoWidgetComponent } from './widgets/ivr-applications/ivr-port-info-widget/ivr-port-info-widget.component';
-import { ChartWidgetComponent } from './widgets/chart-widget/chart-widget.component';
+import { ChartWidgetComponent } from './chart-widget/chart-widget.component';
 import { ExamplePieChartWidgetComponent } from './example-pie-chart-widget/example-pie-chart-widget.component';
 import { OneViewWidgetComponent } from './one-view-widget/one-view-widget.component';
 

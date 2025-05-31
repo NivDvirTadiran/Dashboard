@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GsDashboardWidgetManagerService, WidgetConfig } from '../../gs-dashboard-widget-manager.service';
-import { GSBaseWidget } from '../../base-widget/base-widget.component';
+import { GsDashboardWidgetManagerService, WidgetConfig } from '../gs-dashboard-widget-manager.service';
+import { GSBaseWidget } from '../base-widget/base-widget.component';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { EmisSoapService, ChartRequestParams } from 'src/app/services/emis-soap.service';
