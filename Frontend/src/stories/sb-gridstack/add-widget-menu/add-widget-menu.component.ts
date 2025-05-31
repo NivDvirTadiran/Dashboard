@@ -39,7 +39,7 @@ export class AddWidgetMenuComponent {
       selectedCount: 0,
       totalCount: 4,
       widgets: [
-        { id: 'briefVoiceDnis', icon: '👥', title: 'Brief Voice DNIS' },
+        { id: 'briefDnis', icon: '👥', title: 'Brief Voice DNIS' },
         /*{ id: 'agentsList', icon: '🧑‍💼', title: 'Agents List' },
         { id: 'groupList', icon: '🏢', title: 'Group List' },
         { id: 'dnisList', icon: '📞', title: 'DNIS List' }*/

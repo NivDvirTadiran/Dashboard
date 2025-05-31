@@ -45,8 +45,9 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
 
     super.fetchData();
 
-    const selectedDnisIds = this.widget.config?.selectedDnisIds; // Changed, assuming this config property
-    console.log(`BriefDnisWidget fetchData with selectedDnisIds:`, selectedDnisIds); // Changed
+    // Correctly access selectedDnisIds from widget.config.selectedDnisIds
+    const selectedDnisIds = this.widget.config?.selectedDnisIds;
+    console.log(`BriefDnisWidget fetchData with selectedDnisIds:`, selectedDnisIds);
 
     // Changed to getBriefDnis, assuming selectedDnisIds is the correct parameter
     this.emisSoapService.getBriefDnis(selectedDnisIds).pipe( // Changed service call

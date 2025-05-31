@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
-import {AppConfig} from "../app.config";
+import { Observable, catchError, map, throwError, of, delay } from 'rxjs';
+import { AppConfig } from "../app.config";
 
 // Define interfaces based on WSDL (ensure these match the actual structure from WSDL/Java types)
 
@@ -135,12 +135,24 @@ export interface ChartDataset {
 }
 
 export interface ChartDataResponse {
-  type: string;
-  title?: string;
   labels: string[];
   datasets: ChartDataset[];
 }
 
+// Add DTO for DNIS list items
+export interface DnisListItemDto {
+  id: string; // Or number, depending on your data model
+  name: string;
+  number: string; // Actual DNIS number
+  type?: number;  // from dnisType (unsignedInt)
+}
+
+// Define and export AgentListItemDto
+export interface AgentListItemDto {
+  id: string; // from agentId (number)
+  name: string; // from agentName (string)
+  number?: string; // from agentNumber (string), optional
+}
 
 @Injectable({
   providedIn: 'root'

@@ -11,7 +11,7 @@ import { tap } from "rxjs/operators";
     selector: "loading-indicator",
     templateUrl: "./loading-indicator.component.html",
     styleUrls: ["./loading-indicator.component.scss"],
-    imports: [MatProgressSpinnerModule, AsyncPipe, NgIf, NgTemplateOutlet],
+    imports: [MatProgressSpinnerModule, AsyncPipe, NgTemplateOutlet],
     standalone: true,
 })
 export class LoadingIndicatorComponent implements OnInit {

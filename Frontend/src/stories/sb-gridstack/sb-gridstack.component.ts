@@ -24,6 +24,7 @@ import { IvrPortInfoWidgetComponent } from './widgets/ivr-applications/ivr-port-
 import { ChartWidgetComponent } from './chart-widget/chart-widget.component';
 import { ExamplePieChartWidgetComponent } from './example-pie-chart-widget/example-pie-chart-widget.component';
 import { OneViewWidgetComponent } from './one-view-widget/one-view-widget.component';
+import { BriefDnisWidgetComponent } from './widgets/dnis/brief-dnis-widget/brief-dnis-widget.component';
 
 @Component({
   selector: 'sb-gridstack',
@@ -75,7 +76,8 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       IvrPortInfoWidgetComponent,
       ChartWidgetComponent,
       ExamplePieChartWidgetComponent,
-      OneViewWidgetComponent
+      OneViewWidgetComponent,
+      BriefDnisWidgetComponent
     ]);
   }
 
@@ -208,6 +210,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addGroupAgentsInfoWidget();
     this.addIvrApplicationInfoWidget();
     this.addBriefAgentsWidget();
+    this.addBriefDnisWidget();
   }
 
   public onWidgetSelected(widgetsType: string[]): void {
@@ -254,6 +257,9 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case 'oneViewExample': // Added new case for one-view-widget
           this.addExampleOneViewWidget();
+          break;
+        case 'briefDnis':
+          this.addBriefDnisWidget();
           break;
         default:
           console.warn(`Unknown widget type: ${widgetType}`);
@@ -587,6 +593,27 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       position: { x: 0, y: currentGridHeight }, // y is 0-based
       ...newWidgetConfig
     } as WidgetConfig);
+  }
+
+  public addBriefDnisWidget(): void {
+    const BRIEF_DNIS_WIDGET_ID_BASE = 'brief-dnis-widget';
+    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
+
+    const newWidgetConfig: WidgetConfig = {
+      id: `${BRIEF_DNIS_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'brief-dnis-widget', // This must match the selector of BriefDnisWidgetComponent
+      title: 'Brief DNIS',
+      dataSource: 'BriefDnis', // This should align with what BriefDnisWidgetComponent expects
+      updateInterval: 6000, // Example interval
+      settings: { selectedDnisIds: [] }, // Example: Default to no specific DNIS IDs, or prompt user
+      nlat: 'auto',
+    };
+
+    this.widgetManager.initGsWidget({
+      ...newWidgetConfig,
+      position: { x: 0, y: currentGridHeight },
+    } as WidgetConfig);
+    console.log(`Brief DNIS widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
   }
 
   private updateWidgetDisplay(widgetId: string, data: any): void {

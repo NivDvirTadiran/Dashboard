@@ -6,13 +6,13 @@ import { GsDashboardWidgetManagerService, WidgetConfig, WidgetState } from '../g
 import { Subscription, interval, finalize, tap } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSyncAlt, faEllipsisV, faFilter, faTimes } from '@fortawesome/free-solid-svg-icons';
-// Assuming AgentsListDataItemType is the correct type for items in AgentsListReturnType's returnArray
-import { EmisSoapService, AgentsListReturnType, AgentsListDataItemType } from 'src/app/services/emis-soap.service';
+import { EmisSoapService, AgentsListReturnType, AgentsListDataItemType, AgentListItemDto, DnisListItemDto } from 'src/app/services/emis-soap.service';
 
 // Define a more specific config type for widgets that support agent selection
 export interface WidgetConfigWithAgentSelection extends WidgetConfig {
   config?: {
     selectedAgentIds?: string[];
+    selectedDnisIds?: string[];
     description?: string; // Added description to config
     [key: string]: any; // Allow other config properties
   };
@@ -46,8 +46,12 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
   faTimes = faTimes;
 
   // Agent selection
-  agentsForSelection: AgentSelectItem[] = [];
+  agentsForSelection: (AgentListItemDto & { selected: boolean })[] = [];
   isLoadingAgents = false;
+
+  // DNIS selection
+  dnisForSelection: (DnisListItemDto & { selected: boolean })[] = [];
+  isLoadingDnis = false;
 
   // Inject EmisSoapService - make it protected
   protected emisSoapService = inject(EmisSoapService);
@@ -129,8 +133,6 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
     if (!this.widget || this.widget.type !== 'brief-agents-widget') return;
 
     this.isLoadingAgents = true;
-    // Assuming getAgentsList() returns Observable<AgentsListDataItemType[]>
-    // and AgentsListDataItemType has 'id' and 'name' properties.
     this.emisSoapService.getAgentsList().pipe(
       tap(agentsList => console.log('AgentsList raw response (expected array):', agentsList)),
       finalize(() => this.isLoadingAgents = false)
@@ -173,12 +175,13 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
           .filter(agent => agent.selected)
           .map(agent => agent.id);
         console.log('Saved selectedAgentIds:', this.widget.config.selectedAgentIds);
+      } else if (this.widget.type === 'brief-dnis-widget') {
+        this.widget.config.selectedDnisIds = this.dnisForSelection
+          .filter(dnis => dnis.selected)
+          .map(dnis => dnis.id);
+        console.log('Saved selectedDnisIds:', this.widget.config.selectedDnisIds);
       }
 
-      // Assuming setWidgetConfig takes the whole widget object or just the config part associated with an ID.
-      // If it's (id, config), then this.widgetManager.setWidgetConfig(this.widget.id, this.widget.config) is correct.
-      // If it expects the whole widget: this.widgetManager.setWidgetConfig(this.widget)
-      // The previous error "Expected 1 arguments, but got 2" suggests it takes one argument.
       this.widgetManager.setWidgetConfig(this.widget);
       console.log('Widget settings saved:', this.widget);
       this.fetchData(); // Trigger data refresh for the current widget

@@ -68,8 +68,23 @@
           </div>
         </div>
       </ng-container>
+      <!-- DNIS Selection for brief-dnis-widget -->
+      <ng-container *ngIf="widget.type === 'brief-dnis-widget'">
+        <div class="form-group">
+          <label>Filter DNIS:</label>
+          <div *ngIf="isLoadingDnis" class="loading-small">Loading DNIS list...</div>
+          <div *ngIf="!isLoadingDnis && dnisForSelection.length === 0" class="no-items-message">
+            No DNIS available for selection.
+          </div>
+          <div class="checkbox-group scrollable-checkbox-group" *ngIf="!isLoadingDnis && dnisForSelection.length > 0">
+            <label *ngFor="let dnis of dnisForSelection">
+              <input type="checkbox" [(ngModel)]="dnis.selected" [name]="'dnis_' + dnis.id"> {{ dnis.name }} ({{ dnis.number }})
+            </label>
+          </div>
+        </div>
+      </ng-container>
       <!-- Placeholder for other widget type options -->
-      <div *ngIf="widget.type !== 'brief-agents-widget'" class="form-group">
+      <div *ngIf="widget.type !== 'brief-agents-widget' && widget.type !== 'brief-dnis-widget'" class="form-group">
         <label>Options:</label>
         <div class="checkbox-group">
           <label><input type="checkbox" name="option1_generic"> Generic Option 1</label>
