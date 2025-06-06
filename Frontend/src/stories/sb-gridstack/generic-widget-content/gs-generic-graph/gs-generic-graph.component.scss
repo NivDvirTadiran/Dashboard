@@ -1,0 +1,113 @@
+.graph-widget {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  box-shadow: 0px 3px 10px 0px rgba(84, 159, 229, 0.07);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  direction: rtl;
+  
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 20px;
+    
+    .title {
+      font-family: 'Noto Sans Hebrew', sans-serif;
+      font-weight: 500;
+      font-size: 16px;
+      color: #2E2E2E;
+      margin: 0;
+    }
+  }
+  
+  .chart-area {
+    display: flex;
+    flex: 1;
+    margin-bottom: -2px;
+    
+    .y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0 4px;
+      
+      span {
+        font-family: 'Noto Sans Hebrew', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        color: #BCBCBC;
+      }
+    }
+    
+    .chart-content {
+      flex: 1;
+      position: relative;
+      
+      .grid-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        
+        .grid-line {
+          height: 0;
+          border-top: 1px dashed #BCBCBC;
+        }
+      }
+      
+      .data-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        
+        .data-point {
+          position: absolute;
+          transform: translateX(-50%) translateY(50%);
+          
+          .point-circle {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #1FC777;
+            border: 1px solid #FFFFFF;
+            position: relative;
+            z-index: 2;
+          }
+        }
+      }
+    }
+  }
+  
+  .x-axis {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 0 0 8px 42px;
+    
+    span {
+      font-family: 'Noto Sans Hebrew', sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: #BCBCBC;
+    }
+  }
+  
+  .current-time {
+    text-align: left;
+    font-family: 'Noto Sans Hebrew', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: #BCBCBC;
+    padding-top: 8px;
+  }
+}

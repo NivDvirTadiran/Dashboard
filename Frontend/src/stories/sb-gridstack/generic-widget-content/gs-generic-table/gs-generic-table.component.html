@@ -1,0 +1,92 @@
+<div class="table-widget">
+  <div class="table-controls" *ngIf="enableColumnToggle">
+    <!-- Removed enableFiltering from here as it's per-column now -->
+    <!-- Global filter input removed -->
+    <div class="column-toggle-container" *ngIf="enableColumnToggle">
+      <button class="column-toggle-button">Toggle Columns</button>
+      <div class="column-toggle-dropdown">
+        @for (column of columns; track column.key) {
+          <div>
+            <input
+              type="checkbox"
+              [id]="'col-toggle-' + column.key"
+              [checked]="isColumnVisible(column.key)"
+              (change)="toggleColumnVisibility(column.key)"
+            />
+            <label [for]="'col-toggle-' + column.key">{{ column.header }}</label>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="filteredData.length > 0; else noDataOrFilteredOut">
+    <table class="table">
+      <thead>
+        <tr>
+          @for (column of getVisibleColumns(); track column.key; let colIndex = $index) {
+            <th
+              [class.sortable]="enableSorting && column.isSortable !== false"
+              (click)="enableSorting && column.isSortable !== false && sortTable(column.key)"
+              [class.sorted-asc]="currentSortColumn === column.key && sortDirection === 'asc'"
+              [class.sorted-desc]="currentSortColumn === column.key && sortDirection === 'desc'">
+
+              <div class="header-content">
+                {{ column.header }}
+              </div>
+              <span class="filter-toggle-button" *ngIf="enableFiltering && column.isFilterable !== false"></span>
+
+
+              <span class="sort-indicator-container" *ngIf="enableSorting && column.isSortable !== false">
+                <div style="position: relative;display: flex;height: inherit;width: inherit;flex-direction: row-reverse;">
+                  <fa-icon
+                    class="filter-icon"
+                    [icon]="['fas', 'filter']"
+                    (click)="toggleColumnFilterInput(column.key, $event)">
+                    </fa-icon>
+                  <span class="sort-indicator"></span>
+                </div>
+              </span>
+
+              <div
+                *ngIf="enableFiltering && column.isFilterable !== false && activeFilterColumnKey === column.key"
+                class="column-filter-input-container"
+                (click)="$event.stopPropagation()"> <!-- Prevent click from bubbling to TH sort -->
+                <input
+                  type="text"
+                  [attr.placeholder]="'Filter ' + column.header"
+                  class="column-filter-input"
+                  [value]="columnFilters.get(column.key) || ''"
+                  (input)="onColumnFilterChange($event, column.key)"
+                  (keydown.escape)="toggleColumnFilterInput(column.key)"
+                  (blur)="activeFilterColumnKey !== column.key ? null : toggleColumnFilterInput(column.key)"
+                   />
+                   <!-- Consider adding (focus)="$event.target.select()" for better UX -->
+              </div>
+              <div class="resize-handle" (mousedown)="startResize($event, colIndex)"></div>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of filteredData">
+          @for (column of getVisibleColumns(); track column.key; let i = $index) {
+            <td>
+              <!-- Basic cell rendering -->
+              <span *ngIf="column.key !== 'State'">{{ getCellData(row, column.key) }}</span>
+              <!-- Special rendering for 'State' column, assuming it might need an icon -->
+              <span *ngIf="column.key === 'State'">
+                <span class="status-icon"></span> {{ getCellData(row, column.key) }}
+              </span>
+            </td>
+          }
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <ng-template #noDataOrFilteredOut>
+    <p *ngIf="data.length === 0">No data to display.</p>
+    <p *ngIf="data.length > 0 && filteredData.length === 0">No data matches your filter.</p>
+  </ng-template>
+</div>

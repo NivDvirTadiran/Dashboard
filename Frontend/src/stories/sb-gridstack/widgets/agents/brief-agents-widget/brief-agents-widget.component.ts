@@ -2,16 +2,32 @@ import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GsDashboardWidgetManagerService, WidgetConfig } from '../../../gs-dashboard-widget-manager.service';
 import { GSBaseWidget } from '../../../base-widget/base-widget.component';
-import { Observable, catchError, map, throwError } from 'rxjs';
-import { EmisSoapService, ReturnMatrixDataTypeBG, DataItemType } from 'src/app/services/emis-soap.service';
-import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../gs-generic-table/gs-generic-table.component';
+import { Observable, catchError, finalize, map, tap, throwError } from 'rxjs';
+import {
+  EmisSoapService,
+  ReturnMatrixDataTypeBG,
+  DataItemType,
+  AgentsListDataItemType
+} from 'src/app/services/emis-soap.service';
+import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../generic-widget-content/gs-generic-table/gs-generic-table.component';
+import { WidgetSettingsModalComponent } from '../../../widget-settings-modal/widget-settings-modal.component';
+import { WidgetHeaderComponent } from '../../../widget-header/widget-header.component';
+import { WidgetContentWrapperComponent } from '../../../widget-content-wrapper/widget-content-wrapper.component';
+import { WidgetFooterComponent } from '../../../widget-footer/widget-footer.component';
 
 @Component({
   selector: 'brief-agents-widget',
   templateUrl: './brief-agents-widget.component.html',
   styleUrls: ['./brief-agents-widget.component.scss'],
   standalone: true,
-  imports: [CommonModule, GSBaseWidget, GsGenericTableComponent]
+  imports: [
+    CommonModule,
+    GsGenericTableComponent,
+    WidgetSettingsModalComponent,
+    WidgetHeaderComponent,
+    WidgetContentWrapperComponent,
+    WidgetFooterComponent
+  ]
 })
 export class BriefAgentsWidgetComponent extends GSBaseWidget implements OnDestroy {
   @HostBinding('style.display') display = 'contents';
@@ -48,7 +64,6 @@ export class BriefAgentsWidgetComponent extends GSBaseWidget implements OnDestro
 
   constructor(
     protected override widgetManager: GsDashboardWidgetManagerService
-    // Remove private emisSoapService, will use super.emisSoapService from GSBaseWidget
   ) {
     super(widgetManager);
     console.log('constructor BriefAgentsWidgetComponent');
@@ -69,12 +84,12 @@ export class BriefAgentsWidgetComponent extends GSBaseWidget implements OnDestro
     super.fetchData(); // Handles setting loading to true
 
     // Retrieve selected agent IDs from widget configuration
-    const selectedAgentIds = this.widget.config?.selectedAgentIds;
-    console.log(`BriefAgentsWidget fetchData with selectedAgentIds:`, selectedAgentIds);
+    const selectedEntitiesIds = this.widget.config?.selectedEntitiesIds;
+    console.log(`BriefAgentsWidget fetchData with selectedAgentIds:`, selectedEntitiesIds);
 
     // Pass selectedAgentIds to the service call
     // The emisSoapService is now accessed via `this.emisSoapService` (from GSBaseWidget)
-    this.emisSoapService.getBriefAgents(selectedAgentIds).pipe(
+    this.emisSoapService.getBriefAgents(selectedEntitiesIds).pipe(
         map(data => {
           console.log(`Fetched brief-agents-data with filter:`, data);
           if (data && data.returnMatrix) {
@@ -133,6 +148,44 @@ export class BriefAgentsWidgetComponent extends GSBaseWidget implements OnDestro
       }
     });
     return dataMap;
+  }
+
+  protected override prepareModalData() {
+    super.prepareModalData();
+    this.loadAgentsForSelection();
+  }
+
+  private loadAgentsForSelection(): void {
+    console.log('[BriefAgentsWidgetComponent] loadAgentsForSelection: ENTERED');
+    if (!this.widget || this.widget.type !== 'brief-agents-widget') {
+      console.warn('[BriefAgentsWidgetComponent] loadAgentsForSelection: Invalid widget or widget type. Widget:', this.widget);
+      return;
+    }
+
+    console.log('[BriefAgentsWidgetComponent] loadAgentsForSelection: Widget type is valid, proceeding to load agents.');
+    this.isLoading = true;
+    this.emisSoapService.getAgentsList().pipe(
+      tap(agentsList => console.log('AgentsList raw response (expected array):', agentsList)),
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      next: (agentsList: AgentsListDataItemType[]) => {
+        if (agentsList && Array.isArray(agentsList)) {
+          const selectedIds = new Set(this.widget.config?.selectedEntitiesIds || []);
+          this.entitiesForSelection = agentsList.map((agent: AgentsListDataItemType) => ({
+            id: agent.agentId.toString(),
+            name: agent.agentName,
+            selected: selectedIds.has(agent.agentId.toString())
+          }));
+        } else {
+          this.entitiesForSelection = [];
+          console.warn('No agents returned or invalid format for brief-agents-widget selection. Expected an array.');
+        }
+      },
+      error: (err) => {
+        console.error('Error loading agents for selection:', err);
+        this.entitiesForSelection = [];
+      }
+    });
   }
 
   override ngOnDestroy(): void {

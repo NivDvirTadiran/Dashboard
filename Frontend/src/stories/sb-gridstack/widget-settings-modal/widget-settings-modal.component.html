@@ -1,0 +1,40 @@
+<!-- Settings Modal -->
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Edit Widget Settings</h3>
+      <button class="close-modal-btn" (click)="closeModal()" title="Close">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="widgetNameModal">Widget Name</label>
+        <input type="text" id="widgetNameModal" [(ngModel)]="editableWidgetName" name="widgetNameModal">
+      </div>
+      <div class="form-group">
+        <label for="widgetDescriptionModal">Widget Description</label>
+        <input type="text" id="widgetDescriptionModal" [(ngModel)]="editableWidgetDescription" name="widgetDescriptionModal">
+      </div>
+      <!-- Agent Selection for brief-agents-widget -->
+      <ng-container *ngIf="widget">
+        <div class="form-group">
+          <label>Filter Entities:</label>
+          <div *ngIf="isLoading" class="loading-small">Loading agents...</div>
+          <div *ngIf="!isLoading && entitiesForSelection.length === 0" class="no-agents-message">
+            No agents available for selection.
+          </div>
+          <div class="checkbox-group scrollable-checkbox-group" *ngIf="!isLoading && entitiesForSelection.length > 0">
+            <label *ngFor="let agent of entitiesForSelection">
+              <input type="checkbox" [(ngModel)]="agent.selected" [name]="'agent_modal_' + agent.id"> {{ agent.name }} ({{ agent.id }})
+            </label>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,4 @@
-import { Component, AfterViewInit, Input, OnDestroy, viewChild, OnInit } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, AfterViewInit, Input, OnDestroy, ViewChild, OnInit, Type } from '@angular/core';
 import { WidgetPieDoughnutComponent } from './widget-pie-doughnut/widget-pie-doughnut.component';
 import { GsDashboardWidgetManagerService, WidgetConfig } from './gs-dashboard-widget-manager.service';
 import { TableRow } from 'src/app/dashboard/dashboard.service';
@@ -41,9 +40,9 @@ import { BriefDnisWidgetComponent } from './widgets/dnis/brief-dnis-widget/brief
   ]
 })
 export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
-  private gridComp = viewChild(GridstackComponent);
+  @ViewChild(GridstackComponent, { static: true }) private gridComp!: GridstackComponent;
 
-  private ids = 0;
+  private ids = 0; // Used for layout loading, might need adjustment for dynamic widget IDs
   public showAddWidgetModal = false;
 
   gridOptions: NgGridStackOptions = {
@@ -61,7 +60,9 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public widgetManager: GsDashboardWidgetManagerService
   ) {
-    GridstackComponent.addComponentToSelectorType([
+    // Component to selector type registration is still needed by Gridstack.angular
+    // This allows GridStack to know which Angular component to render for a given selector string.
+    const registeredWidgetTypes = [
       SuperGroupListWidgetComponent,
       GsNlatTableComponent,
       AgentsListWidgetComponent,
@@ -78,7 +79,33 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       ExamplePieChartWidgetComponent,
       OneViewWidgetComponent,
       BriefDnisWidgetComponent
-    ]);
+      // Ensure ALL widget components that can be added are registered here
+    ];
+    GridstackComponent.addComponentToSelectorType(registeredWidgetTypes);
+
+    // Prepare mappings for GsDashboardWidgetManagerService
+    // IMPORTANT: Selectors MUST match the actual @Component({selector: '...'}) values
+    const widgetMappingData = [
+      { widgetType: SuperGroupListWidgetComponent, selector: 'super-group-list-widget' },
+      { widgetType: GsNlatTableComponent, selector: 'gs-nlat-table' },
+      { widgetType: AgentsListWidgetComponent, selector: 'agents-list-widget' },
+      { widgetType: GroupListWidgetComponent, selector: 'group-list-widget' },
+      { widgetType: BriefAgentsWidgetComponent, selector: 'brief-agents-widget' },
+      { widgetType: DnisListWidgetComponent, selector: 'dnis-list-widget' },
+      { widgetType: GroupDetailFullInfoWidgetComponent, selector: 'group-detail-full-info-widget' },
+      { widgetType: GroupQueueInfoWidgetComponent, selector: 'group-queue-info-widget' },
+      { widgetType: GroupAbandonedInfoWidgetComponent, selector: 'group-abandoned-info-widget' },
+      { widgetType: GroupAgentsInfoWidgetComponent, selector: 'group-agents-info-widget' },
+      { widgetType: IvrApplicationInfoWidgetComponent, selector: 'ivr-application-info-widget' },
+      { widgetType: IvrPortInfoWidgetComponent, selector: 'ivr-port-info-widget' },
+      { widgetType: ChartWidgetComponent, selector: 'chart-widget' }, // Or 'app-chart-widget' etc.
+      { widgetType: ExamplePieChartWidgetComponent, selector: 'example-pie-chart-widget' },
+      { widgetType: OneViewWidgetComponent, selector: 'one-view-widget' }, // Or 'app-one-view-widget'
+      { widgetType: BriefDnisWidgetComponent, selector: 'brief-dnis-widget' }
+      // Add ALL other registered widgets here with their correct selectors
+    ];
+
+    this.widgetManager.registerWidgetMappings(widgetMappingData);
   }
 
   public exampleDataNew: string =
@@ -101,11 +128,9 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tableObj = tableObj;
   }
 
-    public wItems: NgGridStackWidget[] = [
-      //{ autoPosition: true, w: 2, h: 1, selector: 'app-decorator-based', input: { title: 'Item (decorator)'}, id: String(1)}  as NgGridStackWidget,
-      //{ autoPosition: true, w: 2, h: 1, selector: 'gs-nlat-table', input: { tableObj: JSON.parse(this.exampleDataNew)}, id: String(2)}  as NgGridStackWidget,
-      //{ autoPosition: true, w: 2, h: 1, selector: 'gs-widget', input: { widget: this.pieChartConfig}, id: String(8)}  as NgGridStackWidget,
-    ];
+  public wItems: NgGridStackWidget[] = [
+    // Example: { autoPosition: true, w: 2, h: 1, selector: 'brief-agents-widget', input: { widget: { id: 'initial-brief-agents', type: 'brief-agents-widget', title: 'Initial Brief Agents', ... } }, id: 'initial-brief-agents'}
+  ];
 
   public ngOnInit(): void {
     this.loadLayout(); // Load layout on init if available
@@ -116,7 +141,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveLayout(): void {
-    const layout = this.gridComp()?.grid?.save(true, true);
+    const layout = this.gridComp?.grid?.save(true, true);
     if (layout) {
       localStorage.setItem('dashboardLayout', JSON.stringify(layout));
       console.log('Dashboard layout saved.');
@@ -128,8 +153,16 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     if (savedLayout) {
       try {
         const layout = JSON.parse(savedLayout);
-        this.gridComp()?.grid?.load(layout);
-        console.log('Dashboard layout loaded.');
+        // Ensure grid is initialized before loading layout
+        if (this.gridComp?.grid) {
+          this.gridComp.grid.load(layout);
+          console.log('Dashboard layout loaded.');
+        } else {
+          // Defer loading if grid is not ready, common if static:true is not appropriate
+          // or if loadLayout is called too early. For now, with static:true, it should be available.
+          console.warn('Grid not ready for loading layout in loadLayout. If this persists, check ViewChild static flag and component lifecycle.');
+        }
+
         let maxId = 0;
         if (Array.isArray(layout)) {
           layout.forEach((node: any) => {
@@ -158,11 +191,11 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   axes = ['both', 'x', 'y'];
 
   ngAfterViewInit(): void {
-    if (this.gridComp()) {
-      this.widgetManager.setGridComponent(this.gridComp());
+    if (this.gridComp) {
+      this.widgetManager.setGridComponent(this.gridComp);
     }
-    this.gridComp()?.grid.load(this.wItems);
-    this.registerWidgets();
+    // this.gridComp?.grid.load(this.wItems); // Load initial items if any
+    // this.registerWidgets(); // This method is likely obsolete now
   }
 
   ngOnDestroy(): void {
@@ -196,429 +229,36 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     return [];
   }
 
-  private registerWidgets(): void {
-    // Widgets are now added via the menu
-    // You might want to load a default set of widgets here or leave it empty
-    // For now, let's add a couple of default ones to have something on the screen
-    this.addExamplePieChartWidget();
-    this.addChartWidget();
-    this.addExampleOneViewWidget();
-    this.addGroupListWidget();
-    this.addDnisListWidget();
-    this.addGroupDetailFullInfoWidget();
-    this.addGroupQueueInfoWidget();
-    this.addGroupAgentsInfoWidget();
-    this.addIvrApplicationInfoWidget();
-    this.addBriefAgentsWidget();
-    this.addBriefDnisWidget();
-  }
+  public onWidgetsSelected(selectedWidgetTypes: Type<any>[]): void {
+    selectedWidgetTypes.forEach(widgetType => {
+      const selector = this.widgetManager.getSelectorForWidgetType(widgetType);
 
-  public onWidgetSelected(widgetsType: string[]): void {
-    widgetsType.forEach(widgetType => {
-      switch (widgetType) {
-        case 'examplePieChart':
-          this.addExamplePieChartWidget();
-          break;
-        case 'chart':
-          this.addChartWidget();
-          break;
-        case 'superGroupList':
-          this.addSuperGroupListWidget();
-          break;
-        case 'agentsList':
-          this.addAgentsListWidget();
-          break;
-        case 'groupList':
-          this.addGroupListWidget();
-          break;
-        case 'dnisList':
-          this.addDnisListWidget();
-          break;
-        case 'groupDetailFullInfo':
-          this.addGroupDetailFullInfoWidget();
-          break;
-        case 'groupQueueInfo':
-          this.addGroupQueueInfoWidget();
-          break;
-        case 'groupAgentsInfo':
-          this.addGroupAgentsInfoWidget();
-          break;
-        case 'ivrApplicationInfo':
-          this.addIvrApplicationInfoWidget();
-          break;
-        case 'ivrPortInfo':
-          this.addIvrPortInfoWidget();
-          break;
-        case 'groupAbandonedInfo':
-          this.addGroupAbandonedInfoWidget();
-          break;
-        case 'briefAgents':
-          this.addBriefAgentsWidget();
-          break;
-        case 'oneViewExample': // Added new case for one-view-widget
-          this.addExampleOneViewWidget();
-          break;
-        case 'briefDnis':
-          this.addBriefDnisWidget();
-          break;
-        default:
-          console.warn(`Unknown widget type: ${widgetType}`);
+      if (selector) {
+        const newWidgetId = `${selector}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+        // Attempt to get a display name for the title. Fallback to selector.
+        // This could be enhanced by adding a static 'widgetName' property to each component type.
+        const widgetTitle = (widgetType as any).widgetName || widgetType.name.replace('WidgetComponent', '') || selector;
+
+        const newWidgetConfig: WidgetConfig = {
+          id: newWidgetId,
+          type: selector, // This is the string selector for GridStack
+          title: widgetTitle, // A more user-friendly title
+          dataSource: '', // Determine appropriate dataSource or leave for widget to handle
+          updateInterval: 60000, // Default or determine based on type
+          settings: {}, // Default or determine based on type
+          nlat: 'auto' // Or other appropriate default
+        };
+
+        this.widgetManager.initGsWidget(newWidgetConfig);
+        console.log(`Widget added: ${newWidgetId} (Type: ${widgetType.name}, Selector: ${selector})`);
+      } else {
+        console.warn(`No selector found for widget type: ${widgetType.name}. Ensure it's mapped in GsDashboardWidgetManagerService and registered with GridstackComponent.`);
       }
     });
-    this.showAddWidgetModal = false; // Close modal after selection
+    this.showAddWidgetModal = false; // Close modal after adding widgets
   }
 
-  public addExampleOneViewWidget(): void {
-    const ONE_VIEW_WIDGET_ID_BASE = 'one-view-widget';
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    // Define any specific settings for the OneViewWidget if needed
-    // For now, we'll use the mock data defined within the OneViewWidgetComponent itself.
-    // If data needed to be passed from here, it would go into 'settings' or a dedicated property.
-    const oneViewSettings = {
-      // Example: if we wanted to configure mainText and value from here
-      // mainText: "Custom Title",
-      // value: 100
-    };
-
-    const newWidgetConfig: WidgetConfig = {
-      id: `${ONE_VIEW_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      type: 'app-one-view-widget', // This must match the selector of OneViewWidgetComponent
-      title: 'One View Example',
-      dataSource: 'localMock', // Indicates data is mocked or handled internally
-      updateInterval: 0, // No external updates needed for mock data, or set as appropriate
-      settings: oneViewSettings, // Pass any specific settings
-      nlat: 'auto', // Or specify exact nlat coordinates if needed
-      // Default w/h for one-view might be smaller, e.g., w:1, h:1 or w:2, h:1
-      // These can be set here or handled by initGsWidget if it has logic for 'app-one-view-widget' type
-    };
-
-    this.widgetManager.initGsWidget({
-      ...newWidgetConfig,
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      // Optionally specify w, h if different from default in initGsWidget
-      // w: 1,
-      // h: 1,
-    } as WidgetConfig);
-    console.log(`One View widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
-  }
-
-  public addExamplePieChartWidget(): void {
-    const EXAMPLE_PIE_CHART_WIDGET_ID = 'example-pie-chart-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    const chartSettings = {
-      // 172.28.31.91
-      type: '3Dpie',
-      refObjectName: 'Group:2',// refObjectName: 'agentStatusSummary' // Temporarily removed
-      keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',  // keys: 'status,count', // Temporarily removed
-      title: 'Calls_Distribution_Graph', // Title for chart generation API
-      size: '532x400'
-
-      // 172.28.31.87
-      //type: '3Dpie',
-      //refObjectName: 'Group:4',
-      //keys: '6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24',
-      //title: 'Email.Contacts_Distribution_Graph',
-      //size: '428x270'
-    };
-
-    newWidgetConfig = {
-      id: `${EXAMPLE_PIE_CHART_WIDGET_ID}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      type: 'example-pie-chart-widget',
-      title: 'Example Pie Chart',
-      dataSource: 'api/chart/agentStatus',
-      updateInterval: 60000,
-      settings: chartSettings,
-      nlat: 'auto',
-    };
-
-    // initGsWidget in GsDashboardWidgetManagerService will handle autoPositioning and default w/h (currently 2,1)
-    // If specific w/h are needed for chart-widget by default, initGsWidget should be modified
-    // or these properties should be added to NgGridStackWidget within initGsWidget based on config.type.
-    this.widgetManager.initGsWidget({
-      id: EXAMPLE_PIE_CHART_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addChartWidget(): void {
-    const CHART_WIDGET_ID_BASE = 'pie-chart-widget';
-
-    const chartSettings = {
-      // 172.28.31.91
-      type: '3Dpie',
-      refObjectName: 'Group:2',// refObjectName: 'agentStatusSummary' // Temporarily removed
-      keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',  // keys: 'status,count', // Temporarily removed
-      title: 'Calls_Distribution_Graph', // Title for chart generation API
-      size: '532x400'
-
-      // 172.28.31.87
-      //type: '3Dpie',
-      //refObjectName: 'Group:1',
-      //keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',
-      //title: 'Calls_Distribution_Graph',
-      //size: '532x400'
-    };
-
-    const newWidgetConfig: WidgetConfig = {
-      id: `${CHART_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      type: 'chart-widget', // This must match the selector of ChartWidgetComponent
-      title: 'Agent Status Chart', // This is the title displayed on the widget header
-      dataSource: 'api/chart/agentStatus', // Placeholder, actual endpoint is called by ChartWidgetComponent's service call
-      updateInterval: 60000, // e.g., 60 seconds
-      settings: chartSettings,
-      nlat: 'auto',
-    };
-
-    // initGsWidget in GsDashboardWidgetManagerService will handle autoPositioning and default w/h (currently 2,1)
-    // If specific w/h are needed for chart-widget by default, initGsWidget should be modified
-    // or these properties should be added to NgGridStackWidget within initGsWidget based on config.type.
-    this.widgetManager.initGsWidget(newWidgetConfig);
-    console.log(`Chart widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized with settings:`, chartSettings);
-  }
-
-  public addSuperGroupListWidget(): void {
-    const SUPER_GROUP_LIST_WIDGET_ID = 'super-group-list-table';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'super-group-list-widget',
-      title: 'Super Group Status',
-      dataSource: 'modernized-api-super-groups',
-      updateInterval: 6000
-    };
-
-    this.widgetManager.initGsWidget({
-      id: SUPER_GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addAgentsListWidget(): void {
-    const AGENTS_LIST_WIDGET_ID = 'agents-list-table';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'agents-list-widget',
-      title: 'Agent Status',
-      dataSource: 'AgentList',
-      updateInterval: 6000
-    };
-
-    this.widgetManager.initGsWidget({
-      id: AGENTS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addGroupListWidget(): void {
-    const GROUP_LIST_WIDGET_ID = 'group-list-table';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'group-list-widget',
-      title: 'Group Status',
-      dataSource: 'GroupList',
-      updateInterval: 6000
-    };
-
-    this.widgetManager.initGsWidget({
-      id: GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addDnisListWidget(): void {
-    const DNIS_LIST_WIDGET_ID = 'dnis-list-table';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'dnis-list-widget',
-      title: 'DNIS Status',
-      dataSource: 'DnisList',
-      updateInterval: 5000
-    };
-
-    this.widgetManager.initGsWidget({
-      id: DNIS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addGroupDetailFullInfoWidget(): void {
-    const GROUP_DETAIL_FULL_INFO_WIDGET_ID = 'group-detail-full-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'group-detail-full-info-widget',
-      title: 'Group Detail Full Info',
-      dataSource: 'GroupDetailFullInfo',
-      updateInterval: 6000,
-      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: GROUP_DETAIL_FULL_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addGroupQueueInfoWidget() {
-    const GROUP_QUEUE_INFO_WIDGET_ID = 'group-queue-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'group-queue-info-widget',
-      title: 'Group Queue Info',
-      dataSource: 'Group Queue Info',
-      updateInterval: 6000,
-      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: GROUP_QUEUE_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addGroupAgentsInfoWidget(): void {
-    const GROUP_AGENTS_INFO_WIDGET_ID = 'group-agents-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'group-agents-info-widget',
-      title: 'Group Agents Info',
-      dataSource: 'GroupAgentsInfo',
-      updateInterval: 6000,
-      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: GROUP_AGENTS_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addIvrApplicationInfoWidget(): void {
-    const IVR_APPLICATION_INFO_WIDGET_ID = 'ivr-application-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'ivr-application-info-widget',
-      title: 'IVR Application Info',
-      dataSource: 'IvrApplicationInfo',
-      updateInterval: 6000,
-      settings: { ivrId: 1 } // Example: Default to IVR ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: IVR_APPLICATION_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addIvrPortInfoWidget(): void {
-    const IVR_PORT_INFO_WIDGET_ID = 'ivr-port-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'ivr-port-info-widget',
-      title: 'IVR Port Info',
-      dataSource: 'IvrPortInfo',
-      updateInterval: 6000,
-      settings: { portId: 1 } // Example: Default to Port ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: IVR_PORT_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addGroupAbandonedInfoWidget(): void {
-    const GROUP_ABANDONED_INFO_WIDGET_ID = 'group-abandoned-info-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'group-abandoned-info-widget',
-      title: 'Group Abandoned Info',
-      dataSource: 'GroupAbandonedInfo',
-      updateInterval: 6000,
-      settings: { groupId: 1 } // Example: Default to group ID 1, or prompt user
-    };
-
-    this.widgetManager.initGsWidget({
-      id: GROUP_ABANDONED_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addBriefAgentsWidget(): void {
-    const BRIEF_AGENTS_WIDGET_ID = 'brief-agents-widget';
-    let newWidgetConfig: Partial<WidgetConfig> = {};
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    newWidgetConfig = {
-      type: 'brief-agents-widget',
-      title: 'Brief Agents',
-      dataSource: 'BriefAgents',
-      updateInterval: 6000
-    };
-
-    this.widgetManager.initGsWidget({
-      id: BRIEF_AGENTS_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
-      ...newWidgetConfig
-    } as WidgetConfig);
-  }
-
-  public addBriefDnisWidget(): void {
-    const BRIEF_DNIS_WIDGET_ID_BASE = 'brief-dnis-widget';
-    const currentGridHeight = this.gridComp()?.grid?.getRow() || 0;
-
-    const newWidgetConfig: WidgetConfig = {
-      id: `${BRIEF_DNIS_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      type: 'brief-dnis-widget', // This must match the selector of BriefDnisWidgetComponent
-      title: 'Brief DNIS',
-      dataSource: 'BriefDnis', // This should align with what BriefDnisWidgetComponent expects
-      updateInterval: 6000, // Example interval
-      settings: { selectedDnisIds: [] }, // Example: Default to no specific DNIS IDs, or prompt user
-      nlat: 'auto',
-    };
-
-    this.widgetManager.initGsWidget({
-      ...newWidgetConfig,
-      position: { x: 0, y: currentGridHeight },
-    } as WidgetConfig);
-    console.log(`Brief DNIS widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
-  }
-
-  private updateWidgetDisplay(widgetId: string, data: any): void {
-    if (widgetId === 'table-widget') {
-      this.tableObj = data;
-    }
+  public setAddWidgetModalViewState(isOpen: boolean): void {
+    this.showAddWidgetModal = isOpen;
   }
 }

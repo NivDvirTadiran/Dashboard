@@ -4,56 +4,28 @@ import { FormsModule } from '@angular/forms';
 import { BaseWidget } from 'gridstack/dist/angular';
 import { GsDashboardWidgetManagerService, WidgetConfig, WidgetState } from '../gs-dashboard-widget-manager.service';
 import { Subscription, interval, finalize, tap } from 'rxjs';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSyncAlt, faEllipsisV, faFilter, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { EmisSoapService, AgentsListReturnType, AgentsListDataItemType, AgentListItemDto, DnisListItemDto } from 'src/app/services/emis-soap.service';
-
-// Define a more specific config type for widgets that support agent selection
-export interface WidgetConfigWithAgentSelection extends WidgetConfig {
-  config?: {
-    selectedAgentIds?: string[];
-    selectedDnisIds?: string[];
-    description?: string; // Added description to config
-    [key: string]: any; // Allow other config properties
-  };
-}
-
-export interface AgentSelectItem {
-  id: string;
-  name: string;
-  selected: boolean;
-}
+import { EmisSoapService, AgentsListDataItemType, DnisListItemType } from 'src/app/services/emis-soap.service';
+import { WidgetSettingsModalComponent } from '../widget-settings-modal/widget-settings-modal.component';
+import { DashboardWidget as ModalDashboardWidget, AgentSelectItem, DnisSelectItem } from '../widget-settings-modal/widget-settings-modal.component';
 
 @Component({
   selector: 'app-base-widget',
   templateUrl: './base-widget.component.html',
   styleUrls: ['./base-widget.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgIf, FormsModule, FontAwesomeModule]
+  imports: [CommonModule, NgIf, FormsModule, WidgetSettingsModalComponent]
 })
 export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
-  @Input() widget!: WidgetConfigWithAgentSelection; // Use the more specific type
+  @Input() widget!: WidgetConfig;
   protected dataSubscription: Subscription | undefined;
 
   public showSettingsModal = false;
-  public editableWidgetName = '';
-  public editableWidgetDescription = '';
+  public currentModalWidgetData: ModalDashboardWidget | null = null;
 
-  // FontAwesome icons
-  faSyncAlt = faSyncAlt;
-  faFilter = faFilter;
-  faEllipsisV = faEllipsisV;
-  faTimes = faTimes;
+  protected entitiesForSelection: any[] = [];
 
-  // Agent selection
-  agentsForSelection: (AgentListItemDto & { selected: boolean })[] = [];
-  isLoadingAgents = false;
+  protected isLoading = false;
 
-  // DNIS selection
-  dnisForSelection: (DnisListItemDto & { selected: boolean })[] = [];
-  isLoadingDnis = false;
-
-  // Inject EmisSoapService - make it protected
   protected emisSoapService = inject(EmisSoapService);
 
   constructor(protected widgetManager: GsDashboardWidgetManagerService) { super(); }
@@ -61,12 +33,9 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.widget) {
       this.startDataRefresh();
-      this.editableWidgetName = this.widget.title || '';
-      // Ensure config exists before trying to access properties on it
       if (!this.widget.config) {
         this.widget.config = {};
       }
-      this.editableWidgetDescription = this.widget.config?.description || '';
     }
   }
 
@@ -75,13 +44,13 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
   }
 
   protected startDataRefresh(): void {
-    this.stopDataRefresh(); // Ensure no previous subscription is active
+    this.stopDataRefresh();
     if (this.widget.updateInterval > 0) {
       this.dataSubscription = interval(this.widget.updateInterval).subscribe(() => {
         this.fetchData();
       });
     }
-    this.fetchData(); // Initial data fetch
+    this.fetchData();
   }
 
   protected stopDataRefresh(): void {
@@ -91,19 +60,15 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
     }
   }
 
-  // This method is intended to be overridden by child components
-  // Child components should call super.fetchData() if they want this base behavior
   public fetchData(): void {
     if (!this.widget || !this.widget.state) return;
 
     this.widget.state.loading = true;
     this.widget.state.error = undefined;
     console.log(`Base fetchData for widget: ${this.widget.id}. Child should override for specific data.`);
-    // Simulate base loading, child will provide actual data
     setTimeout(() => {
       if (this.widget.state) {
-        this.widget.state.loading = false; // Child should set this to false after its data is fetched
-        // this.widget.state.lastUpdated = Date.now(); // Child should set this
+        this.widget.state.loading = false;
       }
     }, 500);
   }
@@ -117,75 +82,65 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
     return this.widgetManager.getWidgetState(widgetId);
   }
 
-  toggleSettingsModal(): void {
-    this.showSettingsModal = !this.showSettingsModal;
-    if (this.showSettingsModal) {
-      this.editableWidgetName = this.widget?.title || '';
-      this.editableWidgetDescription = this.widget.config?.description || '';
-
-      if (this.widget.type === 'brief-agents-widget' && this.agentsForSelection.length === 0 && !this.isLoadingAgents) {
-        this.loadAgentsForSelection();
-      }
+  openSettingsModal(): void {
+    console.log('[GSBaseWidget] openSettingsModal: ENTERED. Widget ID:', this.widget?.id);
+    if (!this.widget) {
+      console.warn('[GSBaseWidget] openSettingsModal: No widget defined, exiting.');
+      return;
     }
+    this.prepareModalData();
+
+    this.currentModalWidgetData = {
+      id: this.widget.id,
+      name: this.widget.title || '',
+      description: this.widget.config?.description || '',
+      type: this.widget.type,
+      settings: { ...(this.widget.config || {}) }
+    };
+
+
+    this.showSettingsModal = true;
   }
 
-  protected loadAgentsForSelection(): void {
-    if (!this.widget || this.widget.type !== 'brief-agents-widget') return;
-
-    this.isLoadingAgents = true;
-    this.emisSoapService.getAgentsList().pipe(
-      tap(agentsList => console.log('AgentsList raw response (expected array):', agentsList)),
-      finalize(() => this.isLoadingAgents = false)
-    ).subscribe({
-      next: (agentsList: AgentsListDataItemType[]) => { // Expecting an array directly
-        if (agentsList && Array.isArray(agentsList)) {
-          const selectedIds = new Set(this.widget.config?.selectedAgentIds || []);
-          this.agentsForSelection = agentsList.map((agent: AgentsListDataItemType) => ({
-            id: agent.agentId.toString(), // Use agentId from AgentsListDataItemType
-            name: agent.agentName,         // Use agentName from AgentsListDataItemType
-            selected: selectedIds.has(agent.agentId.toString())
-          }));
-        } else {
-          this.agentsForSelection = [];
-          console.warn('No agents returned or invalid format for brief-agents-widget selection. Expected an array.');
-        }
-      },
-      error: (err) => {
-        console.error('Error loading agents for selection:', err);
-        this.agentsForSelection = [];
-        // Optionally, display an error message in the modal
-      }
-    });
+  /**
+   * Protected method for derived widgets to override.
+   * This method is called when the settings modal is about to open.
+   * Implementations should load any specific data required for the modal settings,
+   * such as lists for selection (e.g., agents, DNIS).
+   */
+  protected prepareModalData(): void {
+    console.log(`GSBaseWidget.prepareModalData called for widget type: ${this.widget?.type}. Override in derived class if modal data is needed.`);
   }
 
-  closeSettingsModal(): void {
+  handleModalClosed(): void {
     this.showSettingsModal = false;
+    this.currentModalWidgetData = null;
   }
 
-  saveSettings(): void {
-    if (this.widget) {
-      this.widget.title = this.editableWidgetName;
-      if (!this.widget.config) {
-        this.widget.config = {};
-      }
-      this.widget.config.description = this.editableWidgetDescription;
+  handleSettingsSaved(updatedModalData: Partial<ModalDashboardWidget> & { settings?: any }): void {
+    if (!this.widget) return;
 
-      if (this.widget.type === 'brief-agents-widget') {
-        this.widget.config.selectedAgentIds = this.agentsForSelection
-          .filter(agent => agent.selected)
-          .map(agent => agent.id);
-        console.log('Saved selectedAgentIds:', this.widget.config.selectedAgentIds);
-      } else if (this.widget.type === 'brief-dnis-widget') {
-        this.widget.config.selectedDnisIds = this.dnisForSelection
-          .filter(dnis => dnis.selected)
-          .map(dnis => dnis.id);
-        console.log('Saved selectedDnisIds:', this.widget.config.selectedDnisIds);
-      }
+    this.widget.title = updatedModalData.name || this.widget.title;
 
-      this.widgetManager.setWidgetConfig(this.widget);
-      console.log('Widget settings saved:', this.widget);
-      this.fetchData(); // Trigger data refresh for the current widget
+    if (!this.widget.config) {
+      this.widget.config = {};
     }
-    this.closeSettingsModal();
+
+    if (updatedModalData.description !== undefined) {
+      this.widget.config.description = updatedModalData.description;
+    }
+
+    if (updatedModalData.settings) {
+      if (this.widget.type === 'brief-agents-widget' && updatedModalData.settings.selectedAgentIds !== undefined) {
+        this.widget.config.selectedEntitiesIds = updatedModalData.settings.selectedAgentIds;
+      } else if (this.widget.type === 'brief-dnis-widget' && updatedModalData.settings.selectedDnisIds !== undefined) {
+        this.widget.config.selectedEntitiesIds = updatedModalData.settings.selectedDnisIds;
+      }
+    }
+
+    this.widgetManager.setWidgetConfig(this.widget);
+    console.log('Widget settings saved via modal:', this.widget);
+    this.fetchData();
+    this.handleModalClosed();
   }
 }

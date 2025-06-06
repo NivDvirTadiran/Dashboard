@@ -1,0 +1,27 @@
+<div class="pie-chart-container">
+  <ng-container *ngIf="data && data.length > 0; else noData">
+    <!-- Chart title if provided -->
+    <div class="chart-title" *ngIf="title">{{ title }}</div>
+    
+    <!-- Chart wrapper -->
+    <div class="chart-wrapper">
+      <!-- Canvas for the pie chart -->
+      <canvas #chartCanvas class="pie-chart-canvas"></canvas>
+    </div>
+    
+    <!-- Legend -->
+    <div class="chart-legend" *ngIf="showLegend">
+      <div class="legend-item" *ngFor="let item of data">
+        <span class="legend-color" [style.background-color]="item.color || getDefaultColor(item)"></span>
+        <span class="legend-label">{{ item.label }}</span>
+        <span class="legend-value" *ngIf="showLegendValues">{{ formatValue(item.value) }}</span>
+      </div>
+    </div>
+  </ng-container>
+  
+  <ng-template #noData>
+    <div class="no-data-message">
+      <p>No data to display</p>
+    </div>
+  </ng-template>
+</div>

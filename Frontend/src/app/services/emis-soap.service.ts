@@ -183,20 +183,6 @@ export class EmisSoapService {
     );
   }
 
-  getGroupList(): Observable<GroupListDataItemType[]> {
-    return this.http.get<GroupListReturnType>(`${this.basePath}/GroupList`).pipe(
-      map(response => {
-        if (response && response.returnArray) {
-          return response.returnArray;
-        }
-        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
-          console.error('SOAP service error in GroupList:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
-        }
-        return [];
-      })
-    );
-  }
-
   // Example for BriefAgents - define parameters if needed
   getBriefAgents(agentIds?: string[]): Observable<ReturnMatrixDataTypeBG> {
     let requestUrl = `${this.basePath}/brief-agents`;
@@ -221,9 +207,27 @@ export class EmisSoapService {
     );
   }
 
+
+
+
+
+  getDnisList(): Observable<DnisListItemType[]> {
+    return this.http.get<DnisListReturnType>(`${this.basePath}/dnis-list`).pipe(
+      map(response => {
+        if (response && response.returnArray) {
+          return response.returnArray;
+        }
+        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
+          console.error('SOAP service error in DnisList:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+        }
+        return [];
+      })
+    );
+  }
+
   // New method for Brief DNIS
   getBriefDnis(dnisIds?: string[]): Observable<ReturnMatrixDataTypeBG> {
-    let requestUrl = `${this.basePath}/brief-dnis`;
+    let requestUrl = `${this.basePath}/brief-voice-dnis`;
     if (dnisIds && dnisIds.length > 0) {
       const dnisIdsParam = dnisIds.join(',');
       requestUrl += `?dnisIds=${dnisIdsParam}`; // Ensure backend expects 'dnisIds'
@@ -242,14 +246,18 @@ export class EmisSoapService {
     );
   }
 
-  getDnisList(): Observable<DnisListItemType[]> {
-    return this.http.get<DnisListReturnType>(`${this.basePath}/dnis-list`).pipe(
+
+
+
+
+  getGroupList(): Observable<GroupListDataItemType[]> {
+    return this.http.get<GroupListReturnType>(`${this.basePath}/GroupList`).pipe(
       map(response => {
         if (response && response.returnArray) {
           return response.returnArray;
         }
         if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
-          console.error('SOAP service error in DnisList:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+          console.error('SOAP service error in GroupList:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
         }
         return [];
       })
@@ -298,6 +306,9 @@ export class EmisSoapService {
     );
   }
 
+
+
+
   getIvrApplicationInfo(appId: number): Observable<DataItemType[]> {
     return this.http.get<DetailResponseType>(`${this.basePath}/ivr/application/${appId}`).pipe(
       map(response => {
@@ -325,6 +336,9 @@ export class EmisSoapService {
       })
     );
   }
+
+
+
 
   // New methods for Modernized API
   getSuperGroupList(): Observable<SuperGroupListReturnType> { // Return the full DTO

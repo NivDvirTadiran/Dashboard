@@ -4,14 +4,14 @@ import { GsDashboardWidgetManagerService, WidgetConfig } from '../../../gs-dashb
 import { GSBaseWidget } from '../../../base-widget/base-widget.component';
 import { catchError, map, throwError } from 'rxjs';
 import { EmisSoapService, SuperGroupListItemType } from 'src/app/services/emis-soap.service';
-import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../gs-generic-table/gs-generic-table.component';
+import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../generic-widget-content/gs-generic-table/gs-generic-table.component';
 
 @Component({
   selector: 'super-group-list-widget',
   templateUrl: './super-group-list-widget.component.html',
   styleUrls: ['./super-group-list-widget.component.scss'],
   standalone: true,
-  imports: [CommonModule, GSBaseWidget, GsGenericTableComponent]
+  imports: [CommonModule, GsGenericTableComponent, GSBaseWidget]
 })
 export class SuperGroupListWidgetComponent extends GSBaseWidget implements OnDestroy {
   @HostBinding('style.display') display = 'contents';

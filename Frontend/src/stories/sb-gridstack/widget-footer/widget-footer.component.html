@@ -1,0 +1,4 @@
+<div class="widget-footer-container" *ngIf="lastUpdated">
+  <fa-icon [icon]="['fas', 'clock']"></fa-icon>
+  <span>Last updated: {{ lastUpdated | date:'medium' }}</span>
+</div>

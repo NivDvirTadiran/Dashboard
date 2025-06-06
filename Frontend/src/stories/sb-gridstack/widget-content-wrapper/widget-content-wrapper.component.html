@@ -1,0 +1,19 @@
+<div class="widget-content-container">
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="!loading && error" class="error-message">
+    <fa-icon [icon]="['fas', 'exclamation-triangle']"></fa-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Actual content projection -->
+  <div *ngIf="!loading && !error" class="actual-content">
+    <ng-content></ng-content>
+  </div>
+</div>

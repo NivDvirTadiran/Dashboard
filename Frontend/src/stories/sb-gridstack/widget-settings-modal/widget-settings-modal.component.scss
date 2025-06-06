@@ -1,0 +1,125 @@
+/* Styles for widget-settings-modal.component */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Ensure it's above other content */
+}
+
+.modal-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 500px; /* Or max-width */
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}
+
+.modal-body {
+  overflow-y: auto;
+  flex-grow: 1;
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type='text'] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+  }
+
+  .loading-small,
+  .no-agents-message,
+  .no-items-message {
+    font-style: italic;
+    color: #666;
+    padding: 10px 0;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-weight: normal;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+
+      input[type='checkbox'] {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .scrollable-checkbox-group {
+    max-height: 150px; /* Adjust as needed */
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+  }
+}
+
+.modal-footer {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+
+  .btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    border: none;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+}

@@ -1,45 +1,75 @@
 import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GsDashboardWidgetManagerService, WidgetConfig } from '../../../gs-dashboard-widget-manager.service';
-import { GSBaseWidget } from '../../../base-widget/base-widget.component';
-import { Observable, catchError, map, throwError } from 'rxjs';
-// Assuming DnisListItemDto exists or will be created, similar to Agent related DTOs
-// For now, using a generic type or any if the exact DTO is not yet defined.
-// import { DnisListItemDto, ReturnMatrixDataTypeBG, DataItemType } from 'src/app/services/emis-soap.service';
-import { EmisSoapService, ReturnMatrixDataTypeBG, DataItemType } from 'src/app/services/emis-soap.service'; // Using existing types for now
-import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../gs-generic-table/gs-generic-table.component';
+import { Observable, catchError, finalize, map, tap, throwError } from 'rxjs';
+import {
+  EmisSoapService,
+  ReturnMatrixDataTypeBG,
+  DataItemType,
+  DataItemRow,
+  DnisListItemType
+} from 'src/app/services/emis-soap.service';
+import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../generic-widget-content/gs-generic-table/gs-generic-table.component';
+import { WidgetHeaderComponent } from '../../../widget-header/widget-header.component';
+import { WidgetContentWrapperComponent } from '../../../widget-content-wrapper/widget-content-wrapper.component';
+import { WidgetFooterComponent } from '../../../widget-footer/widget-footer.component';
+import { WidgetSettingsModalComponent } from '../../../widget-settings-modal/widget-settings-modal.component';
+import {GSBaseWidget} from "../../../base-widget/base-widget.component";
 
 @Component({
-  selector: 'brief-dnis-widget', // Changed
-  templateUrl: './brief-dnis-widget.component.html', // Changed
-  styleUrls: ['./brief-dnis-widget.component.scss'], // Changed
+  selector: 'brief-dnis-widget',
+  templateUrl: './brief-dnis-widget.component.html',
+  styleUrls: ['./brief-dnis-widget.component.scss'],
   standalone: true,
-  imports: [CommonModule, GSBaseWidget, GsGenericTableComponent]
+  imports: [
+    CommonModule,
+    GsGenericTableComponent,
+    WidgetHeaderComponent,
+    WidgetContentWrapperComponent,
+    WidgetFooterComponent,
+    WidgetSettingsModalComponent
+  ]
 })
-export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy { // Changed
+export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy {
   @HostBinding('style.display') display = 'contents';
 
-  tableColumns: TableColumn[] = [ // Updated for DNIS
+  tableColumns: TableColumn[] = [
+    { key: "DNIS Id", header: "DNIS Id" },
     { key: "DNIS Name", header: "DNIS Name" },
-    { key: "DNIS Number", header: "DNIS Number" },
-    { key: "DNIS Type", header: "DNIS Type" },
-    // Add more columns as needed based on the actual API response
+    { key: "DNIS No.", header: "DNIS No." },
+    { key: "Above T.ASA", header: "Above T.ASA" },
+    { key: "Calls In Q", header: "Calls In Q" },
+    { key: "Max Time In Q", header: "Max Time In Q" },
+    { key: "Calls ACD", header: "Calls ACD" },
+    { key: "Calls Ansd", header: "Calls Ansd" },
+    { key: "Calls Abnd", header: "Calls Abnd" },
+    { key: "TSF", header: "TSF" },
+    { key: "Avg. Wait Abnd", header: "Avg. Wait Abnd" },
+    { key: "Max Wait Abnd", header: "Max Wait Abnd" },
+    { key: "Avg. Q Time", header: "Avg. Q Time" },
+    { key: "Max Q Time", header: "Max Q Time" },
   ];
   tableData: TableRowData[] = [];
+
+
+
+
 
 
   constructor(
     protected override widgetManager: GsDashboardWidgetManagerService
   ) {
     super(widgetManager);
-    console.log('constructor BriefDnisWidgetComponent'); // Changed
+    console.log('constructor BriefDnisWidgetComponent');
   }
 
   public override fetchData(): void {
+    console.log('[BriefDnisWidgetComponent] fetchData: CALLED');
     if (!this.widget || !this.widget.state) {
       if (this.widget && this.widget.state) {
           this.widget.state.loading = false;
       }
+      console.log('[BriefDnisWidgetComponent] fetchData: SKIPPED - no widget or state');
       return;
     }
 
@@ -57,8 +87,8 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
             return data.returnMatrix.map(item => {
               const row: TableRowData = {};
               if (item.returnArray && item.returnArray.length > 0 && item.returnArray[item.returnArray.length - 1]?.value) {
-                const rawDataString = item.returnArray[item.returnArray.length - 1].value;
-                const parsedMap = this.parseDnisDataStringToMap(rawDataString); // Changed
+                const rawData: DataItemType[] = item.returnArray;
+                const parsedMap = this.parseDnisDataItemTypeArrayToMap(rawData); // Changed
                 this.tableColumns.forEach(col => {
                   row[col.key] = parsedMap.get(col.key) || '';
                 });
@@ -69,15 +99,16 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
           return [];
         }),
         catchError(error => {
-          console.error(`Error fetching data for ${this.widget.id} of type ${this.widget.type}:`, error);
-          if (this.widget.state) { // Check if state exists
+          console.error(`[BriefDnisWidgetComponent] Error fetching data (in catchError): ${this.widget.id} of type ${this.widget.type}:`, error);
+          if (this.widget.state) {
             this.widget.state.error = error.message || 'Failed to fetch data';
-            this.widget.state.loading = false; // Ensure loading is false on error
+            this.widget.state.loading = false;
           }
           return throwError(() => error);
         })
       ).subscribe({
         next: (transformedData) => {
+          console.log('[BriefDnisWidgetComponent] Data transformed (subscribe next):', transformedData);
           this.tableData = transformedData;
           if (this.widget.state) {
             this.widget.state.data = transformedData;
@@ -86,28 +117,62 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
           }
         },
         error: (error) => {
-          // Error is already handled in catchError, but ensure loading is false
+          console.error('[BriefDnisWidgetComponent] Subscribe error:', error);
           if (this.widget.state) {
             this.widget.state.loading = false;
           }
-          // Error is already logged by catchError
         }
       });
   }
 
-  private parseDnisDataStringToMap(rawDataString: string): Map<string, string> { // Changed
+  private parseDnisDataItemTypeArrayToMap(rawDataItemTypeArray: DataItemType[]): Map<string, string> {
     const dataMap = new Map<string, string>();
-    if (!rawDataString || typeof rawDataString !== 'string') {
+    if (!rawDataItemTypeArray) {
       return dataMap;
     }
-    const parts = rawDataString.split(',');
-    parts.forEach(part => {
-      const cell = part.split(';');
-      if (cell.length >= 4 && cell[2] !== undefined && cell[3] !== undefined) {
-        dataMap.set(cell[2], cell[3]); // Assuming key is cell[2] and value is cell[3]
+    rawDataItemTypeArray.forEach((cell: DataItemType) => {
+      if (cell.ersname && cell.value) {
+        dataMap.set(cell.ersname, cell.value);
       }
     });
     return dataMap;
+  }
+
+  protected override prepareModalData() {
+    super.prepareModalData();
+    this.loadDnisForSelection();
+  }
+
+  private loadDnisForSelection(): void {
+    console.log('[BriefDnisWidgetComponent] loadDnisForSelection: ENTERED');
+    if (!this.widget || this.widget.type !== 'brief-dnis-widget') {
+      console.warn('[BriefDnisWidgetComponent] loadDnisForSelection: Invalid widget or widget type. Widget:', this.widget);
+      return;
+    }
+
+    this.isLoading = true;
+    this.emisSoapService.getDnisList().pipe(
+      tap(dnisList => console.log('DnisList raw response:', dnisList)),
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      next: (dnisList: DnisListItemType[]) => {
+        if (dnisList && Array.isArray(dnisList)) {
+          const selectedIds = new Set(this.widget.config?.selectedEntitiesIds || []);
+          this.entitiesForSelection = dnisList.map((dnis: DnisListItemType) => ({
+            id: dnis.dnisId.toString(),
+            name: dnis.dnisName,
+            selected: selectedIds.has(dnis.dnisId.toString())
+          }));
+        } else {
+          this.entitiesForSelection = [];
+          console.warn('No DNIS returned or invalid format for brief-dnis-widget selection.');
+        }
+      },
+      error: (err) => {
+        console.error('Error loading DNIS for selection:', err);
+        this.entitiesForSelection = [];
+      }
+    });
   }
 
   override ngOnDestroy(): void {

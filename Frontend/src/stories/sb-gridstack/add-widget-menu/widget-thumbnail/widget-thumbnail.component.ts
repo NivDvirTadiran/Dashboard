@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface WidgetThumbnailData {
-  id: string;
+  id: Type<any>;
   icon: string;
+  contentType?: string;
   title: string;
   showPreview?: boolean;
 }
@@ -19,9 +20,9 @@ export class WidgetThumbnailComponent {
   @Input() widget!: WidgetThumbnailData;
   @Input() isSelected: boolean = false;
 
-  @Output() selectionChange = new EventEmitter<{widgetId: string, selected: boolean}>();
-  @Output() thumbnailClick = new EventEmitter<string>();
-  @Output() previewClick = new EventEmitter<string>();
+  @Output() selectionChange = new EventEmitter<{widgetId: Type<any>, selected: boolean}>();
+  @Output() thumbnailClick = new EventEmitter<Type<any>>();
+  @Output() previewClick = new EventEmitter<Type<any>>();
 
   onCheckboxChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;

@@ -1,0 +1,18 @@
+<div class="widget-header-container">
+  <h3 *ngIf="title">{{ title }}</h3>
+  <div class="widget-controls">
+    <button 
+      (click)="onRefreshClick()" 
+      class="control-btn refresh-btn" 
+      title="Refresh Widget" 
+      [disabled]="!widgetId || disableRefresh">
+      <fa-icon [icon]="['fas', 'sync-alt']"></fa-icon>
+    </button>
+    <button 
+      (click)="onSettingsClick()" 
+      class="control-btn settings-btn" 
+      title="Widget Settings">
+      <fa-icon [icon]="['fas', 'ellipsis-v']"></fa-icon>
+    </button>
+  </div>
+</div>

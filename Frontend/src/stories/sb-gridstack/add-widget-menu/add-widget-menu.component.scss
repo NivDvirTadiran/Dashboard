@@ -1,4 +1,5 @@
 /* Styles for the add-widget-menu component based on Figma design */
+@use "sass:color";
 
 $panel-bg: #F8FBFE;
 $header-footer-bg: #FFFFFF;
@@ -95,10 +96,11 @@ $font-family: 'Arial', sans-serif; // Placeholder, ideally Noto Sans Hebrew or s
 }
 
 .widget-categories::-webkit-scrollbar-thumb {
-  background: darken($panel-bg, 10%);
+  background: color.scale($panel-bg, $lightness: -10%);
+  /*background: darken($panel-bg, 10%);*/
   border-radius: 4px;
 }
 
 .widget-categories::-webkit-scrollbar-thumb:hover {
-  background: darken($panel-bg, 15%);
+  background: color.scale($panel-bg, $lightness: -15%);
 }

@@ -5,7 +5,7 @@ import { GSBaseWidget } from '../../../base-widget/base-widget.component';
 import { catchError, map, throwError } from 'rxjs';
 import { EmisSoapService, BlockItemType, DataItemType } from 'src/app/services/emis-soap.service';
 import { LoadingIndicatorComponent } from '../../../loading/loading-indicator.component';
-import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../gs-generic-table/gs-generic-table.component';
+import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../generic-widget-content/gs-generic-table/gs-generic-table.component';
 
 @Component({
   selector: 'group-abandoned-info-widget',

@@ -1,0 +1,45 @@
+<div class="graph-widget" dir="rtl">
+  <!-- Header section with title -->
+  <div class="header">
+    <h2 class="title">{{ title }}</h2>
+  </div>
+
+  <!-- Main chart area -->
+  <div class="chart-area">
+    <!-- Y-axis labels -->
+    <div class="y-axis">
+      <span *ngFor="let value of yAxisValues">{{ value }}</span>
+    </div>
+
+    <!-- Chart content -->
+    <div class="chart-content">
+      <!-- Grid lines -->
+      <div class="grid-lines">
+        <div *ngFor="let value of yAxisValues" class="grid-line"></div>
+      </div>
+
+      <!-- Data line and points -->
+      <div class="data-line">
+        <svg width="100%" height="100%" preserveAspectRatio="none">
+          <polyline [attr.points]="getLinePoints()" fill="none" stroke="#1FC777" stroke-width="1.5"></polyline>
+        </svg>
+        <div *ngFor="let point of dataPoints; let i = index" 
+             class="data-point" 
+             [style.left]="(i/(dataPoints.length-1))*100 + '%'"
+             [style.bottom]="point.value/maxYValue*100 + '%'">
+          <div class="point-circle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- X-axis labels -->
+  <div class="x-axis">
+    <span *ngFor="let point of dataPoints">{{ point.time }}</span>
+  </div>
+
+  <!-- Current time display -->
+  <div class="current-time">
+    <span>עדכון אחרון: {{ currentTime }}</span>
+  </div>
+</div>

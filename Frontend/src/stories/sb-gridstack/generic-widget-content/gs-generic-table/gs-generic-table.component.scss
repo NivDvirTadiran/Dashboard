@@ -1,0 +1,322 @@
+@use "src/stories/assets/scss/tokens";
+
+.table-widget {
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Allows table to scroll if content overflows */
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif; // Consistent font
+  table-layout: fixed; // Important for respecting column widths during resize
+
+  th, td {
+    padding: 0.75rem;
+    min-width: 50px; // Minimum width for better resizing
+    width: 100px;
+    vertical-align: middle;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    // border-right: 2px dashed var(--border-color, rgba(0, 0, 0, 0.05)); // Keep if needed for visual separation
+
+    &:first-child {
+      padding-left: 1rem;
+    }
+
+    &:last-child {
+      padding-right: 1rem;
+      // border-right: none; // Remove right border for the last cell in a row
+    }
+  }
+
+  th {
+
+    font-weight: 600;
+    color: var(--text-primary-on-light-bg, #495057);
+    background-color: var(--table-header-bg, #f8f9fa);
+    border-bottom: 2px solid var(--border-color-strong, #dee2e6);
+    top: 0;
+    z-index: 10;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    position: relative; // For resize handle positioning
+    overflow: hidden; // Prevent text overflow during resize
+
+    .resize-handle {
+      position: absolute;
+      top: 0;
+      right: -2.5px; // Center the handle over the border
+      bottom: 0;
+      width: 5px;
+      cursor: col-resize;
+      z-index: 11;
+      // background-color: rgba(0,0,255,0.1); // For debugging resize handle
+    }
+  }
+
+  tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--table-row-hover-bg, rgba(61, 142, 207, 0.05));
+    }
+
+    &:nth-child(even) {
+      background-color: var(--table-row-even-bg, #f9fbfd);
+    }
+  }
+
+  td {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--text-secondary-on-light-bg, #2E2E2E);
+    line-height: 1.36;
+    letter-spacing: -0.011em;
+
+    .status-icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #1FC777; // Default green, can be dynamic
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  }
+
+  tbody {
+    overflow: scroll;
+  }
+}
+
+// No data message styling
+p {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-secondary);
+}
+
+// Styles for new controls
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--table-header-bg, #f8f9fa);
+  border-bottom: 1px solid var(--border-color-strong, #dee2e6);
+
+  /* Global .filter-input styles removed as it's no longer global */
+  /* If .filter-input class is reused elsewhere with these styles, keep it or move to a more generic location */
+
+  .column-toggle-container {
+    position: relative;
+
+    .column-toggle-button {
+      padding: 0.5rem 1rem;
+      background-color: var(--primary-color, #007bff);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &:hover {
+        background-color: var(--primary-color-dark, #0056b3);
+      }
+    }
+
+    .column-toggle-dropdown {
+      display: none; // Hidden by default, shown on button interaction (e.g., hover or click)
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: white;
+      border: 1px solid var(--border-color, #ced4da);
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      padding: 0.5rem;
+      min-width: 200px; // Adjust as needed
+
+      div {
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+
+        input[type="checkbox"] {
+          margin-right: 0.5rem;
+        }
+
+        label {
+          font-size: 0.9rem;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+      }
+    }
+    // Show dropdown on hover (simple CSS approach)
+    // For click-based toggle, JavaScript would be needed in the component
+    &:hover .column-toggle-dropdown,
+    .column-toggle-button:focus + .column-toggle-dropdown, // Show on focus for accessibility
+    .column-toggle-dropdown:hover { // Keep open while hovering dropdown itself
+      display: block;
+    }
+  }
+}
+
+  // Styles for sortable headers and indicators
+th {
+  // position: relative; // Already set
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; // Pushes filter button to the right of text
+    width: 100%; // Ensure it takes full width for layout
+  }
+
+  .filter-toggle-button {
+    background: transparent;
+    border: none;
+    padding: 0.2rem; // Small padding
+    margin-left: 0.5rem; // Space from header text
+    cursor: pointer;
+    line-height: 1; // Ensure icon aligns well
+
+    .filter-icon {
+      font-size: 0.8em; // Adjust icon size
+      color: var(--text-secondary-on-light-bg, #555);
+    }
+
+    &:hover .filter-icon {
+      color: var(--primary-color, #007bff);
+    }
+  }
+
+  .column-filter-input-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--table-header-bg, #f8f9fa); // Match header
+    padding: 0.25rem 0.5rem; // Compact padding
+    border-top: 1px solid var(--border-color-strong, #dee2e6);
+    z-index: 12; // Above header content, potentially above resize handle if it extends
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); // Subtle shadow to lift it
+
+    .column-filter-input {
+      width: 100%;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.8rem; // Smaller font for compact input
+      border: 1px solid var(--border-color, #ced4da);
+      border-radius: 3px;
+      box-sizing: border-box; // Ensure padding/border included in width
+    }
+  }
+
+
+  &.sortable {
+    cursor: pointer;
+    user-select: none; // Prevent text selection on click
+
+    &:hover {
+      background-color: var(--table-header-hover-bg, #e9ecef); // Slightly darker shade for hover
+    }
+
+    // Show generic sort icon on hover for non-active sortable columns
+    &:not(.sorted-asc):not(.sorted-desc):hover .sort-indicator-container .sort-indicator::before {
+      content: '↕'; // Generic up-down arrow, or use a different icon/SVG
+      opacity: 0.7;
+    }
+  }
+
+  .sort-indicator-container {
+    position: absolute;
+    top: 0.25rem; // Adjust for vertical alignment
+    right: 0.25rem; // Adjust for horizontal alignment
+    padding-right: 0.25rem;
+    width: inherit;
+    height: 1em;
+    display: flex;
+    z-index: 1; // Ensure it's above text but below resize handle if overlapping
+    flex-direction: row;
+  }
+
+  .sort-indicator {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    opacity: 0; // Hidden by default, shown by parent state
+    transition: opacity 0.15s ease-in-out;
+
+    // Default state (can be a subtle dot or generic icon if needed when hovered but not active)
+    &::before {
+      content: ''; // Default empty, specific icons set below
+      font-size: 0.9em; // Adjust size of icon
+      color: var(--text-primary-on-light-bg, #495057); // Match header text color
+    }
+  }
+
+  .filter-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    opacity: 0; // Hidden by default, shown by parent state
+    transition: opacity 0.15s ease-in-out;
+
+    // Default state (can be a subtle dot or generic icon if needed when hovered but not active)
+    &::before {
+      content: ''; // Default empty, specific icons set below
+      font-size: 0.8em; // Adjust size of icon
+      color: var(--text-primary-on-light-bg, #495057); // Match header text color
+    }
+  }
+
+  &:hover .filter-icon {
+    color: var(--primary-color, #007bff);
+  }
+
+
+  // Active sorted column indicators (always visible)
+  &.sorted-asc .sort-indicator-container .sort-indicator,
+  &.sorted-desc .sort-indicator-container .sort-indicator {
+    opacity: 1;
+  }
+
+  &.sorted-asc .sort-indicator-container .sort-indicator::before {
+    content: '▲'; // Up arrow
+  }
+
+  &.sorted-desc .sort-indicator-container .sort-indicator::before {
+    content: '▼'; // Down arrow
+  }
+
+  // Show indicator on hover for sortable columns that are not currently sorted
+  &.sortable:not(.sorted-asc):not(.sorted-desc):hover .sort-indicator-container .sort-indicator {
+    opacity: 0.7; // Make it slightly less prominent than active sort
+    &::before {
+       content: '↕'; // Or a specific "sortable but not sorted" icon like up/down arrows
+       // Alternatively, you could use a faint up or down arrow based on a default sort preference
+    }
+  }
+}
+
+
+// Custom scrollbars
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}

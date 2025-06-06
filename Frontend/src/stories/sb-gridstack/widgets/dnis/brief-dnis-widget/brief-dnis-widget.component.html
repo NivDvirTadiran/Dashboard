@@ -1,7 +1,30 @@
-<app-base-widget [widget]="widget">
+<app-widget-header
+  [title]="widget?.title"
+  [widgetId]="widget?.id"
+  [disableRefresh]="widget?.state?.loading"
+  (refreshClicked)="refreshWidget($event)"
+  (settingsClicked)="openSettingsModal()">
+</app-widget-header>
+
+<app-widget-content-wrapper
+  [loading]="widget?.state?.loading"
+  [error]="widget?.state?.error">
+  <!-- Specific widget content -->
   <app-gs-generic-table
     [columns]="tableColumns"
     [data]="tableData"
     [widgetId]="widget?.id">
   </app-gs-generic-table>
-</app-base-widget>
+</app-widget-content-wrapper>
+
+<app-widget-footer [lastUpdated]="widget?.state?.lastUpdated"></app-widget-footer>
+
+
+<app-widget-settings-modal
+  *ngIf="showSettingsModal && currentModalWidgetData"
+  [widget]="currentModalWidgetData"
+  [entitiesForSelection]="entitiesForSelection"
+  [isLoading]="isLoading"
+  (settingsSaved)="handleSettingsSaved($event)"
+  (modalClosed)="handleModalClosed()">
+</app-widget-settings-modal>

@@ -5,7 +5,7 @@
 
   <div class="widget-categories">
     <app-widget-category
-      *ngFor="let category of getFilteredCategories()"
+      *ngFor="let category of filteredCategories"
       [category]="category"
       [selectedWidgets]="selectedWidgetTypes"
       (categoryToggle)="onCategoryToggle($event)"
@@ -17,7 +17,7 @@
 
   <div class="panel-footer">
     <button class="button-reset" (click)="resetSelections()">Reset Components</button>
-    <button class="button-add" (click)="addSelectedWidgets()" [textContent]="addComponentsButtonText"></button>
+    <button class="button-add" (click)="onAddSelectedWidgets()" [textContent]="addComponentsButtonText"></button>
     <button class="button-close" (click)="closeMenu.emit()">Close</button>
   </div>
 </div>

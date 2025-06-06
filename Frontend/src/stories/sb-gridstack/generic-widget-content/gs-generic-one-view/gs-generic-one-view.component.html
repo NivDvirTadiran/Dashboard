@@ -1,0 +1,48 @@
+<div class="one-view-container">
+  <ng-container *ngIf="!loading; else loadingTemplate">
+    <div class="one-view-content">
+      <!-- Icon section (optional) -->
+      <div class="icon-section" *ngIf="icon">
+        <i [class]="'icon ' + icon" [style.color]="iconColor"></i>
+      </div>
+      
+      <!-- Main content section -->
+      <div class="content-section">
+        <!-- Main text/label -->
+        <div class="main-text" *ngIf="mainText">{{ mainText }}</div>
+        
+        <!-- Value display -->
+        <div class="value-text" [style.color]="valueColor">
+          <span class="value">{{ formattedValue }}</span>
+          <span class="unit" *ngIf="unit">{{ unit }}</span>
+        </div>
+        
+        <!-- Optional trend indicator -->
+        <div class="trend-section" *ngIf="showTrend && trend !== undefined">
+          <span class="trend-icon" [class.trend-up]="trend > 0" [class.trend-down]="trend < 0">
+            <svg width="12" height="12" viewBox="0 0 12 12">
+              <path *ngIf="trend > 0" d="M6 2L10 8H2L6 2Z" fill="currentColor"/>
+              <path *ngIf="trend < 0" d="M6 10L2 4H10L6 10Z" fill="currentColor"/>
+              <rect *ngIf="trend === 0" x="2" y="5" width="8" height="2" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="trend-value">{{ formatTrendValue(trend) }}%</span>
+        </div>
+        
+        <!-- Optional subtitle -->
+        <div class="subtitle" *ngIf="subtitle">{{ subtitle }}</div>
+      </div>
+    </div>
+  </ng-container>
+  
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <div class="spinner"></div>
+    </div>
+  </ng-template>
+  
+  <!-- Error state -->
+  <div class="error-state" *ngIf="error">
+    <p>{{ error }}</p>
+  </div>
+</div>

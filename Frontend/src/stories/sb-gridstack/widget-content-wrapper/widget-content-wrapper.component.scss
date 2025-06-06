@@ -1,0 +1,47 @@
+.widget-content-container {
+  padding: 12px;
+  flex-grow: 1; // Allows content to fill space if widget is flex container
+  position: relative; // For absolute positioning of spinner/error if needed
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; // Or adapt to content size
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc3545; // Bootstrap danger color
+    padding: 10px;
+    border: 1px solid #f5c6cb; // Bootstrap danger border color
+    background-color: #f8d7da; // Bootstrap danger background color
+    border-radius: 4px;
+
+    fa-icon {
+      font-size: 1.2em;
+    }
+  }
+
+  .actual-content {
+    // Styles for the content area if needed
+  }
+}
+
+// Visually hidden class for accessibility, e.g., for spinner text
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; 
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; /* added line */
+}
