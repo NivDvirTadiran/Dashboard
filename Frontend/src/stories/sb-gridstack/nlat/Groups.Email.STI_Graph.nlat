@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="Groups" type="email">
-		<nla:chart type="area" keys="6_3_1_2_23,6_3_1_2_23a,6_3_1_2_23b,6_3_1_2_23c,6_3_1_2_23d,6_3_1_2_23e,6_3_1_2_23f,6_3_1_2_23g"/>
-	</nla:obj>
-</nla:window>

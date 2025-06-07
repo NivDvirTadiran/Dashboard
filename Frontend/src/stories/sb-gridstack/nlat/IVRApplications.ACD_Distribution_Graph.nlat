@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="IVRApplication">
-		<nla:chart type="3Dpie" keys="6_3_11_3_4,6_3_11_3_5,6_3_11_3_6" title="IVR App. ACD Distribution Graph"/>
-	</nla:obj>
-</nla:window>

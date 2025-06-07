@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="250x200">
-<nla:obj ref="IVRGroups">
-	<nla:table keys="6_3_13_1_1,6_3_13_1_2,6_3_13_2_1,6_3_13_2_2" optionalKeys="6_3_13_2_3,6_3_13_2_4"/>
-</nla:obj>
-</nla:window>

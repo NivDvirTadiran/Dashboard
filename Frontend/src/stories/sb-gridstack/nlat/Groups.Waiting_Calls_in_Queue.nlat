@@ -1,8 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
-
-<nla:window size="450x300">
-	<nla:caption text="Waiting_Calls_in_Queue" type="caption"/>
-	<nla:obj ref="Groups">
-		<nla:data key="6_3_1_2_1"/>
-	</nla:obj>
-</nla:window>

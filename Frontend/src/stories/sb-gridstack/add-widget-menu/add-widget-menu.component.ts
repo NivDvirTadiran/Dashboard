@@ -5,8 +5,8 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
 
 // Import all necessary widget components
 import { BriefAgentsWidgetComponent } from '../widgets/agents/brief-agents-widget/brief-agents-widget.component';
-import { ExamplePieChartWidgetComponent } from '../example-pie-chart-widget/example-pie-chart-widget.component';
-import { ChartWidgetComponent } from '../chart-widget/chart-widget.component';
+//import { ExamplePieChartWidgetComponent } from '../example-pie-chart-widget/example-pie-chart-widget.component';
+//import { ChartWidgetComponent } from '../chart-widget/chart-widget.component';
 import { BriefDnisWidgetComponent } from '../widgets/dnis/brief-dnis-widget/brief-dnis-widget.component';
 // ... import ALL other specific widget components used in categories ...
 // For Group widgets, import specific components if they exist, or a generic one
@@ -25,7 +25,7 @@ import {
 import {
   IvrPortInfoWidgetComponent
 } from "../widgets/ivr-applications/ivr-port-info-widget/ivr-port-info-widget.component";
-import { OneViewWidgetComponent } from '../one-view-widget/one-view-widget.component';
+//import { OneViewWidgetComponent } from '../one-view-widget/one-view-widget.component';
 import {GsDashboardWidgetManagerService, WidgetConfig} from "../gs-dashboard-widget-manager.service";
 import { GridStack } from 'gridstack';
 import {
@@ -242,12 +242,12 @@ export class AddWidgetMenuComponent implements OnInit {
     //this.widgetsSelected.emit(Array.from(this.selectedWidgetTypes));
     this.selectedWidgetTypes.forEach(widgetType => {
       switch (widgetType) {
-        case ExamplePieChartWidgetComponent:
-          this.widgetManager.addExamplePieChartWidget();
-          break;
-        case ChartWidgetComponent:
-          this.widgetManager.addChartWidget();
-          break;
+       // case ExamplePieChartWidgetComponent:
+       //   this.widgetManager.addExamplePieChartWidget();
+       // break;
+       // case ChartWidgetComponent:
+       //    this.widgetManager.addChartWidget();
+       // break;
         case SuperGroupListWidgetComponent:
           this.widgetManager.addSuperGroupListWidget();
           break;
@@ -281,9 +281,9 @@ export class AddWidgetMenuComponent implements OnInit {
         case BriefAgentsWidgetComponent:
           this.widgetManager.addBriefAgentsWidget();
           break;
-        case OneViewWidgetComponent: // Added new case for one-view-widget
-          this.widgetManager.addExampleOneViewWidget();
-          break;
+        //case OneViewWidgetComponent: // Added new case for one-view-widget
+        //  this.widgetManager.addExampleOneViewWidget();
+        //  break;
         case BriefDnisWidgetComponent:
           this.widgetManager.addBriefDnisWidget();
           break;

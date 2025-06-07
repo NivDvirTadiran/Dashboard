@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="350x200">
-	<nla:obj ref="Group:-1">
-		<nla:table ref="Group.Agents" keys="6_3_2_1_1,6_3_2_1_2,6_3_2_1_3,6_3_2_2_2"/>
-	</nla:obj>
-</nla:window>

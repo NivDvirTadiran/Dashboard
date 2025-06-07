@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="Group" type="voice">
-		<nla:chart type="3Dpie" keys="20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13" title="Calls_Distribution_Graph"/>
-	</nla:obj>
-</nla:window>

@@ -4,7 +4,6 @@ import { GsDashboardWidgetManagerService, WidgetConfig } from '../../../gs-dashb
 import { GSBaseWidget } from '../../../base-widget/base-widget.component';
 import { catchError, map, throwError } from 'rxjs';
 import { EmisSoapService, BlockItemType, DataItemType } from 'src/app/services/emis-soap.service';
-import { LoadingIndicatorComponent } from '../../../loading/loading-indicator.component';
 import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../generic-widget-content/gs-generic-table/gs-generic-table.component';
 
 @Component({
@@ -12,7 +11,7 @@ import { GsGenericTableComponent, TableColumn, TableRowData } from '../../../gen
   templateUrl: './group-abandoned-info-widget.component.html',
   styleUrls: ['./group-abandoned-info-widget.component.scss'],
   standalone: true,
-  imports: [CommonModule, /*LoadingIndicatorComponent,*/ GSBaseWidget, GsGenericTableComponent]
+  imports: [CommonModule, GSBaseWidget, GsGenericTableComponent]
 })
 export class GroupAbandonedInfoWidgetComponent extends GSBaseWidget implements OnDestroy {
   @HostBinding('style.display') display = 'contents';

@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="Group">
-		<nla:chart type="3Dpie" keys="6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24" title="Agents.Distribution_Graph"/>
-	</nla:obj>
-</nla:window>

@@ -1,8 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld" %>
-
-<nla:window size="450x300">
-	<nla:caption text="Outbound_Pending_Calls" type="caption"/>
-	<nla:obj ref="Groups">
-		<nla:data key="6_3_1_2_7"/>
-	</nla:obj>
-</nla:window>

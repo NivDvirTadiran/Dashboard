@@ -1,5 +1,4 @@
 import { Component, AfterViewInit, Input, OnDestroy, ViewChild, OnInit, Type } from '@angular/core';
-import { WidgetPieDoughnutComponent } from './widget-pie-doughnut/widget-pie-doughnut.component';
 import { GsDashboardWidgetManagerService, WidgetConfig } from './gs-dashboard-widget-manager.service';
 import { TableRow } from 'src/app/dashboard/dashboard.service';
 import { CommonModule, NgIf } from '@angular/common';
@@ -8,7 +7,6 @@ import { AddWidgetMenuComponent } from './add-widget-menu/add-widget-menu.compon
 
 import { GridstackComponent, GridstackModule, NgGridStackOptions, NgGridStackWidget } from 'gridstack/dist/angular';
 import { GridStackWidget } from 'gridstack/dist/types';
-import { GsNlatTableComponent } from './gs-nlat-table/gs-nlat-table.component';
 import { SuperGroupListWidgetComponent } from './widgets/super-groups/super-group-list-widget/super-group-list-widget.component';
 import { AgentsListWidgetComponent } from './widgets/agents/agents-list-widget/agents-list-widget.component';
 import { GroupListWidgetComponent } from './widgets/groups/group-list-widget/group-list-widget.component';
@@ -20,9 +18,6 @@ import { GroupAbandonedInfoWidgetComponent } from './widgets/groups/group-abando
 import { GroupAgentsInfoWidgetComponent } from './widgets/groups/group-agents-info-widget/group-agents-info-widget.component';
 import { IvrApplicationInfoWidgetComponent } from './widgets/ivr-applications/ivr-application-info-widget/ivr-application-info-widget.component';
 import { IvrPortInfoWidgetComponent } from './widgets/ivr-applications/ivr-port-info-widget/ivr-port-info-widget.component';
-import { ChartWidgetComponent } from './chart-widget/chart-widget.component';
-import { ExamplePieChartWidgetComponent } from './example-pie-chart-widget/example-pie-chart-widget.component';
-import { OneViewWidgetComponent } from './one-view-widget/one-view-widget.component';
 import { BriefDnisWidgetComponent } from './widgets/dnis/brief-dnis-widget/brief-dnis-widget.component';
 
 @Component({
@@ -64,7 +59,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     // This allows GridStack to know which Angular component to render for a given selector string.
     const registeredWidgetTypes = [
       SuperGroupListWidgetComponent,
-      GsNlatTableComponent,
       AgentsListWidgetComponent,
       GroupListWidgetComponent,
       BriefAgentsWidgetComponent,
@@ -75,9 +69,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       GroupAgentsInfoWidgetComponent,
       IvrApplicationInfoWidgetComponent,
       IvrPortInfoWidgetComponent,
-      ChartWidgetComponent,
-      ExamplePieChartWidgetComponent,
-      OneViewWidgetComponent,
       BriefDnisWidgetComponent
       // Ensure ALL widget components that can be added are registered here
     ];
@@ -87,7 +78,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
     // IMPORTANT: Selectors MUST match the actual @Component({selector: '...'}) values
     const widgetMappingData = [
       { widgetType: SuperGroupListWidgetComponent, selector: 'super-group-list-widget' },
-      { widgetType: GsNlatTableComponent, selector: 'gs-nlat-table' },
       { widgetType: AgentsListWidgetComponent, selector: 'agents-list-widget' },
       { widgetType: GroupListWidgetComponent, selector: 'group-list-widget' },
       { widgetType: BriefAgentsWidgetComponent, selector: 'brief-agents-widget' },
@@ -98,9 +88,6 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       { widgetType: GroupAgentsInfoWidgetComponent, selector: 'group-agents-info-widget' },
       { widgetType: IvrApplicationInfoWidgetComponent, selector: 'ivr-application-info-widget' },
       { widgetType: IvrPortInfoWidgetComponent, selector: 'ivr-port-info-widget' },
-      { widgetType: ChartWidgetComponent, selector: 'chart-widget' }, // Or 'app-chart-widget' etc.
-      { widgetType: ExamplePieChartWidgetComponent, selector: 'example-pie-chart-widget' },
-      { widgetType: OneViewWidgetComponent, selector: 'one-view-widget' }, // Or 'app-one-view-widget'
       { widgetType: BriefDnisWidgetComponent, selector: 'brief-dnis-widget' }
       // Add ALL other registered widgets here with their correct selectors
     ];
@@ -187,7 +174,7 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   items = ['Zero', 'One', 'Two'];
-  frames: any = [WidgetPieDoughnutComponent];
+  frames: any = [];
   axes = ['both', 'x', 'y'];
 
   ngAfterViewInit(): void {

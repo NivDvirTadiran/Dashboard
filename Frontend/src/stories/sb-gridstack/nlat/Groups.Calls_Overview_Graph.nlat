@@ -1,8 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="900x550">
-	<jsp:include page="Groups.STI_Graph.nlat" />
-	<jsp:include page="Groups.OACD_STI_Graph.nlat" />
-	<jsp:include page="Groups.Queued_Calls_Graph.nlat" />
-	<jsp:include page="Groups.Queued_OACD_Calls_Graph.nlat" />
-</nla:window>

@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="Group.Periods" type="voice">
-		<nla:table keys="7_3_1_0,7_3_1_2_8,7_3_1_2_22,7_3_1_2_10,7_3_1_3_5a,7_3_1_3_10,7_3_1_3_6a"/>
-	</nla:obj>
-</nla:window>

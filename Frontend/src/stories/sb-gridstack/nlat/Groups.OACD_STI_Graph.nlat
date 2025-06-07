@@ -1,7 +1,0 @@
-<%@taglib prefix="nla" uri="/WEB-INF/nlaTags.tld"%>
-
-<nla:window size="450x300">
-	<nla:obj ref="Groups" type="voice">
-		<nla:chart type="area" keys="6_3_1_2_8a,6_3_1_2_8b,6_3_1_2_8c,6_3_1_2_8d,6_3_1_2_8e,6_3_1_2_8f"/>
-	</nla:obj>
-</nla:window>
