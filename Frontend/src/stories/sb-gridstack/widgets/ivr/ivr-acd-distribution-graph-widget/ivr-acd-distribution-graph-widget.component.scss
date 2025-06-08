@@ -1,0 +1,22 @@
+/* Styles for ivr-acd-distribution-graph-widget.component.scss */
+/* Add any specific styles for this widget here. */
+/* If it uses generic styling from gs-generic-pie, this file might be minimal or empty. */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure the host takes up the full grid item height */
+}
+
+app-widget-content-wrapper {
+  flex-grow: 1; /* Allows the content wrapper to fill available space */
+  display: flex;
+  flex-direction: column;
+}
+
+app-gs-generic-pie {
+  flex-grow: 1; /* Allows the pie chart to fill the content wrapper */
+  display: block; /* Or flex, depending on its internal structure */
+  width: 100%;
+  height: 100%; /* Ensure pie chart component can utilize available space */
+}

@@ -1,0 +1,22 @@
+// Styles for ivr-active-acd-graph-widget
+
+// Since this widget uses a generic graph component,
+// most of the styling will be handled by the generic graph component's SCSS.
+// Add any widget-specific styles here if needed.
+
+// Example: If you need to adjust the container or add specific margins/paddings
+// for this particular widget instance:
+/*
+:host {
+  display: block; // Or 'flex', etc., depending on layout needs
+  padding: 1rem; // Example padding
+}
+*/
+
+// If the generic graph component needs to be constrained in size within this widget:
+/*
+app-gs-generic-graph {
+  width: 100%;
+  height: 300px; // Example fixed height, or use other sizing methods
+}
+*/

@@ -102,7 +102,23 @@ public class ChartDataService {
             if (item == null) {
                 item = new DataItem(fields[i], "...", 0);
             }
-            double val = Double.valueOf(item.getValue().toString());
+            
+            Object pieValueObj = item.getValue();
+            double val = 0.0;
+            if (pieValueObj != null) {
+                String pieValueStr = pieValueObj.toString();
+                if (!pieValueStr.isEmpty()) {
+                    try {
+                        val = Double.parseDouble(pieValueStr);
+                    } catch (NumberFormatException nfe) {
+                        logger.warn("PieChart: Could not parse double from value: '{}' for key: {}. Defaulting to 0.", pieValueStr, fields[i]);
+                    }
+                } else {
+                     logger.warn("PieChart: Empty value string for key: {}. Defaulting to 0.", fields[i]);
+                }
+            } else {
+                logger.warn("PieChart: Null value object for key: {}. Defaulting to 0.", fields[i]);
+            }
             
             if (val != 0) {
                 sum += val;
@@ -189,7 +205,23 @@ public class ChartDataService {
                     }
                 }
 
-                data[r][i] = Double.valueOf(item.getValue().toString());
+                Object barValueObj = item.getValue();
+                double barVal = 0.0;
+                if (barValueObj != null) {
+                    String barValueStr = barValueObj.toString();
+                    if (!barValueStr.isEmpty()) {
+                        try {
+                            barVal = Double.parseDouble(barValueStr);
+                        } catch (NumberFormatException nfe) {
+                            logger.warn("BarChart: Could not parse double from value: '{}' for ersKey: {}. Defaulting to 0.", barValueStr, ersKey);
+                        }
+                    } else {
+                        logger.warn("BarChart: Empty value string for ersKey: {}. Defaulting to 0.", ersKey);
+                    }
+                } else {
+                    logger.warn("BarChart: Null value object for ersKey: {}. Defaulting to 0.", ersKey);
+                }
+                data[r][i] = barVal;
 
                 if (r == 0) {
                     labels.add(itemName);

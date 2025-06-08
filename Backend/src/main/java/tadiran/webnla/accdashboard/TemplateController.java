@@ -1019,7 +1019,54 @@ public class TemplateController {
         logger.info("Successfully fetched ReportListData. Returning " + (responseDto.getReturnArray() != null ? responseDto.getReturnArray().size() : 0) + " items.");
         return ResponseEntity.ok(responseDto);
     }
+/*
+    @GetMapping("/api/soap/brief-ivr-applications")
+    public ResponseEntity<?> getBriefIvrApplications(@RequestParam(name = "ivrAppIds", required = false) String ivrAppIdsParam) {
+        logger.info("Received request for /api/soap/brief-ivr-applications. Requested ivrAppIds: {}", ivrAppIdsParam);
 
+        if (!isUserAuthenticated()) {
+            logger.warn("/api/soap/brief-ivr-applications - User not authenticated.");
+            return new ResponseEntity<>("User not authenticated or session expired. Please login again.", HttpStatus.UNAUTHORIZED);
+        }
+
+        BriefInfoRequestType soapRequest = new BriefInfoRequestType();
+        soapRequest.setRequestInfoHeader(this.reqHeader);
+        // Note: The BriefInfoRequestType in the WSDL doesn't currently support passing IDs.
+        // If filtering by ivrAppIds is needed at the SOAP service level for this new operation,
+        // the BriefInfoRequestType or a new request type would need to be extended in the WSDL
+        // and corresponding Java classes regenerated.
+        // For now, this will fetch all IVR brief reports accessible by the user,
+        // and filtering (if any) would happen client-side or by modifying the C++ layer.
+
+        ReturnMatrixDataTypeBG soapResponse;
+        try {
+            if (wsEMIS_port == null) { wsEMIS_port = establishServerConnection(); }
+            if (wsEMIS_port == null) { return new ResponseEntity<>("Service connection error: Main service not available.", HttpStatus.SERVICE_UNAVAILABLE); }
+            logger.info("Calling briefIvrApplications SOAP operation"); // New SOAP operation
+            soapResponse = wsEMIS_port.briefIvrApplications(soapRequest); // New SOAP operation
+        } catch (Exception e) {
+            logger.error("Error calling briefIvrApplications SOAP operation", e);
+            wsEMIS_port = null;
+            return new ResponseEntity<>("Failed to fetch IVR brief applications data: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (soapResponse == null || soapResponse.getResponseInfoHeader() == null) {
+            logger.error("Received null or invalid response from SOAP service for briefIvrApplications");
+            return new ResponseEntity<>("Invalid response from SOAP service for IVR brief applications", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (soapResponse.getResponseInfoHeader().getErrorCause() != 0) {
+            logger.error("SOAP error in briefIvrApplications response: {} - {}", soapResponse.getResponseInfoHeader().getErrorCause(), soapResponse.getResponseInfoHeader().getServersInfo());
+            return new ResponseEntity<>("SOAP service error (IVR brief applications): " + soapResponse.getResponseInfoHeader().getErrorCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // The response is already ReturnMatrixDataTypeBG, so direct mapping or return is possible.
+        // For consistency with other DTOs, we can map it, or return directly if the frontend service expects the raw SOAP type.
+        // Assuming frontend service (EmisSoapService) will handle ReturnMatrixDataTypeBG directly for this.
+        logger.info("Successfully fetched IVR Brief Applications data. Number of rows: {}",
+            soapResponse.getReturnMatrix() != null ? soapResponse.getReturnMatrix().size() : 0);
+        return ResponseEntity.ok(soapResponse);
+    }
+*/
     @GetMapping("/api/soap/brief-dnis")
     public ResponseEntity<?> getVoiceDnisList() {
         logger.info("Received request for /api/modernized/brief-dnis");
@@ -1811,4 +1858,108 @@ public class TemplateController {
         return getGenericList("mailAccList", wsEMIS_port::mailAccList);
     }
 
+    @GetMapping("/api/soap/ivr-brief-report")
+    public ResponseEntity<?> getIvrBriefReport(@RequestParam(name = "ivrAppIds", required = false) String ivrAppIdsParam) {
+        logger.info("Received request for /api/soap/ivr-brief-report. Requested ivrAppIds: {}", ivrAppIdsParam);
+
+        if (!isUserAuthenticated()) {
+            logger.warn("/api/soap/ivr-brief-report - User not authenticated.");
+            return new ResponseEntity<>("User not authenticated or session expired. Please login again.", HttpStatus.UNAUTHORIZED);
+        }
+
+        GenInfoRequestType soapRequest = new GenInfoRequestType();
+        soapRequest.setRequestInfoHeader(this.reqHeader);
+
+        List<Long> idsToFetch = new ArrayList<>();
+        if (ivrAppIdsParam != null && !ivrAppIdsParam.isEmpty()) {
+            try {
+                Arrays.stream(ivrAppIdsParam.split(","))
+                      .map(String::trim)
+                      .filter(s -> !s.isEmpty())
+                      .map(Long::parseLong)
+                      .forEach(idsToFetch::add);
+                logger.info("Processing specific IVR App IDs: {}", idsToFetch);
+            } catch (NumberFormatException e) {
+                logger.warn("Invalid number format in ivrAppIdsParam: {}", ivrAppIdsParam, e);
+                return new ResponseEntity<>("Invalid IVR Application ID format.", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            logger.info("No specific IVR App IDs provided. Attempting to fetch all accessible IVR App IDs.");
+            GenRequestType listRequest = new GenRequestType();
+            listRequest.setRequestInfoHeader(this.reqHeader);
+            GenListReturnType listResponse;
+            try {
+                if (wsEMIS_port == null) { wsEMIS_port = establishServerConnection(); }
+                if (wsEMIS_port == null) { return new ResponseEntity<>("Service connection error: Main service not available.", HttpStatus.SERVICE_UNAVAILABLE); }
+
+                listResponse = wsEMIS_port.ivrAppList(listRequest);
+                if (listResponse != null && listResponse.getResponseInfoHeader().getErrorCause() == 0 && listResponse.getReturnArray() != null) {
+                    listResponse.getReturnArray().forEach(item -> idsToFetch.add(item.getId()));
+                    logger.info("Fetched {} IVR App IDs to process for brief report.", idsToFetch.size());
+                } else {
+                    logger.warn("Failed to fetch list of IVR applications or empty list returned. ErrorCause: {}",
+                        listResponse != null && listResponse.getResponseInfoHeader() != null ? listResponse.getResponseInfoHeader().getErrorCause() : "N/A");
+                }
+            } catch (Exception e) {
+                logger.error("Error calling ivrAppList SOAP operation to fetch all IVR App IDs.", e);
+                wsEMIS_port = null;
+                return new ResponseEntity<>("Failed to retrieve list of IVR applications: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        if (idsToFetch.isEmpty()) {
+            logger.info("No IVR Application IDs to fetch data for. Returning empty report.");
+            ReturnMatrixDataTypeBG emptyResponse = new ReturnMatrixDataTypeBG();
+            ResponseInfoHeaderType rih = new ResponseInfoHeaderType();
+            rih.setErrorCause(0);
+            rih.setServiceReqId(this.reqHeader != null ? this.reqHeader.getServiceReqId() : 0); // Use stored reqId or default
+            rih.setServersInfo("No IVR Application IDs processed.");
+            emptyResponse.setResponseInfoHeader(rih);
+            // getReturnMatrix will be an empty list by default in JAXB generated classes if not set
+            return ResponseEntity.ok(emptyResponse);
+        }
+
+        soapRequest.getId().addAll(idsToFetch);
+
+        ReturnArrayDataType soapResponseData;
+        try {
+            if (wsEMIS_port == null) { wsEMIS_port = establishServerConnection(); }
+            if (wsEMIS_port == null) { return new ResponseEntity<>("Service connection error: Main service not available.", HttpStatus.SERVICE_UNAVAILABLE); }
+            logger.info("Calling ivrApplInfo SOAP operation for IDs: {}", idsToFetch);
+            soapResponseData = wsEMIS_port.ivrApplInfo(soapRequest);
+        } catch (Exception e) {
+            logger.error("Error calling ivrApplInfo SOAP operation", e);
+            wsEMIS_port = null;
+            return new ResponseEntity<>("Failed to fetch IVR brief report data: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (soapResponseData == null || soapResponseData.getResponseInfoHeader() == null) {
+            logger.error("Received null or invalid response from SOAP service for ivrApplInfo");
+            return new ResponseEntity<>("Invalid response from SOAP service for IVR brief report", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (soapResponseData.getResponseInfoHeader().getErrorCause() != 0) {
+            logger.error("SOAP error in ivrApplInfo response: {} - {}", soapResponseData.getResponseInfoHeader().getErrorCause(), soapResponseData.getResponseInfoHeader().getServersInfo());
+            return new ResponseEntity<>("SOAP service error (IVR brief report): " + soapResponseData.getResponseInfoHeader().getErrorCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        ReturnMatrixDataTypeBG frontendResponse = new ReturnMatrixDataTypeBG();
+        frontendResponse.setResponseInfoHeader(soapResponseData.getResponseInfoHeader());
+
+        if (soapResponseData.getReturnArrayOfBlocks() != null) {
+            List<DataItemRow> dataItemRows = soapResponseData.getReturnArrayOfBlocks().stream()
+                .map(blockItem -> {
+                    DataItemRow dataItemRow = new DataItemRow();
+                    if (blockItem.getReturnArray() != null) {
+                        dataItemRow.getReturnArray().addAll(blockItem.getReturnArray());
+                    }
+                    return dataItemRow;
+                })
+                .collect(Collectors.toList());
+            frontendResponse.getReturnMatrix().addAll(dataItemRows);
+        }
+
+        logger.info("Successfully fetched and transformed IVR Brief Report data. Number of IVR apps processed: {}",
+            frontendResponse.getReturnMatrix() != null ? frontendResponse.getReturnMatrix().size() : 0);
+        return ResponseEntity.ok(frontendResponse);
+    }
 }

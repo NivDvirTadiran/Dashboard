@@ -1,0 +1,34 @@
+<app-widget-header
+  [title]="widget?.title"
+  [widgetId]="widget?.id"
+  [disableRefresh]="widget?.state?.loading"
+  (refreshClicked)="refreshWidget($event)"
+  (settingsClicked)="openSettingsModal()">
+</app-widget-header>
+
+<app-widget-content-wrapper
+  [loading]="widget?.state?.loading"
+  [error]="widget?.state?.error">
+  <!-- Specific widget content for Pie Chart -->
+  <app-gs-generic-pie
+    *ngIf="pieChartData"
+    [chartData]="pieChartData"
+    [title]="widget?.title || 'IVR ACD Distribution'"
+    [widgetId]="widget?.id">
+  </app-gs-generic-pie>
+  <div *ngIf="!pieChartData && !widget?.state?.loading && !widget?.state?.error" class="no-data-message">
+    No data available to display the chart.
+  </div>
+</app-widget-content-wrapper>
+
+<app-widget-footer [lastUpdated]="widget?.state?.lastUpdated"></app-widget-footer>
+
+<!-- Widget Settings Modal Component -->
+<app-widget-settings-modal
+  *ngIf="showSettingsModal && currentModalWidgetData"
+  [widget]="currentModalWidgetData"
+  [entitiesForSelection]="entitiesForSelection"
+  [isLoading]="isLoading"
+  (settingsSaved)="handleSettingsSaved($event)"
+  (modalClosed)="handleModalClosed()">
+</app-widget-settings-modal>

@@ -1,0 +1,28 @@
+// Styles for ivr-oacd-distribution-graph-widget.component.scss
+// This can be similar to other graph/pie widgets or customized as needed.
+
+// If the styles are identical to another graph widget (e.g., ivr-acd-distribution-graph-widget),
+// you could potentially use a shared SCSS file or import common styles.
+// For now, let's assume it might have some unique styles or will start with common ones.
+
+// Example: Importing common pie chart styles if they exist and are applicable
+// @import '../../../generic-widget-content/gs-generic-pie/gs-generic-pie.component.scss';
+
+// Or, define specific styles for this widget
+:host {
+  display: block; // Ensures the component takes up space
+  width: 100%;
+  height: 100%;
+}
+
+// If using app-gs-generic-pie, its styles will apply.
+// Add any additional specific styling for the IVR OACD Distribution Graph widget container or elements here.
+
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-secondary); // Or your preferred color for no-data messages
+  font-style: italic;
+}

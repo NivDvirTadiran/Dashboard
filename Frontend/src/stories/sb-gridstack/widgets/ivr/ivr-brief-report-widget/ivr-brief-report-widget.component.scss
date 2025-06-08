@@ -1,0 +1,19 @@
+// Styles for ivr-brief-report-widget.component.scss
+// This can be similar to other brief report widgets or customized as needed.
+
+// If the styles are identical to another brief report widget (e.g., brief-agents-widget),
+// you could potentially use a shared SCSS file or import common styles.
+// For now, let's assume it might have some unique styles or will start with common ones.
+
+// Example: Importing common table styles if they exist and are applicable
+// @import '../../../generic-widget-content/gs-generic-table/gs-generic-table.component.scss';
+
+// Or, define specific styles for this widget
+:host {
+  display: block; // Ensures the component takes up space
+  width: 100%;
+  height: 100%;
+}
+
+// If using app-gs-generic-table, its styles will apply.
+// Add any additional specific styling for the brief IVR report widget container or elements here.
