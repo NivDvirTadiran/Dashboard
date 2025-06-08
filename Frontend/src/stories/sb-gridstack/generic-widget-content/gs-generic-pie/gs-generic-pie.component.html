@@ -11,11 +11,11 @@
 
     <!-- Legend -->
     <div class="chart-legend" *ngIf="showLegend">
-<!--      <div class="legend-item" *ngFor="let item of data">
-        <span class="legend-color" [style.background-color]="item.color || getDefaultColor(item)"></span>
+      <div class="legend-item" *ngFor="let item of legendItems">
+        <span class="legend-color" [style.background-color]="item.color"></span>
         <span class="legend-label">{{ item.label }}</span>
         <span class="legend-value" *ngIf="showLegendValues">{{ formatValue(item.value) }}</span>
-      </div>-->
+      </div>
     </div>
   </ng-container>
 

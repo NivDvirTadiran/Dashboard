@@ -537,7 +537,7 @@ export class GsDashboardWidgetManagerService {
       type: 'ivr-acd-distribution-graph-widget', // This must match the selector
       title: 'IVR ACD Distribution Graph',
       dataSource: 'api/chart/ivrAcdDistribution', // Example, ensure this endpoint exists or is created
-      updateInterval: 3000, // Example interval
+      updateInterval: 30000, // Example interval
       settings: chartSettings,
       nlat: 'auto',
     };

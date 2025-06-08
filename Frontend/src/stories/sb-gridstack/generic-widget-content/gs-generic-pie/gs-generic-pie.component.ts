@@ -54,6 +54,8 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     '#20C997'  // Teal
   ];
 
+  public legendItems: { label: string; color: string; value?: number }[] = [];
+
   // Computed properties for template
   get showLegend(): boolean {
     return this.config.showLegend !== false;
@@ -73,6 +75,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     // Initialize chart after view is ready
     setTimeout(() => {
       this.initializeChart();
+      this.updateLegendItems();
     }, 0);
   }
 
@@ -80,6 +83,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     // Handle data changes
     if (changes['chartData'] && !changes['chartData'].firstChange) { // Changed from 'data' to 'chartData'
       this.updateChart();
+      this.updateLegendItems();
     }
   }
 
@@ -190,8 +194,10 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     }
 
     const chartData = this.prepareChartData();
-    this.chart.data = chartData;
-    this.chart.update();
+    if (chartData) {
+      this.chart.data = chartData;
+      this.chart.update();
+    }
   }
 
   private destroyChart(): void {
@@ -201,10 +207,10 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     }
   }
 
-  // Helper methods for template
-  getLegendItems(): { label: string; color: string; value?: number }[] {
+  private updateLegendItems(): void {
     if (!this.chartData || !this.chartData.labels || !this.chartData.datasets || this.chartData.datasets.length === 0) {
-      return [];
+      this.legendItems = [];
+      return;
     }
     const labels = this.chartData.labels as string[]; // Assuming labels are strings
     const datasetFromInput = this.chartData.datasets[0];
@@ -223,7 +229,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
       backgroundColors = labels.map((_, index) => this.defaultColors[index % this.defaultColors.length]);
     }
 
-    return labels.map((label, index) => ({
+    this.legendItems = labels.map((label, index) => ({
       label: label,
       color: backgroundColors[index], // Use the resolved backgroundColors
       value: values[index]
