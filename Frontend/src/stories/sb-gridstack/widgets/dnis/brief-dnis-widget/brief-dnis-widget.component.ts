@@ -76,11 +76,11 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
     super.fetchData();
 
     // Correctly access selectedDnisIds from widget.config.selectedDnisIds
-    const selectedDnisIds = this.widget.config?.selectedDnisIds;
-    console.log(`BriefDnisWidget fetchData with selectedDnisIds:`, selectedDnisIds);
+    const selectedEntitiesIds = this.widget.config?.selectedDnisIds;
+    console.log(`BriefDnisWidget fetchData with selectedDnisIds:`, selectedEntitiesIds);
 
     // Changed to getBriefDnis, assuming selectedDnisIds is the correct parameter
-    this.emisSoapService.getBriefDnis(selectedDnisIds).pipe( // Changed service call
+    this.emisSoapService.getBriefDnis(selectedEntitiesIds).pipe( // Changed service call
         map(data => {
           console.log(`Fetched brief-dnis-data with filter:`, data); // Changed
           if (data && data.returnMatrix) {
@@ -99,7 +99,7 @@ export class BriefDnisWidgetComponent extends GSBaseWidget implements OnDestroy 
           return [];
         }),
         catchError(error => {
-          console.error(`[BriefDnisWidgetComponent] Error fetching data (in catchError): ${this.widget.id} of type ${this.widget.type}:`, error);
+          console.error(`Error fetching data (in catchError): ${this.widget.id} of type ${this.widget.type}:`, error);
           if (this.widget.state) {
             this.widget.state.error = error.message || 'Failed to fetch data';
             this.widget.state.loading = false;

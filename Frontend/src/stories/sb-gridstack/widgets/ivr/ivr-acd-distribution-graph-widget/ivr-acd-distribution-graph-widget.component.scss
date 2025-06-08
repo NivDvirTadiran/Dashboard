@@ -14,7 +14,7 @@ app-widget-content-wrapper {
   flex-direction: column;
 }
 
-app-gs-generic-pie {
+gs-generic-pie {
   flex-grow: 1; /* Allows the pie chart to fill the content wrapper */
   display: block; /* Or flex, depending on its internal structure */
   width: 100%;

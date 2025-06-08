@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
+import { Chart, ChartConfiguration, ChartType, registerables, ChartData } from 'chart.js'; // Import ChartData
+import { ChartDataResponse, ChartDataset } from 'src/app/services/emis-soap.service'; // Import ChartDataResponse
 
 // Register Chart.js components
 Chart.register(...registerables);
 
-export interface PieChartDataItem {
+export interface PieChartDataItem { // No longer needed if using ChartDataResponse
   label: string;
   value: number;
   color?: string; // Optional custom color
@@ -20,14 +21,14 @@ export interface PieChartConfig {
 }
 
 @Component({
-  selector: 'app-gs-generic-pie',
+  selector: 'gs-generic-pie',
   templateUrl: './gs-generic-pie.component.html',
   styleUrls: ['./gs-generic-pie.component.scss'],
   standalone: true,
   imports: [CommonModule]
 })
 export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @Input() data: PieChartDataItem[] = [];
+  @Input() chartData: ChartDataResponse;
   @Input() title: string = '';
   @Input() config: PieChartConfig = {
     showLegend: true,
@@ -77,7 +78,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
 
   ngOnChanges(changes: SimpleChanges): void {
     // Handle data changes
-    if (changes['data'] && !changes['data'].firstChange) {
+    if (changes['chartData'] && !changes['chartData'].firstChange) { // Changed from 'data' to 'chartData'
       this.updateChart();
     }
   }
@@ -87,17 +88,23 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   private initializeChart(): void {
-    if (!this.chartCanvas || !this.data || this.data.length === 0) {
+    if (!this.chartCanvas || !this.chartData || !this.chartData.datasets || this.chartData.datasets.length === 0 || !this.chartData.datasets[0].data || this.chartData.datasets[0].data.length === 0) {
+      console.warn('[GsGenericPieComponent] initializeChart: Canvas not ready or no data.');
       return;
     }
 
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     if (!ctx) {
+      console.error('[GsGenericPieComponent] initializeChart: Failed to get 2D context.');
       return;
     }
 
     const chartData = this.prepareChartData();
-    
+    if (!chartData) { // Check if prepareChartData returned null
+        console.warn('[GsGenericPieComponent] initializeChart: Prepared chart data is null.');
+        return;
+    }
+
     const chartConfig: ChartConfiguration<'pie'> = {
       type: 'pie',
       data: chartData,
@@ -115,7 +122,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
               label: (context) => {
                 const label = context.label || '';
                 const value = typeof context.parsed === 'number' ? context.parsed : 0;
-                
+
                 // Calculate total safely
                 let total = 0;
                 if (context.dataset && context.dataset.data) {
@@ -125,7 +132,7 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
                     }
                   });
                 }
-                
+
                 const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
                 return `${label}: ${value} (${percentage}%)`;
               }
@@ -138,20 +145,40 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
     this.chart = new Chart(ctx, chartConfig);
   }
 
-  private prepareChartData(): any {
-    const labels = this.data.map(item => item.label);
-    const values = this.data.map(item => item.value);
-    const colors = this.data.map((item, index) => item.color || this.defaultColors[index % this.defaultColors.length]);
+  private prepareChartData(): ChartData<'pie', number[], string> | null {
+    if (!this.chartData || !this.chartData.labels || !this.chartData.datasets || this.chartData.datasets.length === 0) {
+      console.warn('[GsGenericPieComponent] prepareChartData: Insufficient chart data.');
+      return null;
+    }
+
+    const datasetFromInput = this.chartData.datasets[0]; // This is ChartDataset<'pie', number[]> from chart.js
+    const labels = this.chartData.labels || [];
+    const values = datasetFromInput.data || [];
+
+    let backgroundColors: string[];
+    if (Array.isArray(datasetFromInput.backgroundColor) && datasetFromInput.backgroundColor.length >= labels.length && datasetFromInput.backgroundColor.every(c => typeof c === 'string')) {
+      backgroundColors = datasetFromInput.backgroundColor as string[];
+    } else if (typeof datasetFromInput.backgroundColor === 'string' && labels.length > 0) {
+      // If a single color string is provided, use it for all, or decide on a strategy.
+      // For pie charts, usually an array is expected. Fallback to default if single string for multiple labels.
+      if (labels.length === 1) {
+        backgroundColors = [datasetFromInput.backgroundColor];
+      } else {
+        backgroundColors = labels.map((_, index) => this.defaultColors[index % this.defaultColors.length]);
+      }
+    } else {
+      backgroundColors = labels.map((_, index) => this.defaultColors[index % this.defaultColors.length]);
+    }
 
     return {
       labels: labels,
       datasets: [{
         data: values,
-        backgroundColor: colors,
-        borderColor: '#ffffff',
-        borderWidth: 2,
-        hoverBorderWidth: 3,
-        hoverBorderColor: '#ffffff'
+        backgroundColor: backgroundColors,
+        borderColor: datasetFromInput.borderColor || '#ffffff',
+        borderWidth: datasetFromInput.borderWidth !== undefined ? datasetFromInput.borderWidth : 2,
+        hoverBorderWidth: 3, // You can customize this
+        hoverBorderColor: '#ffffff' // You can customize this
       }]
     };
   }
@@ -175,9 +202,32 @@ export class GsGenericPieComponent implements OnInit, AfterViewInit, OnDestroy, 
   }
 
   // Helper methods for template
-  getDefaultColor(item: PieChartDataItem): string {
-    const index = this.data.indexOf(item);
-    return this.defaultColors[index % this.defaultColors.length];
+  getLegendItems(): { label: string; color: string; value?: number }[] {
+    if (!this.chartData || !this.chartData.labels || !this.chartData.datasets || this.chartData.datasets.length === 0) {
+      return [];
+    }
+    const labels = this.chartData.labels as string[]; // Assuming labels are strings
+    const datasetFromInput = this.chartData.datasets[0];
+    const values = datasetFromInput.data as number[]; // Assuming data are numbers
+
+    let backgroundColors: string[];
+    if (Array.isArray(datasetFromInput.backgroundColor) && datasetFromInput.backgroundColor.length >= labels.length && datasetFromInput.backgroundColor.every(c => typeof c === 'string')) {
+      backgroundColors = datasetFromInput.backgroundColor as string[];
+    } else if (typeof datasetFromInput.backgroundColor === 'string' && labels.length > 0) {
+      if (labels.length === 1) {
+        backgroundColors = [datasetFromInput.backgroundColor];
+      } else {
+        backgroundColors = labels.map((_, index) => this.defaultColors[index % this.defaultColors.length]);
+      }
+    } else {
+      backgroundColors = labels.map((_, index) => this.defaultColors[index % this.defaultColors.length]);
+    }
+
+    return labels.map((label, index) => ({
+      label: label,
+      color: backgroundColors[index], // Use the resolved backgroundColors
+      value: values[index]
+    }));
   }
 
   formatValue(value: number): string {

@@ -11,8 +11,8 @@
   [error]="widget?.state?.error">
   <!-- Specific widget content -->
   <!-- Use GsGenericPieComponent for pie charts -->
-  <app-gs-generic-pie *ngIf="chartData" [chartData]=this.chartData >
-  </app-gs-generic-pie>
+  <gs-generic-pie *ngIf="chartData" [chartData]=this.chartData >
+  </gs-generic-pie>
   <div *ngIf="!chartData && !widget?.state?.loading && !widget?.state?.error" class="no-data-message">
     No data available for this chart.
   </div>

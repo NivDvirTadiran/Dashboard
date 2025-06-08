@@ -4,6 +4,9 @@ import {Subscription} from 'rxjs';
 import {TableRow} from 'src/app/dashboard/dashboard.service'; // Adjusted path
 import {GridstackComponent, NgGridStackWidget} from 'gridstack/dist/angular';
 import {GridStack} from 'gridstack';
+import {
+  EmailContactsDistributionGraphWidgetComponent
+} from "./widgets/groups/email-contacts-distribution-graph-widget/email-contacts-distribution-graph-widget.component";
 
 export interface WidgetConfig {
     id: string; // Unique identifier for the widget
@@ -106,7 +109,8 @@ export class GsDashboardWidgetManagerService {
     }
 
     getWidgetState(widgetId: string): WidgetState | undefined {
-        return this.widgetConfigs.get(widgetId).state;
+        const config = this.widgetConfigs.get(widgetId); // Added to fix potential error
+        return config ? config.state : undefined; // Added to fix potential error
     }
 
     getRegisteredWidgets(): WidgetConfig[] {
@@ -174,7 +178,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       ...newWidgetConfig,
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       // Optionally specify w, h if different from default in initGsWidget
       // w: 1,
       // h: 1,
@@ -182,30 +186,30 @@ export class GsDashboardWidgetManagerService {
     console.log(`One View widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
   }
 
-  public addExamplePieChartWidget(): void {
-    const EXAMPLE_PIE_CHART_WIDGET_ID = 'example-pie-chart-widget';
+  public addEmailContactsDistributionGraphWidget(): void {
+    const EXAMPLE_PIE_CHART_WIDGET_ID = 'email-contacts-distribution-graph-widget';
     let newWidgetConfig: Partial<WidgetConfig> = {};
     const currentGridHeight = this.getGridComponent().getRow() || 0;
 
     const chartSettings = {
       // 172.28.31.91
-      type: '3Dpie',
-      refObjectName: 'Group:2',// refObjectName: 'agentStatusSummary' // Temporarily removed
-      keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',  // keys: 'status,count', // Temporarily removed
-      title: 'Calls_Distribution_Graph', // Title for chart generation API
-      size: '532x400'
+      //type: '3Dpie',
+      //refObjectName: 'Group:2',// refObjectName: 'agentStatusSummary' // Temporarily removed
+      //keys: '20_3_1_4_4,20_3_1_4_7,20_3_1_4_10,20_3_1_4_13',  // keys: 'status,count', // Temporarily removed
+      //title: 'Calls_Distribution_Graph', // Title for chart generation API
+      //size: '532x400'
 
       // 172.28.31.87
-      //type: '3Dpie',
-      //refObjectName: 'Group:4',
-      //keys: '6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24',
-      //title: 'Email.Contacts_Distribution_Graph',
-      //size: '428x270'
+      type: '3Dpie',
+      refObjectName: 'Group:4',
+      keys: '6_3_1_3_3,6_3_1_3_5,6_3_1_3_2,6_3_1_3_6,6_3_1_3_9,6_3_1_3_4,6_3_1_3_15,6_3_1_3_24',
+      title: 'Email.Contacts_Distribution_Graph',
+      size: '428x270'
     };
 
     newWidgetConfig = {
       id: `${EXAMPLE_PIE_CHART_WIDGET_ID}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      type: 'example-pie-chart-widget',
+      type: 'email-contacts-distribution-graph-widget',
       title: 'Example Pie Chart',
       dataSource: 'api/chart/agentStatus',
       updateInterval: 60000,
@@ -218,7 +222,7 @@ export class GsDashboardWidgetManagerService {
     // or these properties should be added to NgGridStackWidget within initGsWidget based on config.type.
     this.initGsWidget({
       id: EXAMPLE_PIE_CHART_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -273,7 +277,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: SUPER_GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -292,7 +296,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: AGENTS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -311,7 +315,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: GROUP_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -330,7 +334,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: DNIS_LIST_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -350,7 +354,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: GROUP_DETAIL_FULL_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -370,7 +374,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: GROUP_QUEUE_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -390,7 +394,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: GROUP_AGENTS_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -410,7 +414,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: IVR_APPLICATION_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -430,7 +434,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: IVR_PORT_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -450,7 +454,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: GROUP_ABANDONED_INFO_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -469,7 +473,7 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       id: BRIEF_AGENTS_WIDGET_ID + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      position: { x: 0, y: currentGridHeight }, // y is 0-based
+      // position: { x: 0, y: currentGridHeight }, // y is 0-based // position is not a direct property of WidgetConfig
       ...newWidgetConfig
     } as WidgetConfig);
   }
@@ -490,8 +494,130 @@ export class GsDashboardWidgetManagerService {
 
     this.initGsWidget({
       ...newWidgetConfig,
-      position: { x: 0, y: currentGridHeight },
+      // position: { x: 0, y: currentGridHeight }, // position is not a direct property of WidgetConfig
     } as WidgetConfig);
     console.log(`Brief DNIS widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
+  }
+
+  public addIvrBriefReportWidget(): void {
+    const IVR_BRIEF_REPORT_WIDGET_ID_BASE = 'ivr-brief-report-widget';
+    const currentGridHeight = this.getGrid().getRow() || 0;
+
+    const newWidgetConfig: WidgetConfig = {
+      id: `${IVR_BRIEF_REPORT_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'ivr-brief-report-widget', // This must match the selector of IvrBriefReportWidgetComponent
+      title: 'IVR Brief Report',
+      dataSource: 'IvrBriefReport', // This should align with what IvrBriefReportWidgetComponent expects
+      updateInterval: 6000, // Example interval
+      settings: { selectedIvrAppIds: [] }, // Default to no specific IVR App IDs, or prompt user
+      nlat: 'auto',
+    };
+
+    this.initGsWidget({
+      ...newWidgetConfig,
+      // position: { x: 0, y: currentGridHeight }, // position is not a direct property of WidgetConfig
+    } as WidgetConfig);
+    console.log(`IVR Brief Report widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
+  }
+
+  public addIvrAcdDistributionGraphWidget(): void {
+    const IVR_ACD_DIST_GRAPH_WIDGET_ID_BASE = 'ivr-acd-distribution-graph-widget';
+    const currentGridHeight = this.getGrid().getRow() || 0;
+
+    const chartSettings = {
+      type: '3Dpie', // Example, adjust as needed
+      refObjectName: 'IVRApplication:1', // Example, adjust based on actual data source
+      keys:  '6_3_11_3_21,6_3_11_3_23,6_3_11_3_24', // Example, adjust based on actual data source
+      title: 'IVR_ACD_Distribution_Graph',
+      size: '428x270' // Example, adjust as needed
+    };
+
+    const newWidgetConfig: WidgetConfig = {
+      id: `${IVR_ACD_DIST_GRAPH_WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'ivr-acd-distribution-graph-widget', // This must match the selector
+      title: 'IVR ACD Distribution Graph',
+      dataSource: 'api/chart/ivrAcdDistribution', // Example, ensure this endpoint exists or is created
+      updateInterval: 3000, // Example interval
+      settings: chartSettings,
+      nlat: 'auto',
+    };
+
+    this.initGsWidget({
+      ...newWidgetConfig,
+      // position: { x: 0, y: currentGridHeight }, // position is not a direct property of WidgetConfig
+    } as WidgetConfig);
+    console.log(`IVR ACD Distribution Graph widget ${newWidgetConfig.id} (type: ${newWidgetConfig.type}) initialized.`);
+  }
+
+  public addIvrActiveAcdGraphWidget(): void {
+    const WIDGET_ID_BASE = 'ivr-active-acd-graph-widget';
+    const currentGridHeight = this.getGrid()?.getRow() || 0;
+    const chartSettings = {
+      type: 'graph',
+      refObjectName: 'IvrApplication:All', // Default or allow configuration
+      keys: 'time,active_acd_calls',
+      title: 'IVR_Active_ACD_Graph',
+      size: '400x300'
+    };
+    const newWidgetConfig: WidgetConfig = {
+      id: `${WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'ivr-active-acd-graph-widget',
+      title: 'IVR Active ACD Graph',
+      dataSource: 'api/chart/ivrActiveAcd',
+      updateInterval: 30000,
+      settings: chartSettings,
+      nlat: 'auto',
+      config: { position: { x: 0, y: currentGridHeight } }
+    };
+    this.initGsWidget(newWidgetConfig);
+    console.log(`IVR Active ACD Graph widget ${newWidgetConfig.id} initialized.`);
+  }
+
+  public addIvrActiveOacdGraphWidget(): void {
+    const WIDGET_ID_BASE = 'ivr-active-oacd-graph-widget';
+    const currentGridHeight = this.getGrid()?.getRow() || 0;
+    const chartSettings = {
+      type: 'graph',
+      refObjectName: 'IvrApplication:All',
+      keys: 'time,active_oacd_calls',
+      title: 'IVR_Active_OACD_Graph',
+      size: '400x300'
+    };
+    const newWidgetConfig: WidgetConfig = {
+      id: `${WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'ivr-active-oacd-graph-widget',
+      title: 'IVR Active OACD Graph',
+      dataSource: 'api/chart/ivrActiveOacd',
+      updateInterval: 30000,
+      settings: chartSettings,
+      nlat: 'auto',
+      config: { position: { x: 0, y: currentGridHeight } }
+    };
+    this.initGsWidget(newWidgetConfig);
+    console.log(`IVR Active OACD Graph widget ${newWidgetConfig.id} initialized.`);
+  }
+
+  public addIvrOacdDistributionGraphWidget(): void {
+    const WIDGET_ID_BASE = 'ivr-oacd-distribution-graph-widget';
+    const currentGridHeight = this.getGrid()?.getRow() || 0;
+    const chartSettings = {
+      type: '3Dpie',
+      refObjectName: 'IVRApplication:1',
+      keys: '6_3_11_3_21,6_3_11_3_23,6_3_11_3_24', // Example keys
+      title: 'IVR_OACD_Distribution_Graph',
+      size: '400x300'
+    };
+    const newWidgetConfig: WidgetConfig = {
+      id: `${WIDGET_ID_BASE}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      type: 'ivr-oacd-distribution-graph-widget',
+      title: 'IVR OACD Distribution Graph',
+      dataSource: 'api/chart/ivrOacdDistribution',
+      updateInterval: 60000,
+      settings: chartSettings,
+      nlat: 'auto',
+      config: { position: { x: 0, y: currentGridHeight } }
+    };
+    this.initGsWidget(newWidgetConfig);
+    console.log(`IVR OACD Distribution Graph widget ${newWidgetConfig.id} initialized.`);
   }
 }

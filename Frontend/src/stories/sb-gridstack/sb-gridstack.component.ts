@@ -19,6 +19,22 @@ import { GroupAgentsInfoWidgetComponent } from './widgets/groups/group-agents-in
 import { IvrApplicationInfoWidgetComponent } from './widgets/ivr-applications/ivr-application-info-widget/ivr-application-info-widget.component';
 import { IvrPortInfoWidgetComponent } from './widgets/ivr-applications/ivr-port-info-widget/ivr-port-info-widget.component';
 import { BriefDnisWidgetComponent } from './widgets/dnis/brief-dnis-widget/brief-dnis-widget.component';
+import { IvrBriefReportWidgetComponent } from './widgets/ivr/ivr-brief-report-widget/ivr-brief-report-widget.component';
+import {
+  IvrAcdDistributionGraphWidgetComponent
+} from "./widgets/ivr/ivr-acd-distribution-graph-widget/ivr-acd-distribution-graph-widget.component";
+import {
+  IvrActiveAcdGraphWidgetComponent
+} from "./widgets/ivr/ivr-active-acd-graph-widget/ivr-active-acd-graph-widget.component";
+import {
+  IvrActiveOacdGraphWidgetComponent
+} from "./widgets/ivr/ivr-active-oacd-graph-widget/ivr-active-oacd-graph-widget.component";
+import {
+  IvrOacdDistributionGraphWidgetComponent
+} from "./widgets/ivr/ivr-oacd-distribution-graph-widget/ivr-oacd-distribution-graph-widget.component";
+import {
+  EmailContactsDistributionGraphWidgetComponent
+} from "./widgets/groups/email-contacts-distribution-graph-widget/email-contacts-distribution-graph-widget.component"; // Added
 
 @Component({
   selector: 'sb-gridstack',
@@ -67,9 +83,17 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       GroupQueueInfoWidgetComponent,
       GroupAbandonedInfoWidgetComponent,
       GroupAgentsInfoWidgetComponent,
+      EmailContactsDistributionGraphWidgetComponent,
       IvrApplicationInfoWidgetComponent,
       IvrPortInfoWidgetComponent,
-      BriefDnisWidgetComponent
+      BriefDnisWidgetComponent,
+
+      IvrBriefReportWidgetComponent,
+      IvrAcdDistributionGraphWidgetComponent,
+      IvrActiveAcdGraphWidgetComponent,
+      IvrActiveOacdGraphWidgetComponent,
+      IvrBriefReportWidgetComponent,
+      IvrOacdDistributionGraphWidgetComponent
       // Ensure ALL widget components that can be added are registered here
     ];
     GridstackComponent.addComponentToSelectorType(registeredWidgetTypes);
@@ -88,7 +112,8 @@ export class SbGridstackComponent implements OnInit, AfterViewInit, OnDestroy {
       { widgetType: GroupAgentsInfoWidgetComponent, selector: 'group-agents-info-widget' },
       { widgetType: IvrApplicationInfoWidgetComponent, selector: 'ivr-application-info-widget' },
       { widgetType: IvrPortInfoWidgetComponent, selector: 'ivr-port-info-widget' },
-      { widgetType: BriefDnisWidgetComponent, selector: 'brief-dnis-widget' }
+      { widgetType: BriefDnisWidgetComponent, selector: 'brief-dnis-widget' },
+      { widgetType: IvrBriefReportWidgetComponent, selector: 'ivr-brief-report-widget' }
       // Add ALL other registered widgets here with their correct selectors
     ];
 

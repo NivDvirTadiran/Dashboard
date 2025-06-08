@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GsDashboardWidgetManagerService, WidgetConfig } from '../../../gs-dashboard-widget-manager.service';
 import { GSBaseWidget } from '../../../base-widget/base-widget.component';
@@ -31,11 +31,11 @@ import { WidgetFooterComponent } from '../../../widget-footer/widget-footer.comp
   templateUrl: './ivr-acd-distribution-graph-widget.component.html',
   styleUrls: ['./ivr-acd-distribution-graph-widget.component.scss']
 })
-export class IvrAcdDistributionGraphWidgetComponent extends GSBaseWidget implements OnDestroy {
+export class IvrAcdDistributionGraphWidgetComponent extends GSBaseWidget implements OnDestroy, OnInit {
   @HostBinding('style.display') display = 'contents';
 
   // Data structure for the pie chart
-  pieChartData: ChartData<'pie', number[], string> | null = null;
+  pieChartData: ChartDataResponse | null = null;
 
   constructor(
     protected override widgetManager: GsDashboardWidgetManagerService
@@ -71,7 +71,7 @@ export class IvrAcdDistributionGraphWidgetComponent extends GSBaseWidget impleme
     };
 
     this.emisSoapService.getChartData(params).pipe(
-      map((response: ChartDataResponse): ChartData<'pie', number[], string> => {
+      map(response => {
         console.log(`Fetched IVR ACD Distribution graph data:`, response);
         if (response && response.labels && response.datasets && response.datasets.length > 0) {
           // Assuming the first dataset is relevant for the pie chart
@@ -99,7 +99,7 @@ export class IvrAcdDistributionGraphWidgetComponent extends GSBaseWidget impleme
         return throwError(() => error);
       })
     ).subscribe({
-      next: (chartData: ChartData<'pie', number[], string>) => {
+      next: (chartData) => {
         this.pieChartData = chartData;
         if (this.widget.state) {
           this.widget.state.data = chartData; // Store ChartData

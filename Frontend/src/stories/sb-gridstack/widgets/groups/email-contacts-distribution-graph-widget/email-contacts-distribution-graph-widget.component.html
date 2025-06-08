@@ -2,9 +2,15 @@
   <div class="widget-piechart"
     [attr.data-property1]="property1"
     [attr.data-state]="state">
-    <div class="wrapper">
+<!--    <div class="wrapper">
       <div class="div1" *ngIf="showDiv">{{prop}}</div>
-    </div>
+    </div>-->
     <frame-component> </frame-component>
     <status-filter> </status-filter>
   </div>
+  <gs-generic-pie
+    *ngIf="pieChartData"
+    [chartData]="pieChartData"
+    [title]="widget?.title || 'IVR ACD Distribution'"
+    [widgetId]="widget?.id">
+  </gs-generic-pie>

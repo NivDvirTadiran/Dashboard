@@ -127,9 +127,9 @@ export interface ChartRequestParams {
 
 // Interfaces for Chart Data API
 export interface ChartDataset {
-  label: string;
+  label?: string; // Made optional to align with Chart.js and typical pie chart usage
   data: number[];
-  backgroundColor: string[];
+  backgroundColor: string | string[]; // Allow single string or array for chart.js compatibility
   borderColor?: string[];
   borderWidth?: number;
 }
@@ -152,6 +152,17 @@ export interface AgentListItemDto {
   id: string; // from agentId (number)
   name: string; // from agentName (string)
   number?: string; // from agentNumber (string), optional
+}
+
+// Generic list item type, e.g., for IVR Applications
+export interface GenListDataItemType {
+  id: number;
+  name: string;
+}
+
+export interface GenListReturnType {
+  responseInfoHeader: ResponseInfoHeaderType;
+  returnArray: GenListDataItemType[];
 }
 
 @Injectable({
@@ -381,6 +392,47 @@ export class EmisSoapService {
       catchError(err => {
         console.error('Error fetching chart data in EmisSoapService:', err);
         return throwError(() => new Error(`Failed to load chart: ${err.message || 'Server error'}`));
+      })
+    );
+  }
+
+  getIvrAppList(): Observable<GenListDataItemType[]> {
+    // Assuming the endpoint for IVR App List is /api/soap/IvrAppList
+    // and it uses the GenRequestType similar to other list operations.
+    // The actual SOAP operation name in TemplateController would be ivrAppList
+    return this.http.get<GenListReturnType>(`${this.basePath}/ivr/applications`).pipe(
+      map(response => {
+        if (response && response.returnArray) {
+          return response.returnArray;
+        }
+        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
+          console.error('SOAP service error in getIvrAppList:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+        }
+        return [];
+      }),
+      catchError(err => {
+        console.error('HTTP error fetching IVR App List:', err);
+        return throwError(() => new Error(`Failed to fetch IVR App List: ${err.message || 'Server error'}`));
+      })
+    );
+  }
+
+  getIvrBriefReport(selectedIvrAppIds?: string[]): Observable<ReturnMatrixDataTypeBG> {
+    let requestUrl = `${this.basePath}/ivr-brief-report`; // This endpoint needs to be created in TemplateController
+    if (selectedIvrAppIds && selectedIvrAppIds.length > 0) {
+      const idsParam = selectedIvrAppIds.join(',');
+      requestUrl += `?ivrAppIds=${idsParam}`; // Assuming backend expects 'ivrAppIds'
+    }
+    return this.http.get<ReturnMatrixDataTypeBG>(requestUrl).pipe(
+      map(response => {
+        if (response && response.responseInfoHeader && response.responseInfoHeader.errorCause !== 0) {
+          console.error('SOAP service error in getIvrBriefReport:', response.responseInfoHeader.errorCause, response.responseInfoHeader.serversInfo);
+        }
+        return response;
+      }),
+      catchError(err => {
+        console.error('HTTP error fetching IVR Brief Report:', err);
+        return throwError(() => new Error(`Failed to fetch IVR Brief Report data: ${err.message || 'Server error'}`));
       })
     );
   }

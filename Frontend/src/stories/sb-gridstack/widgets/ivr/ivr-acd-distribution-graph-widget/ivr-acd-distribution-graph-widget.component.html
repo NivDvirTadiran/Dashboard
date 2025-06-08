@@ -10,12 +10,12 @@
   [loading]="widget?.state?.loading"
   [error]="widget?.state?.error">
   <!-- Specific widget content for Pie Chart -->
-  <app-gs-generic-pie
+  <gs-generic-pie
     *ngIf="pieChartData"
     [chartData]="pieChartData"
     [title]="widget?.title || 'IVR ACD Distribution'"
     [widgetId]="widget?.id">
-  </app-gs-generic-pie>
+  </gs-generic-pie>
   <div *ngIf="!pieChartData && !widget?.state?.loading && !widget?.state?.error" class="no-data-message">
     No data available to display the chart.
   </div>

@@ -25,12 +25,20 @@ import {
 import {
   IvrPortInfoWidgetComponent
 } from "../widgets/ivr-applications/ivr-port-info-widget/ivr-port-info-widget.component";
+import { IvrBriefReportWidgetComponent } from '../widgets/ivr/ivr-brief-report-widget/ivr-brief-report-widget.component'; // Added
+import { IvrAcdDistributionGraphWidgetComponent } from '../widgets/ivr/ivr-acd-distribution-graph-widget/ivr-acd-distribution-graph-widget.component'; // Added
+import { IvrActiveAcdGraphWidgetComponent } from '../widgets/ivr/ivr-active-acd-graph-widget/ivr-active-acd-graph-widget.component';
+import { IvrActiveOacdGraphWidgetComponent } from '../widgets/ivr/ivr-active-oacd-graph-widget/ivr-active-oacd-graph-widget.component';
+import { IvrOacdDistributionGraphWidgetComponent } from '../widgets/ivr/ivr-oacd-distribution-graph-widget/ivr-oacd-distribution-graph-widget.component';
 //import { OneViewWidgetComponent } from '../one-view-widget/one-view-widget.component';
 import {GsDashboardWidgetManagerService, WidgetConfig} from "../gs-dashboard-widget-manager.service";
 import { GridStack } from 'gridstack';
 import {
   GroupDetailFullInfoWidgetComponent
 } from "../widgets/groups/group-detail-full-info-widget/group-detail-full-info-widget.component";
+import {
+  EmailContactsDistributionGraphWidgetComponent
+} from "../widgets/groups/email-contacts-distribution-graph-widget/email-contacts-distribution-graph-widget.component";
 // ... and so on for all group widgets ...
 // Placeholder for group widgets if specific components are not yet defined/imported
 // You'll need to create this or map to actual components
@@ -62,7 +70,7 @@ export class AddWidgetMenuComponent implements OnInit {
       selectedCount: 0,
       totalCount: 0,
       widgets: [
-        { id: BriefAgentsWidgetComponent, icon: '', title: 'Brief Agents' },
+        { id: BriefAgentsWidgetComponent, icon: '📅', contentType: 'table', title: 'Brief Agents' },
         // { id: ExamplePieChartWidgetComponent, icon: '', title: 'Example Pie Chart' },
         // { id: ChartWidgetComponent, icon: '', title: 'Chart Widget (API)' }
       ]
@@ -75,7 +83,7 @@ export class AddWidgetMenuComponent implements OnInit {
       selectedCount: 0,
       totalCount: 0,
       widgets: [
-        { id: BriefDnisWidgetComponent, icon: '', title: 'Brief Voice DNIS' },
+        { id: BriefDnisWidgetComponent, icon: '📅', contentType: 'table', title: 'Brief Voice DNIS' },
       ]
     },
     {
@@ -107,7 +115,7 @@ export class AddWidgetMenuComponent implements OnInit {
         { id: PlaceholderGroupWidgetComponent, icon: '📋', contentType: 'report', title: 'Daily Detailed Report' },                         // Daily Detailed Report
         { id: PlaceholderGroupWidgetComponent, icon: '📋', contentType: 'report', title: 'Detailed Report' },                                     // Detailed Report
         { id: PlaceholderGroupWidgetComponent, icon: '📅', contentType: 'table', title: 'Email Brief Report' },                               // Email Brief Report   table
-        { id: PlaceholderGroupWidgetComponent, icon: '📈', contentType: 'graph', title: 'Email Contacts Distribution Graph' }, // Email Contacts Distribution Graph
+        { id: EmailContactsDistributionGraphWidgetComponent, icon: '📈', contentType: 'graph', title: 'Email Contacts Distribution Graph' }, // Email Contacts Distribution Graph
         { id: PlaceholderGroupWidgetComponent, icon: '📅', contentType: 'table', title: 'Email Daily Brief Report' },                   // Email Daily Brief Report   table
         { id: PlaceholderGroupWidgetComponent, icon: '📋', title: 'Email Daily Detailed Report' },             // Email Daily Detailed Report     ?
         { id: PlaceholderGroupWidgetComponent, icon: '📋', title: 'Email Detailed Report' },                         // Email Detailed Report      ?
@@ -140,14 +148,13 @@ export class AddWidgetMenuComponent implements OnInit {
       selectedCount: 0,
       totalCount: 0,
       widgets: [
-        // IMPORTANT: Replace PlaceholderIvrWidgetComponent with actual component types
-        { id: PlaceholderIvrWidgetComponent, icon: '🔵', contentType: 'pie', title: 'IVR ACD Distribution Graph' },
-        { id: PlaceholderIvrWidgetComponent, icon: '📈', contentType: 'graph', title: 'IVR Active ACD Graph' },
-        { id: PlaceholderIvrWidgetComponent, icon: '📈', contentType: 'graph', title: 'IVR Active OACD Graph' },
-        { id: PlaceholderIvrWidgetComponent, icon: '📅', contentType: 'table', title: 'IVR Brief Report' },
-       // { id: PlaceholderIvrWidgetComponent, icon: '📋', contentType: 'report', title: 'IVR Detailed Report' },
-        { id: PlaceholderIvrWidgetComponent, icon: '🔵', contentType: 'pie', title: 'IVR OACD Distribution Graph' }
-      ]
+        { id: IvrAcdDistributionGraphWidgetComponent, icon: '🔵', contentType: 'pie', title: 'IVR ACD Distribution Graph' },
+        { id: IvrActiveAcdGraphWidgetComponent, icon: '📈', contentType: 'graph', title: 'IVR Active ACD Graph' },
+        { id: IvrActiveOacdGraphWidgetComponent, icon: '📈', contentType: 'graph', title: 'IVR Active OACD Graph' },
+        { id: IvrBriefReportWidgetComponent, icon: '📅', contentType: 'table', title: 'IVR Brief Report' },
+        { id: IvrOacdDistributionGraphWidgetComponent, icon: '🔵', contentType: 'pie', title: 'IVR OACD Distribution Graph' }
+      ] // { id: PlaceholderIvrWidgetComponent, icon: '📋', contentType: 'report', title: 'IVR Detailed Report' }, // This one remains a placeholder as per user's initial file
+
     },
     {
       id: 'super-groups',
@@ -242,9 +249,9 @@ export class AddWidgetMenuComponent implements OnInit {
     //this.widgetsSelected.emit(Array.from(this.selectedWidgetTypes));
     this.selectedWidgetTypes.forEach(widgetType => {
       switch (widgetType) {
-       // case ExamplePieChartWidgetComponent:
-       //   this.widgetManager.addExamplePieChartWidget();
-       // break;
+        case EmailContactsDistributionGraphWidgetComponent:
+          this.widgetManager.addEmailContactsDistributionGraphWidget();
+        break;
        // case ChartWidgetComponent:
        //    this.widgetManager.addChartWidget();
        // break;
@@ -286,6 +293,21 @@ export class AddWidgetMenuComponent implements OnInit {
         //  break;
         case BriefDnisWidgetComponent:
           this.widgetManager.addBriefDnisWidget();
+          break;
+        case IvrBriefReportWidgetComponent: // Added
+          this.widgetManager.addIvrBriefReportWidget(); // Added
+          break; // Added
+        case IvrAcdDistributionGraphWidgetComponent: // Added
+          this.widgetManager.addIvrAcdDistributionGraphWidget(); // Added
+          break; // Added
+        case IvrActiveAcdGraphWidgetComponent:
+          this.widgetManager.addIvrActiveAcdGraphWidget();
+          break;
+        case IvrActiveOacdGraphWidgetComponent:
+          this.widgetManager.addIvrActiveOacdGraphWidget();
+          break;
+        case IvrOacdDistributionGraphWidgetComponent:
+          this.widgetManager.addIvrOacdDistributionGraphWidget();
           break;
         default:
           console.warn(`Unknown widget type: ${widgetType}`);

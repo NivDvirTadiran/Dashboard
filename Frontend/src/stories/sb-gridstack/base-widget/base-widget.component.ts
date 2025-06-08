@@ -131,10 +131,8 @@ export class GSBaseWidget extends BaseWidget implements OnInit, OnDestroy {
     }
 
     if (updatedModalData.settings) {
-      if (this.widget.type === 'brief-agents-widget' && updatedModalData.settings.selectedAgentIds !== undefined) {
+      if (updatedModalData.settings.selectedAgentIds !== undefined) {
         this.widget.config.selectedEntitiesIds = updatedModalData.settings.selectedAgentIds;
-      } else if (this.widget.type === 'brief-dnis-widget' && updatedModalData.settings.selectedDnisIds !== undefined) {
-        this.widget.config.selectedEntitiesIds = updatedModalData.settings.selectedDnisIds;
       }
     }
 
